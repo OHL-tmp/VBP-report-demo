@@ -22,6 +22,7 @@ from plotly.subplots import make_subplots
 from dash.dependencies import Input, Output, State
 from utils import Header, make_dash_table
 from figure import bargraph_overall,waterfall_overall,tbl_utilizer,piechart_utilizer,bargraph_h,bargraph_stack3,bubblegraph,bargraph_perform
+from modal_dashboard_domain_selection import modal_dashboard_domain_selection
 
 # Path
 BASE_PATH = pathlib.Path(__file__).parent.resolve()
@@ -44,6 +45,28 @@ df_domain_perform=pd.read_csv("data/domain_perform.csv")
 df_measure_perform=pd.read_csv("data/measure_performance.csv")
 df_tot_script=pd.DataFrame(df_tot_script_split.sum(axis=0)[1:4,],columns=['tot_script']).iloc[[2,1,0],]
 df_tot_unit=pd.DataFrame(df_tot_unit_split.sum(axis=0)[1:4,],columns=['tot_unit']).iloc[[2,1,0],]
+
+waterfall_domain1=waterfall_overall(df_waterfall['label'] ,df_waterfall['base'], df_waterfall['adjusted'])
+domain1_perform=bargraph_perform(df_measure_perform['performance'], df_measure_perform['Measure'])
+
+waterfall_domain2=waterfall_overall(df_waterfall['label'] ,df_waterfall['base'], df_waterfall['adjusted'])
+domain2_perform=bargraph_perform(df_measure_perform['performance'], df_measure_perform['Measure'])
+
+waterfall_domain3=waterfall_overall(df_waterfall['label'] ,df_waterfall['base'], df_waterfall['adjusted'])
+domain3_perform=bargraph_perform(df_measure_perform['performance'], df_measure_perform['Measure'])
+
+waterfall_domain4=waterfall_overall(df_waterfall['label'] ,df_waterfall['base'], df_waterfall['adjusted'])
+domain4_perform=bargraph_perform(df_measure_perform['performance'], df_measure_perform['Measure'])
+
+waterfall_domain5=waterfall_overall(df_waterfall['label'] ,df_waterfall['base'], df_waterfall['adjusted'])
+domain5_perform=bargraph_perform(df_measure_perform['performance'], df_measure_perform['Measure'])
+
+waterfall_domain6=waterfall_overall(df_waterfall['label'] ,df_waterfall['base'], df_waterfall['adjusted'])
+domain6_perform=bargraph_perform(df_measure_perform['performance'], df_measure_perform['Measure'])
+
+waterfall_domain7=waterfall_overall(df_waterfall['label'] ,df_waterfall['base'], df_waterfall['adjusted'])
+domain7_perform=bargraph_perform(df_measure_perform['performance'], df_measure_perform['Measure'])
+
 
 def create_layout():
     return html.Div(
@@ -199,54 +222,56 @@ def card_main_volumn_based_measures():
             )
 
 def card_sub1_volumn_based_measures(volumn_measure,fig):
-    return dbc.Card(
-                dbc.CardBody(
-                    [
-                        dbc.Row(
+    return html.Div([
+    	dbc.Card(
+                        dbc.CardBody(
                             [
-                                dbc.Col(html.Img(src=app.get_asset_url("bullet-round-blue.png"), width="20%"), width=1, align="start", style={"margin-right":"-20px", "margin-top":"-4px"}),
-                                dbc.Col(html.H6(volumn_measure)),
-    #                            dbc.Button([
-    #                                "Close"
-    #                            ], id = u"close-button-{}".format(volumn_measure),color = "light",size = "sm"),
-                            ],
-                            no_gutters=True,
+                                dbc.Row(
+                                    [
+                                        dbc.Col(html.Img(src=app.get_asset_url("bullet-round-blue.png"), width="20%"), width=1, align="start", style={"margin-right":"-20px", "margin-top":"-4px"}),
+                                        dbc.Col(html.H6(volumn_measure)),
+            #                            dbc.Button([
+            #                                "Close"
+            #                            ], id = u"close-button-{}".format(volumn_measure),color = "light",size = "sm"),
+                                    ],
+                                    no_gutters=True,
+                                ),
+                                dbc.Row(
+                                    [
+                                        dbc.Col(dcc.Graph(figure=fig), width="100%"),
+                                    ],
+                                ),
+                            ]
                         ),
-                        dbc.Row(
-                            [
-                                dbc.Col(dcc.Graph(figure=fig), width="100%"),
-                            ],
-                        ),
-                    ]
-                ),
-                className="mb-3",
-            )], id = u"card-container-{}".format(volumn_measure))
+                        className="mb-3", 
+                    )], id = u"card-container-{}".format(volumn_measure))
 
 
 def card_sub2_volumn_based_measures(volumn_measure,fig1,fig2):
-    return dbc.Card(
-                dbc.CardBody(
-                    [
-                        dbc.Row(
+    return html.Div([
+    	dbc.Card(
+                        dbc.CardBody(
                             [
-                                dbc.Col(html.Img(src=app.get_asset_url("bullet-round-blue.png"), width="20%"), width=1, align="start", style={"margin-right":"-20px", "margin-top":"-4px"}),
-                                dbc.Col(html.H6(volumn_measure)),
-#                                dbc.Button([
-#                                    "Close"
-#                                ], id = u"close-button-{}".format(volumn_measure),color = "light",size = "sm"),
-                            ],
-                            no_gutters=True,
+                                dbc.Row(
+                                    [
+                                        dbc.Col(html.Img(src=app.get_asset_url("bullet-round-blue.png"), width="20%"), width=1, align="start", style={"margin-right":"-20px", "margin-top":"-4px"}),
+                                        dbc.Col(html.H6(volumn_measure)),
+        #                                dbc.Button([
+        #                                    "Close"
+        #                                ], id = u"close-button-{}".format(volumn_measure),color = "light",size = "sm"),
+                                    ],
+                                    no_gutters=True,
+                                ),
+                                dbc.Row(
+                                    [
+                                        dbc.Col(dcc.Graph(figure=fig1), width=6),
+                                        dbc.Col(dcc.Graph(figure=fig2), width=6),
+                                    ],
+                                ),
+                            ]
                         ),
-                        dbc.Row(
-                            [
-                                dbc.Col(dcc.Graph(figure=fig1), width=6),
-                                dbc.Col(dcc.Graph(figure=fig2), width=6),
-                            ],
-                        ),
-                    ]
-                ),
-                className="mb-3",
-            )], id = u"card-container-{}".format(volumn_measure))
+                        className="mb-3",
+                    )], id = u"card-container-{}".format(volumn_measure))
 
 
 def card_main_value_based_measures():
@@ -342,8 +367,7 @@ def card_buttonGroup_domain_selected():
 
 
 def card_sub_value_based_measures(volumn_measure):
-    waterfall_domain=waterfall_overall(df_waterfall['label'] ,df_waterfall['base'], df_waterfall['adjusted'])
-    domain_perform=bargraph_perform(df_measure_perform['performance'], df_measure_perform['Measure'])
+
     return dbc.Card(
                 dbc.CardBody(
                     [
@@ -456,26 +480,26 @@ def generate_domain_related_graph(b1, b2, b3, b4, b5, b6, b7):
     fig1 = {}
     fig2 = {}
     if button_id == "button-domain-1":
-        fig1 = fig1_1
-        fig2 = fig2_1
+        fig1 = waterfall_domain1
+        fig2 = domain1_perform
     elif button_id == "button-domain-2":
-        fig1 = fig1_2
-        fig2 = fig2_2
+        fig1 = waterfall_domain2
+        fig2 = domain2_perform
     elif button_id == "button-domain-3":
-        fig1 = fig1_3
-        fig2 = fig2_3
+        fig1 = waterfall_domain3
+        fig2 = domain3_perform
     elif button_id == "button-domain-4":
-        fig1 = fig1_4
-        fig2 = fig2_4
+        fig1 = waterfall_domain4
+        fig2 = domain4_perform
     elif button_id == "button-domain-5":
-        fig1 = fig1_5
-        fig2 = fig2_5
+        fig1 = waterfall_domain5
+        fig2 = domain5_perform
     elif button_id == "button-domain-6":
-        fig1 = fig1_6
-        fig2 = fig2_6
+        fig1 = waterfall_domain6
+        fig2 = domain6_perform
     elif button_id == "button-domain-7":
-        fig1 = fig1_7
-        fig2 = fig2_7
+        fig1 = waterfall_domain7
+        fig2 = domain7_perform
     
     return fig1, fig2
 
