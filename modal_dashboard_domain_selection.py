@@ -31,7 +31,53 @@ app = dash.Dash(__name__, url_base_pathname='/demo-report/', external_stylesheet
 
 server = app.server
 
+Domain_options ={
+"checklist-domain-measures-lv1-1" : {
+    "Average Cost per Patient" : ["All Causes Average Cost per Patient", "CHF Related Average Cost per Patient "],
+    "Average IP Cost per Patient" : ["All Causes Average IP Cost per Patient", "CHF Related Average IP Cost per Patient"  ]
+},
 
+"checklist-domain-measures-lv1-2" : {
+    "Hospitalization Rate" : ["All Causes Hospitalization Rate", "CHF Related Hospitalization Rate"],
+    "ER Rate" : ["All Causes ER Rate", "CHF Related ER Rate"  ],
+    "Readmission Rate" : [],
+    "Incidence Rate of Medical Procedures" : []
+},
+
+"checklist-domain-measures-lv1-3" : {
+    "Improvement in Clinical Measures" : ["NT-proBNP Improvement %", "LVEF Improvement %", "LAVi Improvement %",
+                                         "LVEDVi Improvement %", "LVESVi and E/e’ Improvement %"],
+    "Functional Outcomes" : ["Change in Self-Care Score", "Change in Mobility Score"  ],
+    "Life Expectancy" : ["CV Mortality Rate"],
+    "Disease Progression" : ["Rate of CHF Progression for 24 months"],
+    "Clinical Measures Adherence Level" : [],
+    "Depressive Symptom Measures" : [],
+    "Psychosocial Outcome" : []
+},
+
+"checklist-domain-measures-lv1-4" : {
+    "Benefit Coverage Parity" : [],
+    "Screening Rate" : []
+},
+
+"checklist-domain-measures-lv1-5" : {
+    "Occurrence of Side Effects" : ["Emergent care rate for medication side effect", "Hospitalization rate for medication side effect"],
+    "Occurrence of Adverse Event" : [],
+    "Occurrence of Complications" : [],
+    "Inappropriate Use" :[]
+},
+
+"checklist-domain-measures-lv1-6" : {
+    "Medication Adherence" : ["DOT", "PDC", "MPR"],
+    "Healthcare-Associated Infections" : [],
+    "Patient-reported Care quality outcome" : []
+},
+
+"checklist-domain-measures-lv1-7" : {
+    "Symptom management" : ["Patient Reported SOB changes", "Patient Reported Fatigue and Tiredness Changes",
+                           "Patient Reported Peripheral Oedema Changes", "Patient Reported Disturbed Sleep Changes"],
+    "Patient Satisfaction" : []
+}}
 
 def modal_dashboard_domain_selection(n):
     return html.Div(
@@ -42,8 +88,12 @@ def modal_dashboard_domain_selection(n):
                             dbc.ModalHeader([
                                 dbc.Row([
                                      dbc.Col(html.Div("Select Domain")),
-#                                    dbc.Card(id = "dashboard-card-selected-domain",
-#                                            className="mb-3",),
+                                     html.Div([
+                                         html.Div("Disease"),
+                                         dbc.Input(placeholder = "CHF",
+                                                  className = "mb-3",
+                                                  disabled = True)
+                                     ], style = {"display" : "flex"})
                                 ]),
                             ]),
                             dbc.ModalBody(
@@ -83,11 +133,14 @@ def card_domain_selection(n):
     return html.Div(domain_card)
 
 def collapse_domain_selection_measures(n):
+    domain_set = ["Cost Reduction", "Utilization Reduction", "Improving Disease Outcome",
+                 "Decreasing Health Disparities", "Increasing Patient Safety",
+                 "Enhancing Care Quality", "Better Patient Experience"]
     return html.Div(
                 [
                     dbc.Row(
                         [
-                            dbc.Col(html.Div(u'Domain {}'.format(n+1))),
+                            dbc.Col(html.Div(domain_set[n])),
                             dbc.Card(id = u"dashboard-card-selected-domain-{}".format(n+1),
                                     className="mb-3",
                                     color="info"),
@@ -107,7 +160,17 @@ def collapse_domain_selection_measures(n):
                                     html.H5("Choose Measures", className="card-title"),
                                     eval("checklist_domain_measures_lv1_"+str(n+1)+"()"),
                                     html.Hr(className="my-2"),
-                                    html.Div(id=u"checklist-domain-measures-lv2-container-{}".format(n+1)),
+                                    html.Div([
+                                               dbc.FormGroup([
+                                                   dbc.Checklist(
+                                                       value=[],
+                                                       id=u"checklist-domain-measures-lv2-{}".format(n+1),
+                                                       inline=True,
+                                                       persistence = True,
+                                                       persistence_type = 'session',
+                                                   ),
+                                               ]),
+                                            ],id=u"checklist-domain-measures-lv2-container-{}".format(n+1)),
                                 ]
                             )
                         ),
@@ -123,12 +186,8 @@ def checklist_domain_measures_lv1_1():
                     #dbc.Label("Choose measures"),
                     dbc.Checklist(
                         options=[
-                            {"label": "Option 1", "value": 1},
-                            {"label": "Option 2", "value": 2},
-                            {"label": "Option 3", "value": 3},
-                            {"label": "Option 4", "value": 4},
-                            {"label": "Option 5", "value": 5},
-                            {"label": "Option 6", "value": 6},
+                            {"label": "Average Cost per Patient", "value": "Average Cost per Patient"},
+                            {"label": "Average IP Cost per Patient", "value":  "Average IP Cost per Patient"},
                         ],
                         value=[],
                         id="checklist-domain-measures-lv1-1",
@@ -137,22 +196,18 @@ def checklist_domain_measures_lv1_1():
                 ]
             )
 
-def checklist_domain_measures_lv2_1_1():
+
+def checklist_domain_measures_lv2_1():
     return dbc.FormGroup(
                 [
                     #dbc.Label("Choose measures"),
                     dbc.Checklist(
-                        options=[
-                            {"label": "Option 1", "value": 1},
-                            {"label": "Option 2", "value": 2},
-                            {"label": "Option 3", "value": 3},
-                            {"label": "Option 4", "value": 4},
-                            {"label": "Option 5", "value": 5},
-                            {"label": "Option 6", "value": 6},
-                        ],
+                        
                         value=[],
                         id="checklist-domain-measures-lv2-1",
                         inline=True,
+                        persistence = True,
+                        persistence_type = 'session',
                     ),
                 ]
             )
@@ -164,12 +219,10 @@ def checklist_domain_measures_lv1_2():
                     #dbc.Label("Choose measures"),
                     dbc.Checklist(
                         options=[
-                            {"label": "Option 1", "value": 1},
-                            {"label": "Option 2", "value": 2},
-                            {"label": "Option 3", "value": 3},
-                            {"label": "Option 4", "value": 4},
-                            {"label": "Option 5", "value": 5},
-                            {"label": "Option 6", "value": 6},
+                            {"label": "Hospitalization Rate", "value": "Hospitalization Rate"},
+                            {"label": "ER Rate", "value": "ER Rate"},
+                            {"label": "Readmission Rate", "value": "Readmission Rate", "disabled" : True},
+                            {"label": "Incidence Rate of Medical Procedures", "value": "Incidence Rate of Medical Procedures", "disabled" : True},
                         ],
                         value=[],
                         id="checklist-domain-measures-lv1-2",
@@ -178,7 +231,7 @@ def checklist_domain_measures_lv1_2():
                 ]
             )
 
-def checklist_domain_measures_lv2_2_1():
+def checklist_domain_measures_lv2_2():
     return dbc.FormGroup(
                 [
                     #dbc.Label("Choose measures"),
@@ -205,12 +258,13 @@ def checklist_domain_measures_lv1_3():
                     #dbc.Label("Choose measures"),
                     dbc.Checklist(
                         options=[
-                            {"label": "Option 1", "value": 1},
-                            {"label": "Option 2", "value": 2},
-                            {"label": "Option 3", "value": 3},
-                            {"label": "Option 4", "value": 4},
-                            {"label": "Option 5", "value": 5},
-                            {"label": "Option 6", "value": 6},
+                            {"label": "Improvement in Clinical Measures", "value": "Improvement in Clinical Measures"},
+                            {"label": "Functional Outcomes", "value": "Functional Outcomes"},
+                            {"label": "Life Expectancy", "value": "Life Expectancy"},
+                            {"label": "Disease Progression", "value": "Disease Progression"},
+                            {"label": "Clinical Measures Adherence Level", "value": "Clinical Measures Adherence Level", "disabled" : True},
+                            {"label": "Depressive Symptom Measures", "value": "Depressive Symptom Measures", "disabled" : True},
+                            {"label": "Psychosocial Outcome", "value": "Psychosocial Outcome", "disabled" : True},
                         ],
                         value=[],
                         id="checklist-domain-measures-lv1-3",
@@ -219,7 +273,7 @@ def checklist_domain_measures_lv1_3():
                 ]
             )
 
-def checklist_domain_measures_lv2_3_1():
+def checklist_domain_measures_lv2_3():
     return dbc.FormGroup(
                 [
                     #dbc.Label("Choose measures"),
@@ -246,12 +300,8 @@ def checklist_domain_measures_lv1_4():
                     #dbc.Label("Choose measures"),
                     dbc.Checklist(
                         options=[
-                            {"label": "Option 1", "value": 1},
-                            {"label": "Option 2", "value": 2},
-                            {"label": "Option 3", "value": 3},
-                            {"label": "Option 4", "value": 4},
-                            {"label": "Option 5", "value": 5},
-                            {"label": "Option 6", "value": 6},
+                            {"label": "Benefit Coverage Parity", "value": "Benefit Coverage Parity", "disabled" : True},
+                            {"label": "Screening Rate", "value": "Screening Rate", "disabled" : True},
                         ],
                         value=[],
                         id="checklist-domain-measures-lv1-4",
@@ -287,12 +337,10 @@ def checklist_domain_measures_lv1_5():
                     #dbc.Label("Choose measures"),
                     dbc.Checklist(
                         options=[
-                            {"label": "Option 1", "value": 1},
-                            {"label": "Option 2", "value": 2},
-                            {"label": "Option 3", "value": 3},
-                            {"label": "Option 4", "value": 4},
-                            {"label": "Option 5", "value": 5},
-                            {"label": "Option 6", "value": 6},
+                            {"label": "Occurrence of Side Effects", "value": "Occurrence of Side Effects"},
+                            {"label": "Occurrence of Adverse Event", "value": "Occurrence of Adverse Event", "disabled" : True},
+                            {"label": "Occurrence of Complications", "value": "Occurrence of Complications", "disabled" : True},
+                            {"label": "Inappropriate Use", "value": "Inappropriate Use", "disabled" : True},
                         ],
                         value=[],
                         id="checklist-domain-measures-lv1-5",
@@ -329,12 +377,9 @@ def checklist_domain_measures_lv1_6():
                     #dbc.Label("Choose measures"),
                     dbc.Checklist(
                         options=[
-                            {"label": "Option 1", "value": 1},
-                            {"label": "Option 2", "value": 2},
-                            {"label": "Option 3", "value": 3},
-                            {"label": "Option 4", "value": 4},
-                            {"label": "Option 5", "value": 5},
-                            {"label": "Option 6", "value": 6},
+                            {"label": "Medication Adherence", "value": "Medication Adherence"},
+                            {"label": "Healthcare-Associated Infections", "value": "Healthcare-Associated Infections", "disabled" : True},
+                            {"label": "Patient-reported Care quality outcome", "value": "Patient-reported Care quality outcome", "disabled" : True},
                         ],
                         value=[],
                         id="checklist-domain-measures-lv1-6",
@@ -370,12 +415,8 @@ def checklist_domain_measures_lv1_7():
                     #dbc.Label("Choose measures"),
                     dbc.Checklist(
                         options=[
-                            {"label": "Option 1", "value": 1},
-                            {"label": "Option 2", "value": 2},
-                            {"label": "Option 3", "value": 3},
-                            {"label": "Option 4", "value": 4},
-                            {"label": "Option 5", "value": 5},
-                            {"label": "Option 6", "value": 6},
+                            {"label": "Symptom management", "value": "Symptom management"},
+                            {"label": "Patient Satisfaction", "value": "Patient Satisfaction", "disabled" : True},
                         ],
                         value=[],
                         id="checklist-domain-measures-lv1-7",

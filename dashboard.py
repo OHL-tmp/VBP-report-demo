@@ -213,7 +213,6 @@ def card_main_volumn_based_measures():
                             className="mb-3",
                         ),
                         
-                        
                     ]
                 ),
                 style={"box-shadow":"0 4px 8px 0 rgba(0, 0, 0, 0.05), 0 6px 20px 0 rgba(0, 0, 0, 0.05)", "border":"none", "border-radius":"0.5rem"}
@@ -395,6 +394,9 @@ def card_sub_value_based_measures(volumn_measure):
                 style={"background-color":"#f7f7f7", "border":"none", "border-radius":"0.5rem"}
             )
 
+
+
+
 app.layout = create_layout()
 
 # add measure popover
@@ -521,12 +523,8 @@ def toggle_modal_dashboard_domain_selection(n1, n2, is_open):
     return is_open
 
 
-##Domain 1
-@app.callback(
-    [Output("collapse-1", "is_open"), Output("collapse-button-1","children")],
-    [Input("collapse-button-1", "n_clicks")],
-    [State("collapse-1", "is_open")],
-)
+##Domain 1-7
+
 def toggle_collapse_domain_selection_measures(n, is_open):
     if n and n%2 == 1:
         return not is_open, "Confirm"
@@ -534,275 +532,66 @@ def toggle_collapse_domain_selection_measures(n, is_open):
         return not is_open, "Edit"
     return is_open, "Select"
 
+for i in range(7):
+    app.callback(
+        [Output(f"collapse-{i+1}", "is_open"), 
+         Output(f"collapse-button-{i+1}","children")],
+        [Input(f"collapse-button-{i+1}", "n_clicks")],
+        [State(f"collapse-{i+1}", "is_open")],
+    )(toggle_collapse_domain_selection_measures)
 
-@app.callback(
-    [Output("dashboard-card-domain-selection-1", "color"),
-    Output("dashboard-card-selected-domain-1", "children")],
-    [Input("checklist-domain-measures-lv1-1", "value"), Input("collapse-button-1", "n_clicks")],
-)
+
+
 def toggle_collapse_domain_selection_measures(v, n):
     if len(v) > 0 and n%2 == 0: 
-        return  "info", u"Domain 1 ( {} measures selected) ".format(len(v))
+        return  "info", u"{} measures selected".format(len(v))
     return "light", ""
+
+for i in range(7):
+    app.callback(
+        [Output(f"dashboard-card-domain-selection-{i+1}", "color"),
+        Output(f"dashboard-card-selected-domain-{i+1}", "children")],
+        [Input(f"checklist-domain-measures-lv1-{i+1}", "value"), 
+         Input(f"collapse-button-{i+1}", "n_clicks")],
+    )(toggle_collapse_domain_selection_measures)
     
 
-@app.callback(
-    Output("checklist-domain-measures-lv2-container-1", "children"),
-    [
-        Input("checklist-domain-measures-lv1-1", "value"),
-    ],
-)
+
 def on_form_change(checklist_value):
     
     checked = len(checklist_value)
     
     if checked > 0:
-        return checklist_domain_measures_lv2()
-    return ""
+        return False
+    return True
 
-
-##Domain 2
-@app.callback(
-    [Output("collapse-2", "is_open"), Output("collapse-button-2","children")],
-    [Input("collapse-button-2", "n_clicks")],
-    [State("collapse-2", "is_open")],
-)
-def toggle_collapse_domain_selection_measures(n, is_open):
-    if n and n%2 == 1:
-        return not is_open, "Confirm"
-    elif n and n%2 == 0:
-        return not is_open, "Edit"
-    return is_open, "Select"
-
-
-@app.callback(
-    [Output("dashboard-card-domain-selection-2", "color"),
-    Output("dashboard-card-selected-domain-2", "children")],
-    [Input("checklist-domain-measures-lv1-2", "value"), Input("collapse-button-2", "n_clicks")],
-)
-def toggle_collapse_domain_selection_measures(v, n):
-    if len(v) > 0 and n%2 == 0: 
-        return  "info", u"Domain 2 ( {} measures selected) ".format(len(v))
-    return "light", ""
+for i in range(7):
+    app.callback(
+        Output(f"checklist-domain-measures-lv2-container-{i+1}", "hidden"),
+        [Input(f"checklist-domain-measures-lv1-{i+1}", "value"),],
+    )(on_form_change)
+    
     
 
-@app.callback(
-    Output("checklist-domain-measures-lv2-container-2", "children"),
-    [
-        Input("checklist-domain-measures-lv1-2", "value"),
-    ],
-)
-def on_form_change(checklist_value):
-    
-    checked = len(checklist_value)
-    
-    if checked > 0:
-        return checklist_domain_measures_lv2()
-    return ""
+def set_measure_lv2_options(selected_measure_lv1):
+    ctx = dash.callback_context
+    if len(ctx.triggered[0]['value']) > 0:
+        editing_domain = ctx.triggered[0]['prop_id'].split('.')[0]
+        checked_measure = ctx.triggered[0]['value'][-1]
+        return [{"label" : k, "value": k} for k in Domain_options[editing_domain][checked_measure]]
+
+
+    else:
+        return []
+
+for i in range(7):
+    app.callback(
+        Output(f"checklist-domain-measures-lv2-{i+1}", "options"),
+        [Input(f"checklist-domain-measures-lv1-{i+1}", "value")]
+    )(set_measure_lv2_options)
 
 
 
-##Domain 3
-@app.callback(
-    [Output("collapse-3", "is_open"), Output("collapse-button-3","children")],
-    [Input("collapse-button-3", "n_clicks")],
-    [State("collapse-3", "is_open")],
-)
-def toggle_collapse_domain_selection_measures(n, is_open):
-    if n and n%2 == 1:
-        return not is_open, "Confirm"
-    elif n and n%2 == 0:
-        return not is_open, "Edit"
-    return is_open, "Select"
-
-
-@app.callback(
-    [Output("dashboard-card-domain-selection-3", "color"),
-    Output("dashboard-card-selected-domain-3", "children")],
-    [Input("checklist-domain-measures-lv1-3", "value"), Input("collapse-button-3", "n_clicks")],
-)
-def toggle_collapse_domain_selection_measures(v, n):
-    if len(v) > 0 and n%2 == 0: 
-        return  "info", u"Domain 3 ( {} measures selected) ".format(len(v))
-    return "light", ""
-    
-
-@app.callback(
-    Output("checklist-domain-measures-lv2-container-3", "children"),
-    [
-        Input("checklist-domain-measures-lv1-3", "value"),
-    ],
-)
-def on_form_change(checklist_value):
-    
-    checked = len(checklist_value)
-    
-    if checked > 0:
-        return checklist_domain_measures_lv2()
-    return ""
-
-
-
-##Domain 4
-@app.callback(
-    [Output("collapse-4", "is_open"), Output("collapse-button-4","children")],
-    [Input("collapse-button-4", "n_clicks")],
-    [State("collapse-4", "is_open")],
-)
-def toggle_collapse_domain_selection_measures(n, is_open):
-    if n and n%2 == 1:
-        return not is_open, "Confirm"
-    elif n and n%2 == 0:
-        return not is_open, "Edit"
-    return is_open, "Select"
-
-
-@app.callback(
-    [Output("dashboard-card-domain-selection-4", "color"),
-    Output("dashboard-card-selected-domain-4", "children")],
-    [Input("checklist-domain-measures-lv1-4", "value"), Input("collapse-button-4", "n_clicks")],
-)
-def toggle_collapse_domain_selection_measures(v, n):
-    if len(v) > 0 and n%2 == 0: 
-        return  "info", u"Domain 4 ( {} measures selected) ".format(len(v))
-    return "light", ""
-    
-
-@app.callback(
-    Output("checklist-domain-measures-lv2-container-4", "children"),
-    [
-        Input("checklist-domain-measures-lv1-4", "value"),
-    ],
-)
-def on_form_change(checklist_value):
-    
-    checked = len(checklist_value)
-    
-    if checked > 0:
-        return checklist_domain_measures_lv2()
-    return ""
-
-
-
-##Domain 5
-@app.callback(
-    [Output("collapse-5", "is_open"), Output("collapse-button-5","children")],
-    [Input("collapse-button-5", "n_clicks")],
-    [State("collapse-5", "is_open")],
-)
-def toggle_collapse_domain_selection_measures(n, is_open):
-    if n and n%2 == 1:
-        return not is_open, "Confirm"
-    elif n and n%2 == 0:
-        return not is_open, "Edit"
-    return is_open, "Select"
-
-
-@app.callback(
-    [Output("dashboard-card-domain-selection-5", "color"),
-    Output("dashboard-card-selected-domain-5", "children")],
-    [Input("checklist-domain-measures-lv1-5", "value"), Input("collapse-button-5", "n_clicks")],
-)
-def toggle_collapse_domain_selection_measures(v, n):
-    if len(v) > 0 and n%2 == 0: 
-        return  "info", u"Domain 5 ( {} measures selected) ".format(len(v))
-    return "light", ""
-    
-
-@app.callback(
-    Output("checklist-domain-measures-lv2-container-5", "children"),
-    [
-        Input("checklist-domain-measures-lv1-5", "value"),
-    ],
-)
-def on_form_change(checklist_value):
-    
-    checked = len(checklist_value)
-    
-    if checked > 0:
-        return checklist_domain_measures_lv2()
-    return ""
-
-
-
-##Domain 6
-@app.callback(
-    [Output("collapse-6", "is_open"), Output("collapse-button-6","children")],
-    [Input("collapse-button-6", "n_clicks")],
-    [State("collapse-6", "is_open")],
-)
-def toggle_collapse_domain_selection_measures(n, is_open):
-    if n and n%2 == 1:
-        return not is_open, "Confirm"
-    elif n and n%2 == 0:
-        return not is_open, "Edit"
-    return is_open, "Select"
-
-
-@app.callback(
-    [Output("dashboard-card-domain-selection-6", "color"),
-    Output("dashboard-card-selected-domain-6", "children")],
-    [Input("checklist-domain-measures-lv1-6", "value"), Input("collapse-button-6", "n_clicks")],
-)
-def toggle_collapse_domain_selection_measures(v, n):
-    if len(v) > 0 and n%2 == 0: 
-        return  "info", u"Domain 6 ( {} measures selected) ".format(len(v))
-    return "light", ""
-    
-
-@app.callback(
-    Output("checklist-domain-measures-lv2-container-6", "children"),
-    [
-        Input("checklist-domain-measures-lv1-6", "value"),
-    ],
-)
-def on_form_change(checklist_value):
-    
-    checked = len(checklist_value)
-    
-    if checked > 0:
-        return checklist_domain_measures_lv2()
-    return ""
-
-
-##Domain 7
-@app.callback(
-    [Output("collapse-7", "is_open"), Output("collapse-button-7","children")],
-    [Input("collapse-button-7", "n_clicks")],
-    [State("collapse-7", "is_open")],
-)
-def toggle_collapse_domain_selection_measures(n, is_open):
-    if n and n%2 == 1:
-        return not is_open, "Confirm"
-    elif n and n%2 == 0:
-        return not is_open, "Edit"
-    return is_open, "Select"
-
-
-@app.callback(
-    [Output("dashboard-card-domain-selection-7", "color"),
-    Output("dashboard-card-selected-domain-7", "children")],
-    [Input("checklist-domain-measures-lv1-7", "value"), Input("collapse-button-7", "n_clicks")],
-)
-def toggle_collapse_domain_selection_measures(v, n):
-    if len(v) > 0 and n%2 == 0: 
-        return  "info", u"Domain 7 ( {} measures selected) ".format(len(v))
-    return "light", ""
-    
-
-@app.callback(
-    Output("checklist-domain-measures-lv2-container-7", "children"),
-    [
-        Input("checklist-domain-measures-lv1-7", "value"),
-    ],
-)
-def on_form_change(checklist_value):
-    
-    checked = len(checklist_value)
-    
-    if checked > 0:
-        return checklist_domain_measures_lv2()
-    return ""
 
 
 
