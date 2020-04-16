@@ -36,7 +36,7 @@ server = app.server
 def modal_dashboard_domain_selection(n):
     return html.Div(
                 [
-                    dbc.Button("EDIT", id="open-centered"),
+                    dbc.Button("Edit Domain", id="open-centered", className="mb-3", style={"background-color":"#38160f", "border":"none", "border-radius":"10rem", "font-family":"NotoSans-Regular", "font-size":"0.6rem"}), 
                     dbc.Modal(
                         [
                             dbc.ModalHeader([

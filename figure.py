@@ -62,12 +62,19 @@ def bargraph_overall(x,y1,y2):  #df_overall['month'] df_overall['base'] df_overa
             showticklabels=True,
             zeroline=True,
             zerolinecolor=colors['grey'],
-            zerolinewidth=1
+            zerolinewidth=1,
         ),
         hovermode=False,
         modebar=dict(
-        bgcolor=colors['transparent']
-        )
+            bgcolor=colors['transparent']
+        ),
+        
+        margin=dict(l=0,r=0,b=60,t=40,pad=0),
+        font=dict(
+            family="NotoSans-CondensedLight",
+            size=12,
+            color="#7f7f7f"
+        ),
     )
     return fig_overall
 
@@ -114,13 +121,19 @@ def waterfall_overall(x,y1,y2): #df_waterfall['label']  df_waterfall['base'] df_
             showticklabels=True,
             zeroline=True,
             zerolinecolor=colors['grey'],
-            zerolinewidth=1
+            zerolinewidth=1,
         ),
         hovermode=False,
         showlegend=False,
         modebar=dict(
-        bgcolor=colors['transparent']
-        )
+            bgcolor=colors['transparent']
+        ),
+        margin=dict(l=0,r=0,b=60,t=40,pad=0),
+        font=dict(
+            family="NotoSans-CondensedLight",
+            size=12,
+            color="#7f7f7f"
+        ),
     )
     return fig_waterfall   
 
@@ -145,7 +158,13 @@ def tbl_utilizer(df_utilizer):
     
     utilizer_tbl.update_layout(
        autosize=True,
-        #width=1000       
+       margin=dict(l=0,r=0,b=30,t=50,pad=0),
+       paper_bgcolor=colors["transparent"],
+       font=dict(
+            family="NotoSans-CondensedLight",
+            size=12,
+            color="#38160f"
+        ),
     )     
     return utilizer_tbl
 
@@ -158,14 +177,21 @@ def piechart_utilizer(label,value): #df_util_split['Class']  df_util_split['%']
             values=value_pie,
             pull=[0.1,0,0],
             marker=dict(
-                    colors=[colors['blue'],colors['yellow'],colors['grey']]            
+                    colors=["#1357DD","F5B111","#df8885"]            
                     ),
             textinfo='label+percent'
         )
     ])
     fig_util_split.update_layout(
        hovermode=False,
-       showlegend=False       
+       showlegend=False,
+       margin=dict(l=0,r=0,b=0,t=0,pad=0),
+       paper_bgcolor=colors["transparent"],
+       font=dict(
+            family="NotoSans-CondensedLight",
+            size=12,
+            color="#7f7f7f"
+        ),
     )   
     return fig_util_split
 
@@ -192,7 +218,12 @@ def bargraph_h(x,y):#df_script_per_util['avg script']  df_script_per_util['label
         plot_bgcolor=colors['transparent'],
         hovermode=False,
         showlegend=False,
-        margin=dict(l=80,r=80,t=100,b=80,pad=10)
+        margin=dict(l=0,r=0,b=30,t=30,pad=10),
+       font=dict(
+            family="NotoSans-CondensedLight",
+            size=12,
+            color="#38160f"
+        ),
     )
     return fig_script_per_util
 
@@ -254,7 +285,13 @@ def bargraph_stack3(x,y1,y2,y3) : #   df_tot_script_split['dosage'] df_tot_scrip
             zerolinecolor=colors['grey'],
             zerolinewidth=1
         ),
-        hovermode=False
+        #hovermode=True,
+        margin=dict(l=0,r=0,b=30,t=50,pad=0),
+       font=dict(
+            family="NotoSans-CondensedLight",
+            size=8,
+            color="#38160f"
+        ),
     )    
     return fig_tot_script_split
 
@@ -272,8 +309,8 @@ def bubblegraph(x,y,t):#df_domain_perform['weight'] df_domain_perform['performan
             #dx=0.1,dy=0.1,
             marker=dict(
                 size=60,
-                color=['rgb(93, 164, 214)', 'rgb(255, 144, 14)', 'rgb(44, 160, 101)', 'rgb(255, 65, 54)'],
-                opacity=[1, 0.8, 0.6, 0.4]
+                color=["#df8885", 'rgb(255, 144, 14)', 'rgb(250, 206, 115)', 'rgb(183, 156, 205)'],
+                opacity=[0.8, 0.8, 0.8, 0.8]
             )
         )
     ])
@@ -297,6 +334,12 @@ def bubblegraph(x,y,t):#df_domain_perform['weight'] df_domain_perform['performan
             zerolinecolor='grey',
             rangemode="tozero"
         ),
+        margin=dict(l=0,r=0,b=50,t=10,pad=0),
+       font=dict(
+            family="NotoSans-CondensedLight",
+            size=8,
+            color="#38160f"
+        ),
         yaxis = dict(
             #showgrid = True, 
             #gridcolor =colors[3],
@@ -310,7 +353,6 @@ def bubblegraph(x,y,t):#df_domain_perform['weight'] df_domain_perform['performan
             zerolinecolor='grey',
             ticks='inside'
         ),
-        hovermode=False
     )
     return fig_domain_perform
 

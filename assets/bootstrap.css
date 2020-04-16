@@ -389,7 +389,8 @@ h5, .h5 {
 }
 
 h6, .h6 {
-  font-size: 1rem;
+  font-family: 'NotoSans-Regular';
+  font-size: 0.8rem;
 }
 
 .lead {

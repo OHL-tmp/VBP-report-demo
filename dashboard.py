@@ -153,12 +153,12 @@ def div_overall_performance():
                     html.P("Placeholder Placeholder Placeholder Placeholder Placeholder Placeholder Placeholder Placeholder Placeholder Placeholder Placeholder Placeholder Placeholder ", style={"color":"#000", "font-size":"0.8rem"}),
                     dbc.Row(
                         [
-                            dbc.Col(dcc.Graph(figure=bargraph_overall1), width=6),
-                            dbc.Col(dcc.Graph(figure=waterfall_overall1), width=6),
+                            dbc.Col(dcc.Graph(figure=bargraph_overall1, style={"height" : "23.25rem", "width" : "30rem"})),
+                            dbc.Col(dcc.Graph(figure=waterfall_overall1, style={"height" : "23.5rem", "width" : "20rem"})),
                         ],
                     ),
                 ],
-                style={"padding":"1rem", "padding-right":"2rem"},
+                style={"padding":"1rem", "padding-right":"2rem", "max-height":"10rem"},
             )
 
 def card_main_volumn_based_measures():
@@ -205,10 +205,10 @@ def card_main_volumn_based_measures():
                         ),
                         html.Div(
                             [
-                                card_sub2_volumn_based_measures("Utilizer Count and Market Share",tbl_utilizer1,piechart_utilizer1),
+                                card_sub2_volumn_based_measures("Utilizer Count and Market Share",tbl_utilizer1,piechart_utilizer1,0.7,0.3),
                                 card_sub1_volumn_based_measures("Avg Script (30-day adj) per Utilizer",bargraph_script_per_util),
-                                card_sub2_volumn_based_measures("Total Script Count (30-day adj) by Dosage (in thousand)",bargraph_tot_script,bargraph_tot_script_split),
-                                card_sub2_volumn_based_measures("Total Units by Dosage (Mn)",bargraph_tot_unit,bargraph_tot_unit_split),
+                                card_sub2_volumn_based_measures("Total Script Count (30-day adj) by Dosage (in thousand)",bargraph_tot_script,bargraph_tot_script_split,0.5,0.5),
+                                card_sub2_volumn_based_measures("Total Units by Dosage (Mn)",bargraph_tot_unit,bargraph_tot_unit_split,0.5,0.5),
                             ],
                             className="mb-3",
                         ),
@@ -234,13 +234,13 @@ def card_sub1_volumn_based_measures(volumn_measure, fig):
 		                        ),
 		                        dbc.Row(
 		                            [
-		                                dbc.Col(dcc.Graph(figure=fig), width=12),
+		                                dbc.Col(dcc.Graph(figure=fig, style={"height" : "12rem", "width" : "28rem"}), width=12),
 		                            ],
 		                        ),
 		                    ]
 		                ),
 		                className="mb-3",
-		                style={"background-color":"#f7f7f7", "border":"none", "border-radius":"0.5rem"}
+		                style={"background-color":"#f7f7f7", "border":"none", "border-radius":"0.5rem", "max-height":"20rem"}
 			        )
 	            ],
                 id = u"card-container-{}".format(volumn_measure),
@@ -248,7 +248,9 @@ def card_sub1_volumn_based_measures(volumn_measure, fig):
             )
 
 
-def card_sub2_volumn_based_measures(volumn_measure,fig1,fig2):
+def card_sub2_volumn_based_measures(volumn_measure,fig1,fig2,size1,size2):
+    size1 = str(int(size1*28)) + "rem"
+    size2 = str(int(size2*28)) + "rem"
     return html.Div(
 			    [
 			        dbc.Card(
@@ -263,8 +265,8 @@ def card_sub2_volumn_based_measures(volumn_measure,fig1,fig2):
 		                        ),
 		                        dbc.Row(
 		                            [
-		                                dbc.Col(dcc.Graph(figure=fig1, style={"height" : "15rem", "width" : "15rem"})),
-		                                dbc.Col(dcc.Graph(figure=fig2, style={"height" : "100%", "width" : "100%"})),
+		                                dbc.Col(dcc.Graph(figure=fig1, style={"height" : "12rem", "width" : size1})),
+		                                dbc.Col(dcc.Graph(figure=fig2, style={"height" : "12rem", "width" : size2})),
 		                            ],
 		                        ),
 		                    ]
@@ -299,11 +301,11 @@ def card_overview_value_based_measures():
     return dbc.Card(
                 dbc.CardBody(
                     [
-                       dcc.Graph(figure=bubble_graph_domain)
+                       dcc.Graph(figure=bubble_graph_domain, style={"height":"20rem", "width" : "28rem"})
                     ]
                 ),
                 className="mb-3",
-                style={"background-color":"#f7f7f7", "border":"none", "border-radius":"0.5rem"}
+                style={"background-color":"#f7f7f7", "border":"none", "border-radius":"0.5rem", "max-height":"20rem"}
             )
 
 def card_modify_value_based_measures():
@@ -314,61 +316,60 @@ def card_modify_value_based_measures():
                             [
                                 dbc.Col(html.Img(src=app.get_asset_url("bullet-round-blue.png"), width="20%"), width=1, align="start", style={"margin-right":"-20px", "margin-top":"-4px"}),
                                 dbc.Col(html.H6("Domain Detail")),
-                                dbc.Col([dbc.Button("Edit Domain", className="mb-3", style={"background-color":"#38160f", "border":"none", "border-radius":"10rem", "font-family":"NotoSans-Regular", "font-size":"0.6rem"},)], width=3),
+                                dbc.Col(modal_dashboard_domain_selection(7), width=3),
                             ],
                             no_gutters=True,
                         ),
                         html.Div(
                             [
-                                dbc.Col(modal_dashboard_domain_selection(7)),
                                 dbc.Col(
                                     [
                                      card_buttonGroup_domain_selected(),
                                     ], 
-                                    width="100%",
+                                    width="100%"
                                 ),
                             ],
                         ),
                     ]
                 ),
-                className="mb-3",
-                style={"border":"none", "border-radius":"0.5rem"}
+                className="mb-3"
             )
 
 def card_buttonGroup_domain_selected():
     return dbc.Card(
-            dbc.CardBody([
-                html.Div([dbc.Button("Domain 1", 
-                                  id = "button-domain-1")],
-                         id = "buttonGroup-domain-selected-1",
-                         hidden = True),
-                html.Div([dbc.Button("Domain 2", 
-                                  id = "button-domain-2")],
-                         id = "buttonGroup-domain-selected-2",
-                         hidden = True),
-                html.Div([dbc.Button("Domain 3", 
-                                  id = "button-domain-3")],
-                         id = "buttonGroup-domain-selected-3",
-                         hidden = True),
-                html.Div([dbc.Button("Domain 4", 
-                                  id = "button-domain-4")],
-                         id = "buttonGroup-domain-selected-4",
-                         hidden = True),
-                html.Div([dbc.Button("Domain 5", 
-                                  id = "button-domain-5")],
-                         id = "buttonGroup-domain-selected-5",
-                         hidden = True),
-                html.Div([dbc.Button("Domain 6", 
-                                  id = "button-domain-6")],
-                         id = "buttonGroup-domain-selected-6",
-                         hidden = True),
-                html.Div([dbc.Button("Domain 7", 
-                                  id = "button-domain-7")],
-                         id = "buttonGroup-domain-selected-7",
-                         hidden = True),
-            ],
-            style = {"display": "flex"}),
-            className="mb-3")
+                dbc.CardBody([
+                    html.Div([dbc.Button("Domain 1", 
+                                      id = "button-domain-1")],
+                             id = "buttonGroup-domain-selected-1",
+                             hidden = True),
+                    html.Div([dbc.Button("Domain 2", 
+                                      id = "button-domain-2")],
+                             id = "buttonGroup-domain-selected-2",
+                             hidden = True),
+                    html.Div([dbc.Button("Domain 3", 
+                                      id = "button-domain-3")],
+                             id = "buttonGroup-domain-selected-3",
+                             hidden = True),
+                    html.Div([dbc.Button("Domain 4", 
+                                      id = "button-domain-4")],
+                             id = "buttonGroup-domain-selected-4",
+                             hidden = True),
+                    html.Div([dbc.Button("Domain 5", 
+                                      id = "button-domain-5")],
+                             id = "buttonGroup-domain-selected-5",
+                             hidden = True),
+                    html.Div([dbc.Button("Domain 6", 
+                                      id = "button-domain-6")],
+                             id = "buttonGroup-domain-selected-6",
+                             hidden = True),
+                    html.Div([dbc.Button("Domain 7", 
+                                      id = "button-domain-7")],
+                             id = "buttonGroup-domain-selected-7",
+                             hidden = True),
+                ],
+                style = {"display": "flex", "border":"none", "border-radius":"0.5rem"}),
+                className="mb-3"
+            )
 
 
 def card_sub_value_based_measures(volumn_measure):
