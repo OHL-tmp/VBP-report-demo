@@ -176,17 +176,8 @@ def card_main_volumn_based_measures():
                         html.H1("Volumn Based Measures", className="mb-3", style={"font-size":"1.5rem"}),
                         html.Div(
                             [
-                                card_sub2_volumn_based_measures("Utilizer Count and Market Share",tbl_utilizer1,piechart_utilizer1),
-                                card_sub1_volumn_based_measures("Avg Script (30-day adj) per Utilizer",bargraph_script_per_util),
-                                card_sub2_volumn_based_measures("Total Script Count (30-day adj) by Dosage (in thousand)",bargraph_tot_script,bargraph_tot_script_split),
-                                card_sub2_volumn_based_measures("Total Units by Dosage (Mn)",bargraph_tot_unit,bargraph_tot_unit_split),
-                            ],
-                            className="mb-3",
-                        ),
-                        html.Div(
-                            [
                                 dbc.Button(
-                                    "Edit",
+                                    "Edit Measures",
                                     id="button-add-measure",
                                     className="mb-3",
                                     style={"background-color":"#38160f", "border":"none", "border-radius":"10rem", "font-family":"NotoSans-Regular", "font-size":"0.6rem"},
@@ -210,8 +201,18 @@ def card_main_volumn_based_measures():
                                 target = "button-add-measure",
                                 placement = "top"),
                             ],
-                            style={"text-align":"center"},
+                            style={"text-align":"end"},
                         ),
+                        html.Div(
+                            [
+                                card_sub2_volumn_based_measures("Utilizer Count and Market Share",tbl_utilizer1,piechart_utilizer1),
+                                card_sub1_volumn_based_measures("Avg Script (30-day adj) per Utilizer",bargraph_script_per_util),
+                                card_sub2_volumn_based_measures("Total Script Count (30-day adj) by Dosage (in thousand)",bargraph_tot_script,bargraph_tot_script_split),
+                                card_sub2_volumn_based_measures("Total Units by Dosage (Mn)",bargraph_tot_unit,bargraph_tot_unit_split),
+                            ],
+                            className="mb-3",
+                        ),
+                        
                         
                     ]
                 ),
@@ -233,7 +234,7 @@ def card_sub1_volumn_based_measures(volumn_measure, fig):
 		                        ),
 		                        dbc.Row(
 		                            [
-		                                dbc.Col(dcc.Graph(figure=fig), width="100%"),
+		                                dbc.Col(dcc.Graph(figure=fig), width=12),
 		                            ],
 		                        ),
 		                    ]
@@ -241,7 +242,9 @@ def card_sub1_volumn_based_measures(volumn_measure, fig):
 		                className="mb-3",
 		                style={"background-color":"#f7f7f7", "border":"none", "border-radius":"0.5rem"}
 			        )
-	            ], id = u"card-container-{}".format(volumn_measure)
+	            ],
+                id = u"card-container-{}".format(volumn_measure),
+                #style={"max-height":"20rem"}
             )
 
 
@@ -260,14 +263,14 @@ def card_sub2_volumn_based_measures(volumn_measure,fig1,fig2):
 		                        ),
 		                        dbc.Row(
 		                            [
-		                                dbc.Col(dcc.Graph(figure=fig1), width=6),
-		                                dbc.Col(dcc.Graph(figure=fig2), width=6),
+		                                dbc.Col(dcc.Graph(figure=fig1, style={"height" : "15rem", "width" : "15rem"})),
+		                                dbc.Col(dcc.Graph(figure=fig2, style={"height" : "100%", "width" : "100%"})),
 		                            ],
 		                        ),
 		                    ]
 		                ),
 		                className="mb-3",
-		                style={"background-color":"#f7f7f7", "border":"none", "border-radius":"0.5rem"}
+		                style={"background-color":"#f7f7f7", "border":"none", "border-radius":"0.5rem", "max-height":"20rem"}
 		            )
 		        ], id = u"card-container-{}".format(volumn_measure)
             )
