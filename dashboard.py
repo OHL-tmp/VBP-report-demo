@@ -21,7 +21,8 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 from dash.dependencies import Input, Output, State
 from utils import Header, make_dash_table
-
+from figure import bargraph_overall,waterfall_overall,tbl_utilizer,piechart_utilizer,bargraph_h,bargraph_stack3,bubblegraph,bargraph_perform
+from modal_dashboard_domain_selection import modal_dashboard_domain_selection
 
 # Path
 BASE_PATH = pathlib.Path(__file__).parent.resolve()
@@ -32,6 +33,39 @@ app = dash.Dash(__name__, url_base_pathname='/demo-report/')
 
 server = app.server
 
+## load data
+df_overall = pd.read_csv("data/overall_performance.csv")
+df_waterfall = pd.read_csv("data/overall_waterfall.csv")
+df_utilizer= pd.read_csv("data/utilizer_tbl.csv")
+df_util_split=pd.read_csv("data/util_split.csv")
+df_script_per_util=pd.read_csv("data/script_per_util.csv")
+df_tot_script_split=pd.read_csv("data/tot_script_split.csv")
+df_tot_unit_split=pd.read_csv("data/tot_unit_split.csv")
+df_domain_perform=pd.read_csv("data/domain_perform.csv")
+df_measure_perform=pd.read_csv("data/measure_performance.csv")
+df_tot_script=pd.DataFrame(df_tot_script_split.sum(axis=0)[1:4,],columns=['tot_script']).iloc[[2,1,0],]
+df_tot_unit=pd.DataFrame(df_tot_unit_split.sum(axis=0)[1:4,],columns=['tot_unit']).iloc[[2,1,0],]
+
+waterfall_domain1=waterfall_overall(df_waterfall['label'] ,df_waterfall['base'], df_waterfall['adjusted'])
+domain1_perform=bargraph_perform(df_measure_perform['performance'], df_measure_perform['Measure'])
+
+waterfall_domain2=waterfall_overall(df_waterfall['label'] ,df_waterfall['base'], df_waterfall['adjusted'])
+domain2_perform=bargraph_perform(df_measure_perform['performance'], df_measure_perform['Measure'])
+
+waterfall_domain3=waterfall_overall(df_waterfall['label'] ,df_waterfall['base'], df_waterfall['adjusted'])
+domain3_perform=bargraph_perform(df_measure_perform['performance'], df_measure_perform['Measure'])
+
+waterfall_domain4=waterfall_overall(df_waterfall['label'] ,df_waterfall['base'], df_waterfall['adjusted'])
+domain4_perform=bargraph_perform(df_measure_perform['performance'], df_measure_perform['Measure'])
+
+waterfall_domain5=waterfall_overall(df_waterfall['label'] ,df_waterfall['base'], df_waterfall['adjusted'])
+domain5_perform=bargraph_perform(df_measure_perform['performance'], df_measure_perform['Measure'])
+
+waterfall_domain6=waterfall_overall(df_waterfall['label'] ,df_waterfall['base'], df_waterfall['adjusted'])
+domain6_perform=bargraph_perform(df_measure_perform['performance'], df_measure_perform['Measure'])
+
+waterfall_domain7=waterfall_overall(df_waterfall['label'] ,df_waterfall['base'], df_waterfall['adjusted'])
+domain7_perform=bargraph_perform(df_measure_perform['performance'], df_measure_perform['Measure'])
 
 
 def create_layout():
@@ -97,6 +131,8 @@ def card_year_to_date_metrics(title, value):
             )
 
 def div_overall_performance():
+    bargraph_overall1=bargraph_overall(df_overall['month'],df_overall['base'],df_overall['adjusted'])
+    waterfall_overall1=waterfall_overall(df_waterfall['label'] ,df_waterfall['base'], df_waterfall['adjusted'])
     return html.Div(
                 [
                     dbc.Row(
@@ -117,8 +153,8 @@ def div_overall_performance():
                     html.P("Placeholder Placeholder Placeholder Placeholder Placeholder Placeholder Placeholder Placeholder Placeholder Placeholder Placeholder Placeholder Placeholder ", style={"color":"#000", "font-size":"0.8rem"}),
                     dbc.Row(
                         [
-                            dbc.Col(html.Img(src=app.get_asset_url("logo-demo.png")), width=6),
-                            dbc.Col(html.Img(src=app.get_asset_url("logo-demo.png")), width=6),
+                            dbc.Col(dcc.Graph(figure=bargraph_overall1), width=6),
+                            dbc.Col(dcc.Graph(figure=waterfall_overall1), width=6),
                         ],
                     ),
                 ],
@@ -126,16 +162,24 @@ def div_overall_performance():
             )
 
 def card_main_volumn_based_measures():
+    tbl_utilizer1=tbl_utilizer(df_utilizer)
+    piechart_utilizer1=piechart_utilizer(df_util_split['Class'],df_util_split['%'])
+    bargraph_script_per_util=bargraph_h(df_script_per_util['avg script'] , df_script_per_util['label'])
+    bargraph_tot_script=bargraph_h(df_tot_script['tot_script'] , df_tot_script.index)
+    bargraph_tot_script_split=bargraph_stack3(df_tot_script_split['dosage'], df_tot_script_split['YTD'], df_tot_script_split['Annualized'] ,df_tot_script_split['Plan Target'])
+    bargraph_tot_unit_split=bargraph_stack3(df_tot_unit_split['dosage'], df_tot_unit_split['YTD'], df_tot_unit_split['Annualized'] ,df_tot_unit_split['Plan Target'])
+    bargraph_tot_unit=bargraph_h(df_tot_unit['tot_unit'] , df_tot_unit.index)
+
     return dbc.Card(
                 dbc.CardBody(
                     [
                         html.H1("Volumn Based Measures", className="mb-3", style={"font-size":"1.5rem"}),
                         html.Div(
                             [
-                                card_sub2_volumn_based_measures("Utilizer Count and Market Share"),
-                                card_sub1_volumn_based_measures("Avg Script (30-day adj) per Utilizer"),
-                                card_sub2_volumn_based_measures("Total Script Count (30-day adj) by Dosage (in thousand)"),
-                                card_sub2_volumn_based_measures("Total Units by Dosage (Mn)"),
+                                card_sub2_volumn_based_measures("Utilizer Count and Market Share",tbl_utilizer1,piechart_utilizer1),
+                                card_sub1_volumn_based_measures("Avg Script (30-day adj) per Utilizer",bargraph_script_per_util),
+                                card_sub2_volumn_based_measures("Total Script Count (30-day adj) by Dosage (in thousand)",bargraph_tot_script,bargraph_tot_script_split),
+                                card_sub2_volumn_based_measures("Total Units by Dosage (Mn)",bargraph_tot_unit,bargraph_tot_unit_split),
                             ],
                             className="mb-3",
                         ),
@@ -174,7 +218,7 @@ def card_main_volumn_based_measures():
                 style={"box-shadow":"0 4px 8px 0 rgba(0, 0, 0, 0.05), 0 6px 20px 0 rgba(0, 0, 0, 0.05)", "border":"none", "border-radius":"0.5rem"}
             )
 
-def card_sub1_volumn_based_measures(volumn_measure):
+def card_sub1_volumn_based_measures(volumn_measure, fig):
     return html.Div(
 	    		[
 			        dbc.Card(
@@ -189,7 +233,7 @@ def card_sub1_volumn_based_measures(volumn_measure):
 		                        ),
 		                        dbc.Row(
 		                            [
-		                                dbc.Col(html.Img(src=app.get_asset_url("logo-demo.png"), width="100%")),
+		                                dbc.Col(dcc.Graph(figure=fig), width="100%"),
 		                            ],
 		                        ),
 		                    ]
@@ -201,7 +245,7 @@ def card_sub1_volumn_based_measures(volumn_measure):
             )
 
 
-def card_sub2_volumn_based_measures(volumn_measure):
+def card_sub2_volumn_based_measures(volumn_measure,fig1,fig2):
     return html.Div(
 			    [
 			        dbc.Card(
@@ -216,8 +260,8 @@ def card_sub2_volumn_based_measures(volumn_measure):
 		                        ),
 		                        dbc.Row(
 		                            [
-		                                dbc.Col(html.Img(src=app.get_asset_url("logo-demo.png"), width="100%"), width=6),
-		                                dbc.Col(html.Img(src=app.get_asset_url("logo-demo.png"), width="100%"), width=6),
+		                                dbc.Col(dcc.Graph(figure=fig1), width=6),
+		                                dbc.Col(dcc.Graph(figure=fig2), width=6),
 		                            ],
 		                        ),
 		                    ]
@@ -248,10 +292,11 @@ def card_main_value_based_measures():
             )
 
 def card_overview_value_based_measures():
+    bubble_graph_domain=bubblegraph(df_domain_perform['weight'] ,df_domain_perform['performance'] ,df_domain_perform['domain'])
     return dbc.Card(
                 dbc.CardBody(
                     [
-                        html.Img(src=app.get_asset_url("logo-demo.png"), width="100%")
+                       dcc.Graph(figure=bubble_graph_domain)
                     ]
                 ),
                 className="mb-3",
@@ -266,13 +311,12 @@ def card_modify_value_based_measures():
                             [
                                 dbc.Col(html.Img(src=app.get_asset_url("bullet-round-blue.png"), width="20%"), width=1, align="start", style={"margin-right":"-20px", "margin-top":"-4px"}),
                                 dbc.Col(html.H6("Domain Detail")),
-                                dbc.Col([dbc.Button("Edit Domain", className="mb-3", color="primary", style={"background-color":"#38160f", "border":"none", "border-radius":"10rem", "font-family":"NotoSans-Regular", "font-size":"0.6rem"},)], width=3),
+                                dbc.Col([dbc.Button("Edit Domain", className="mb-3", style={"background-color":"#38160f", "border":"none", "border-radius":"10rem", "font-family":"NotoSans-Regular", "font-size":"0.6rem"},)], width=3),
                             ],
                             no_gutters=True,
                         ),
                         html.Div(
                             [
-               #                 dbc.Col([dbc.Button("Open collapse", className="mb-3", color="primary")], width=3),
                                 dbc.Col(modal_dashboard_domain_selection(7)),
                                 dbc.Col(
                                     [
@@ -280,10 +324,6 @@ def card_modify_value_based_measures():
                                     ], 
                                     width="100%",
                                 ),
-                                
-                                #dbc.Button("Open collapseddddddddddd", className="mr-1", style={"background-color":"#fff", "border":"2px solid #1357DD", "border-radius":".5rem", "font-family":"NotoSans-Regular", "font-size":"0.8rem", "color":"#1357DD"}),
-                                #dbc.Button("Open ", className="mr-1", color="primary", style={"background-color":"#fff", "border":"2px solid #1357DD", "border-radius":".5rem", "font-family":"NotoSans-Regular", "font-size":"0.8rem", "color":"#1357DD"}),
-                                #dbc.Button("Open collapse", className="mr-1", color="primary", style={"background-color":"#fff", "border":"2px solid #1357DD", "border-radius":".5rem", "font-family":"NotoSans-Regular", "font-size":"0.8rem", "color":"#1357DD"}),
                             ],
                         ),
                     ]
@@ -350,8 +390,9 @@ def card_sub_value_based_measures(volumn_measure):
                 style={"background-color":"#f7f7f7", "border":"none", "border-radius":"0.5rem"}
             )
 
-app.layout = create_layout()
 
+
+app.layout = create_layout()
 
 # add measure popover
 @app.callback(
@@ -442,26 +483,26 @@ def generate_domain_related_graph(b1, b2, b3, b4, b5, b6, b7):
     fig1 = {}
     fig2 = {}
     if button_id == "button-domain-1":
-        fig1 = fig1_1
-        fig2 = fig2_1
+        fig1 = waterfall_domain1
+        fig2 = domain1_perform
     elif button_id == "button-domain-2":
-        fig1 = fig1_2
-        fig2 = fig2_2
+        fig1 = waterfall_domain2
+        fig2 = domain2_perform
     elif button_id == "button-domain-3":
-        fig1 = fig1_3
-        fig2 = fig2_3
+        fig1 = waterfall_domain3
+        fig2 = domain3_perform
     elif button_id == "button-domain-4":
-        fig1 = fig1_4
-        fig2 = fig2_4
+        fig1 = waterfall_domain4
+        fig2 = domain4_perform
     elif button_id == "button-domain-5":
-        fig1 = fig1_5
-        fig2 = fig2_5
+        fig1 = waterfall_domain5
+        fig2 = domain5_perform
     elif button_id == "button-domain-6":
-        fig1 = fig1_6
-        fig2 = fig2_6
+        fig1 = waterfall_domain6
+        fig2 = domain6_perform
     elif button_id == "button-domain-7":
-        fig1 = fig1_7
-        fig2 = fig2_7
+        fig1 = waterfall_domain7
+        fig2 = domain7_perform
     
     return fig1, fig2
 
