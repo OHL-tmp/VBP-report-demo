@@ -369,6 +369,7 @@ def card_buttonGroup_domain_selected():
 
 
 def card_sub_value_based_measures(volumn_measure):
+
     return dbc.Card(
                 dbc.CardBody(
                     [
@@ -389,8 +390,6 @@ def card_sub_value_based_measures(volumn_measure):
                 className="mb-3",
                 style={"background-color":"#f7f7f7", "border":"none", "border-radius":"0.5rem"}
             )
-
-
 
 app.layout = create_layout()
 
