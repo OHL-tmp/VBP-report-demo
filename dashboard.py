@@ -21,7 +21,6 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 from dash.dependencies import Input, Output, State
 from utils import Header, make_dash_table
-from figure import bargraph_overall,waterfall_overall,tbl_utilizer,piechart_utilizer,bargraph_h,bargraph_stack3,bubblegraph,bargraph_perform
 
 
 # Path
@@ -34,8 +33,6 @@ app = dash.Dash(__name__,  url_base_pathname='/demo-report/', external_styleshee
 
 server = app.server
 
-## load data
-df_overall = pd.read_csv("data/overall_performance.csv")
 
 
 def create_layout():
