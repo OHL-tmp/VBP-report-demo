@@ -15,7 +15,7 @@ def get_header(app):
                         dbc.Col(
                             html.Div(
                                 [
-                                    html.Img(src=app.get_asset_url("logo-demo.png"))
+                                    html.Img(src=app.get_asset_url("logo-demo.png"), style={"height":"4rem", "padding-top":"1px"})
                                 ]
                             )
                         ),
@@ -40,12 +40,14 @@ def get_header(app):
                                     dcc.Link(
                                         "Fees & Minimums", href="/dash-financial-report/fees", className="tab"
                                     ),
-                                ]
+                                ],
+                                style={"margin-top":"8px"}
                             )
                         ),
                     ]    
                 )
-            ]
+            ],
+            style={"padding-top":"1rem"},
         )
             
     return header
