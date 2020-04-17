@@ -316,7 +316,10 @@ def card_main_value_based_measures():
     return dbc.Card(
                 dbc.CardBody(
                     [
-                        html.H1("Volumn Based Measures", className="mb-3", style={"font-size":"1.5rem"}),
+                        dbc.Row([
+                            html.H1("Volumn Based Measures", className="mb-3", style={"font-size":"1.5rem"}),
+                            dbc.Button(id = "switch-domain-measure-view"),
+                        ]),
                         html.Div(
                             [
                                 card_overview_value_based_measures(),
@@ -500,15 +503,17 @@ for i in range(domain_ct):
 
 
 @app.callback(
-    Output("bubble_graph_domain", "figure"),
+    [Output("bubble_graph_domain", "figure"),
+     Output("switch-domain-measure-view","children")],
     [Input("dashboard-card-domain-selection-1", "color"),
     Input("dashboard-card-domain-selection-2", "color"),
     Input("dashboard-card-domain-selection-3", "color"),
     Input("dashboard-card-domain-selection-4", "color"),
     Input("dashboard-card-domain-selection-5", "color"),
-    Input("dashboard-card-domain-selection-6", "color")]
+    Input("dashboard-card-domain-selection-6", "color"),
+    Input("switch-domain-measure-view","n_clicks")]
 )
-def bubble_graph_domain(cr1, cr2, cr3, cr4, cr5, cr6):
+def bubble_graph_domain(cr1, cr2, cr3, cr4, cr5, cr6, n):
 
     trace_selected_number = []
     for i in range(domain_ct):
@@ -520,9 +525,11 @@ def bubble_graph_domain(cr1, cr2, cr3, cr4, cr5, cr6):
     
     for i in range(len(trace_selected_number)):
         bubble_show_traces.append(bubble_graph_domain[trace_selected_number[i]])
+    
+    if n%2 == 1:
+        return {"data": bubble_show_traces, "layout" : bubblegraph_layout()}, "Switch to Domains View" #需要替换成measure的图
         
-    return {"data": bubble_show_traces,
-           "layout" : bubblegraph_layout()}
+    return {"data": bubble_show_traces, "layout" : bubblegraph_layout()}, "Switch to Measures View"
     
         
 
@@ -706,9 +713,6 @@ def toggle_collapse_domain_selection_measures_6(is_open, v1):
     if measure_count > 0 and is_open != True: 
         return  "info", u"{} measures selected".format(measure_count)
     return "light", "" 
-
-
-
 
 
 
