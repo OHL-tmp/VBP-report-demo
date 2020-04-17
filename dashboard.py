@@ -22,7 +22,7 @@ from plotly.subplots import make_subplots
 from dash.dependencies import Input, Output, State
 from utils import Header, make_dash_table
 from figure import bargraph_overall,waterfall_overall,tbl_utilizer,piechart_utilizer,bargraph_h,bargraph_stack3,bubblegraph,bargraph_perform,waterfall_domain
-from modal_dashboard_domain_selection import modal_dashboard_domain_selection
+from modal_dashboard_domain_selection import *
 
 # Path
 BASE_PATH = pathlib.Path(__file__).parent.resolve()
