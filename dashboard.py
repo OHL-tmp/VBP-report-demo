@@ -21,7 +21,7 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 from dash.dependencies import Input, Output, State
 from utils import Header, make_dash_table
-from figure import bargraph_overall,waterfall_overall,tbl_utilizer,piechart_utilizer,bargraph_h,bargraph_stack3,bubblegraph,bargraph_perform,waterfall_domain
+from figure import *
 from modal_dashboard_domain_selection import *
 
 # Path
@@ -88,6 +88,7 @@ def load_data():
     
     bubble_graph_domain=bubblegraph(df_domain_perform['weight'] ,df_domain_perform['performance'] ,df_domain_perform['domain'])
     
+
 
 def create_layout():
     load_data()
@@ -320,7 +321,7 @@ def card_main_value_based_measures():
                             [
                                 card_overview_value_based_measures(),
                                 card_modify_value_based_measures(),
-                                card_sub_value_based_measures("Domain 1"),
+                                card_sub_value_based_measures(),
                             ],
                             className="mb-3",
                         ),
@@ -334,7 +335,7 @@ def card_overview_value_based_measures():
     return dbc.Card(
                 dbc.CardBody(
                     [
-                       dcc.Graph(figure=bubble_graph_domain, style={"height":"20rem"})
+                       dcc.Graph(style={"height":"20rem"}, id = "bubble_graph_domain")
                     ]
                 ),
                 className="mb-3",
@@ -349,7 +350,7 @@ def card_modify_value_based_measures():
                             [
                                 dbc.Col(html.Img(src=app.get_asset_url("bullet-round-blue.png"), width="20%"), width=1, align="start", style={"margin-right":"-20px", "margin-top":"-4px"}),
                                 dbc.Col(html.H6("Domain Detail")),
-                                dbc.Col(modal_dashboard_domain_selection(7), width=3),
+                                dbc.Col(modal_dashboard_domain_selection(domain_ct), width=3),
                             ],
                             no_gutters=True,
                         ),
@@ -373,33 +374,30 @@ def card_modify_value_based_measures():
 def card_buttonGroup_domain_selected():
     return dbc.Card(
                 dbc.CardBody([
-                    html.Div([dbc.Button("Cost Reduction", 
+                    html.Div([dbc.Button("Cost & Utilization Reduction", 
                                       id = "button-domain-1")],
                              id = "buttonGroup-domain-selected-1",
                              hidden = True),
-                    html.Div([dbc.Button("Utilization Reduction", 
+                    html.Div([dbc.Button("Improving Disease Outcome", 
                                       id = "button-domain-2")],
                              id = "buttonGroup-domain-selected-2",
                              hidden = True),
-                    html.Div([dbc.Button("Improving Disease Outcome", 
+                    html.Div([dbc.Button("Decreasing Health Disparities", 
                                       id = "button-domain-3")],
                              id = "buttonGroup-domain-selected-3",
                              hidden = True),
-                    html.Div([dbc.Button("Decreasing Health Disparities", 
+                    html.Div([dbc.Button("Increasing Patient Safety", 
                                       id = "button-domain-4")],
                              id = "buttonGroup-domain-selected-4",
                              hidden = True),
-                    html.Div([dbc.Button("Increasing Patient Safety", 
+                    html.Div([dbc.Button("Enhancing Care Quality", 
                                       id = "button-domain-5")],
                              id = "buttonGroup-domain-selected-5",
                              hidden = True),
-                    html.Div([dbc.Button("Enhancing Care Quality", 
+                    html.Div([dbc.Button("Better Patient Experience", 
                                       id = "button-domain-6")],
                              id = "buttonGroup-domain-selected-6",
-                             hidden = True),
-                    html.Div([dbc.Button("Better Patient Experience", 
-                                      id = "button-domain-7")],
-                             id = "buttonGroup-domain-selected-7",
+
                              hidden = True),
                 ],
                 style = {"display": "flex", "border":"none", "border-radius":"0.5rem"}),
@@ -407,14 +405,14 @@ def card_buttonGroup_domain_selected():
             )
 
 
-def card_sub_value_based_measures(volumn_measure):
+def card_sub_value_based_measures():
 
     return dbc.Card(
                 dbc.CardBody(
                     [
                         dbc.Row(
                             [
-                                dbc.Col(html.H6(volumn_measure)),
+                                dbc.Col(html.H6(id = "card_domain_name")),
                                 dbc.Col(dbc.Col(dbc.Button("Change Measure", className="mb-3", color="primary", style={"background-color":"#38160f", "border":"none", "border-radius":"10rem", "font-family":"NotoSans-Regular", "font-size":"0.6rem"})), width=4),
                             ],
                         ),
@@ -493,27 +491,56 @@ def generate_card_domain_button(color):
         return False
     return True
 
-for i in range(7):
+for i in range(domain_ct):
     app.callback(
         Output(f"buttonGroup-domain-selected-{i+1}", "hidden"),
         [Input(f"dashboard-card-domain-selection-{i+1}", "color")]
     )(generate_card_domain_button)
+    
+
+
+@app.callback(
+    Output("bubble_graph_domain", "figure"),
+    [Input("dashboard-card-domain-selection-1", "color"),
+    Input("dashboard-card-domain-selection-2", "color"),
+    Input("dashboard-card-domain-selection-3", "color"),
+    Input("dashboard-card-domain-selection-4", "color"),
+    Input("dashboard-card-domain-selection-5", "color"),
+    Input("dashboard-card-domain-selection-6", "color")]
+)
+def bubble_graph_domain(cr1, cr2, cr3, cr4, cr5, cr6):
+
+    trace_selected_number = []
+    for i in range(domain_ct):
+        if eval("cr"+str(i+1)) == "info":
+            trace_selected_number.append(i)    
+    bubble_show_traces = []
+    
+    bubble_graph_domain=bubblegraph(df_domain_perform['weight'] ,df_domain_perform['performance'] ,df_domain_perform['domain'])    
+    
+    for i in range(len(trace_selected_number)):
+        bubble_show_traces.append(bubble_graph_domain[trace_selected_number[i]])
+        
+    return {"data": bubble_show_traces,
+           "layout" : bubblegraph_layout()}
+    
+        
 
     
 
 # generate domain-related graph
 @app.callback(
     [Output("graph-container-domain-selected-1", "figure"),
-    Output("graph-container-domain-selected-2", "figure")],
+    Output("graph-container-domain-selected-2", "figure"),
+    Output("card_domain_name", "children")],
     [Input("button-domain-1", "n_clicks"),
     Input("button-domain-2", "n_clicks"),
     Input("button-domain-3", "n_clicks"),
     Input("button-domain-4", "n_clicks"),
     Input("button-domain-5", "n_clicks"),
-    Input("button-domain-6", "n_clicks"),
-    Input("button-domain-7", "n_clicks")]
+    Input("button-domain-6", "n_clicks")]
 )
-def generate_domain_related_graph(b1, b2, b3, b4, b5, b6, b7):
+def generate_domain_related_graph(b1, b2, b3, b4, b5, b6):
     ctx = dash.callback_context
     
     if not ctx.triggered:
@@ -526,26 +553,31 @@ def generate_domain_related_graph(b1, b2, b3, b4, b5, b6, b7):
     if button_id == "button-domain-1":
         fig1 = waterfall_domain1
         fig2 = domain1_perform
+        name = domain_set[0]
     elif button_id == "button-domain-2":
         fig1 = waterfall_domain2
         fig2 = domain2_perform
+        name = domain_set[1]
     elif button_id == "button-domain-3":
         fig1 = waterfall_domain3
         fig2 = domain3_perform
+        name = domain_set[2]
     elif button_id == "button-domain-4":
         fig1 = waterfall_domain4
         fig2 = domain4_perform
+        name = domain_set[3]
     elif button_id == "button-domain-5":
         fig1 = waterfall_domain5
         fig2 = domain5_perform
+        name = domain_set[4]
     elif button_id == "button-domain-6":
         fig1 = waterfall_domain6
         fig2 = domain6_perform
-    elif button_id == "button-domain-7":
-        fig1 = waterfall_domain7
-        fig2 = domain7_perform
+        name = domain_set[5]
+
+
     
-    return fig1, fig2
+    return fig1, fig2, name
 
 ## modal
 @app.callback(
@@ -558,7 +590,7 @@ def toggle_modal_dashboard_domain_selection(n1, n2, is_open):
         return not is_open
     return is_open
 
-##Domain 1-7
+##Domain 1-6
 
 def toggle_collapse_domain_selection_measures(n, is_open):
     if n and n%2 == 1:
@@ -567,7 +599,7 @@ def toggle_collapse_domain_selection_measures(n, is_open):
         return not is_open, "Edit"
     return is_open, "Select"
 
-for i in range(7):
+for i in range(domain_ct):
     app.callback(
         [Output(f"collapse-{i+1}", "is_open"), 
          Output(f"collapse-button-{i+1}","children")],
@@ -611,10 +643,12 @@ for d in range(len(list(Domain_options.keys()))):
     Output("dashboard-card-selected-domain-1", "children")],
     [Input("collapse-1", "is_open"),
     Input("checklist-domain-measures-lv2-1-1", "value"),
-    Input("checklist-domain-measures-lv2-1-2", "value")],
+    Input("checklist-domain-measures-lv2-1-2", "value"),
+    Input("checklist-domain-measures-lv2-1-3", "value"),
+    Input("checklist-domain-measures-lv2-1-4", "value")],
 )
-def toggle_collapse_domain_selection_measures_1(is_open, v1, v2):
-    measure_count = len(v1) + len(v2)
+def toggle_collapse_domain_selection_measures_1(is_open, v1, v2, v3, v4):
+    measure_count = len(v1) + len(v2) + len(v3) + len(v4)
     if measure_count > 0 and is_open != True: 
         return  "info", u"{} measures selected".format(measure_count)
     return "light", ""    
@@ -625,26 +659,24 @@ def toggle_collapse_domain_selection_measures_1(is_open, v1, v2):
     Output("dashboard-card-selected-domain-2", "children")],
     [Input("collapse-2", "is_open"),
     Input("checklist-domain-measures-lv2-2-1", "value"),
-    Input("checklist-domain-measures-lv2-2-2", "value")],
+    Input("checklist-domain-measures-lv2-2-2", "value"),
+    Input("checklist-domain-measures-lv2-2-3", "value")],
 )
-def toggle_collapse_domain_selection_measures_2(is_open, v1, v2):
-    measure_count = len(v1) + len(v2)
+def toggle_collapse_domain_selection_measures_2(is_open, v1, v2, v3):
+    measure_count = len(v1) + len(v2) +len(v3)
     if measure_count > 0 and is_open != True: 
         return  "info", u"{} measures selected".format(measure_count)
     return "light", "" 
 
-## Domain 3
+## Domain 4
 @app.callback(
-    [Output("dashboard-card-domain-selection-3", "color"),
-    Output("dashboard-card-selected-domain-3", "children")],
-    [Input("collapse-3", "is_open"),
-    Input("checklist-domain-measures-lv2-3-1", "value"),
-    Input("checklist-domain-measures-lv2-3-2", "value"),
-    Input("checklist-domain-measures-lv2-3-3", "value"),
-    Input("checklist-domain-measures-lv2-3-4", "value")],
+    [Output("dashboard-card-domain-selection-4", "color"),
+    Output("dashboard-card-selected-domain-4", "children")],
+    [Input("collapse-4", "is_open"),
+    Input("checklist-domain-measures-lv2-4-1", "value")],
 )
-def toggle_collapse_domain_selection_measures_3(is_open, v1, v2, v3, v4):
-    measure_count = len(v1) + len(v2) + len(v3) + len(v4)
+def toggle_collapse_domain_selection_measures_4(is_open, v1):
+    measure_count = len(v1) 
     if measure_count > 0 and is_open != True: 
         return  "info", u"{} measures selected".format(measure_count)
     return "light", "" 
@@ -657,7 +689,7 @@ def toggle_collapse_domain_selection_measures_3(is_open, v1, v2, v3, v4):
     Input("checklist-domain-measures-lv2-5-1", "value")],
 )
 def toggle_collapse_domain_selection_measures_5(is_open, v1):
-    measure_count = len(v1) 
+    measure_count = len(v1)
     if measure_count > 0 and is_open != True: 
         return  "info", u"{} measures selected".format(measure_count)
     return "light", "" 
@@ -675,18 +707,7 @@ def toggle_collapse_domain_selection_measures_6(is_open, v1):
         return  "info", u"{} measures selected".format(measure_count)
     return "light", "" 
 
-## Domain 7
-@app.callback(
-    [Output("dashboard-card-domain-selection-7", "color"),
-    Output("dashboard-card-selected-domain-7", "children")],
-    [Input("collapse-7", "is_open"),
-    Input("checklist-domain-measures-lv2-7-1", "value")],
-)
-def toggle_collapse_domain_selection_measures_7(is_open, v1):
-    measure_count = len(v1)
-    if measure_count > 0 and is_open != True: 
-        return  "info", u"{} measures selected".format(measure_count)
-    return "light", "" 
+
 
 
 

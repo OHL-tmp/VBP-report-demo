@@ -34,17 +34,14 @@ server = app.server
 Domain_options ={
 "checklist-domain-measures-lv1-1" : {
     "Average Cost per Patient" : ["All Causes Average Cost per Patient", "CHF Related Average Cost per Patient "],
-    "Average IP Cost per Patient" : ["All Causes Average IP Cost per Patient", "CHF Related Average IP Cost per Patient"  ]
-},
-
-"checklist-domain-measures-lv1-2" : {
+    "Average IP Cost per Patient" : ["All Causes Average IP Cost per Patient", "CHF Related Average IP Cost per Patient"  ],
     "Hospitalization Rate" : ["All Causes Hospitalization Rate", "CHF Related Hospitalization Rate"],
     "ER Rate" : ["All Causes ER Rate", "CHF Related ER Rate"  ],
     "Readmission Rate" : [],
     "Incidence Rate of Medical Procedures" : []
 },
 
-"checklist-domain-measures-lv1-3" : {
+"checklist-domain-measures-lv1-2" : {
     "Improvement in Clinical Measures" : ["NT-proBNP Improvement %", "LVEF Improvement %", "LAVi Improvement %",
                                          "LVEDVi Improvement %", "LVESVi and E/e’ Improvement %"],
     "Functional Outcomes" : ["Change in Self-Care Score", "Change in Mobility Score"  ],
@@ -55,29 +52,41 @@ Domain_options ={
     "Psychosocial Outcome" : []
 },
 
-"checklist-domain-measures-lv1-4" : {
+"checklist-domain-measures-lv1-3" : {
     "Benefit Coverage Parity" : [],
     "Screening Rate" : []
 },
 
-"checklist-domain-measures-lv1-5" : {
+"checklist-domain-measures-lv1-4" : {
     "Occurrence of Side Effects" : ["Emergent care rate for medication side effect", "Hospitalization rate for medication side effect"],
     "Occurrence of Adverse Event" : [],
     "Occurrence of Complications" : [],
     "Inappropriate Use" :[]
 },
 
-"checklist-domain-measures-lv1-6" : {
+"checklist-domain-measures-lv1-5" : {
     "Medication Adherence" : ["DOT", "PDC", "MPR"],
     "Healthcare-Associated Infections" : [],
     "Patient-reported Care quality outcome" : []
 },
 
-"checklist-domain-measures-lv1-7" : {
+"checklist-domain-measures-lv1-6" : {
     "Symptom management" : ["Patient Reported SOB changes", "Patient Reported Fatigue and Tiredness Changes",
                            "Patient Reported Peripheral Oedema Changes", "Patient Reported Disturbed Sleep Changes"],
     "Patient Satisfaction" : []
 }}
+
+domain_focus = list(Domain_options.keys())
+
+domain_set = ["Cost & Utilization  Reduction", "Improving Disease Outcome",
+                 "Decreasing Health Disparities", "Increasing Patient Safety",
+                 "Enhancing Care Quality", "Better Patient Experience"]
+
+Triple_Aim_set =["Reducing Cost","Improving Health", "Improving Health","Improving Patient Care",
+                "Improving Patient Care","Improving Patient Care"]
+Triple_Aim_color = ["#1357DD", "#F5B111","#F5B111", "#df8885", "#df8885", "#df8885"]
+
+domain_ct = len(domain_set)
 
 def modal_dashboard_domain_selection(n):
     return html.Div(
@@ -115,7 +124,14 @@ def modal_dashboard_domain_selection(n):
 def card_domain_selection(n):
     domain_card = []
     for i in range(n):
-        card = dbc.Card(
+        v = 0
+        for m in range(len(list(Domain_options[domain_focus[i]].keys()))):
+            v=v+len(list(Domain_options[domain_focus[i]].values())[m])
+        if v>0:
+            hidden_status = False
+        else:
+            hidden_status = True    
+        card = html.Div([dbc.Card(
                 [
                     dbc.CardBody(
                         dbc.Row(
@@ -128,18 +144,17 @@ def card_domain_selection(n):
                 ],
                 id=u"dashboard-card-domain-selection-{}".format(i+1),
                 className="mb-3"
-            )
+            )], hidden = hidden_status)
         domain_card.append(card)
     return html.Div(domain_card)
 
 def collapse_domain_selection_measures(n):
-    domain_set = ["Cost Reduction", "Utilization Reduction", "Improving Disease Outcome",
-                 "Decreasing Health Disparities", "Increasing Patient Safety",
-                 "Enhancing Care Quality", "Better Patient Experience"]
+    
     return html.Div(
                 [
                     dbc.Row(
                         [
+                            dbc.Badge(Triple_Aim_set[n],style = {"color" : Triple_Aim_color[n]},className="mr-1"),
                             dbc.Col(html.Div(domain_set[n])),
                             dbc.Card(id = u"dashboard-card-selected-domain-{}".format(n+1),
                                     className="mb-3",
@@ -168,7 +183,7 @@ def collapse_domain_selection_measures(n):
                 ]
             )
 
-#domain 1
+#domain card
 def checklist_domain_measures_lv1(d):
     domain_focus = list(Domain_options.keys())
     measures_lv1 = Domain_options[domain_focus[d]]
@@ -178,17 +193,17 @@ def checklist_domain_measures_lv1(d):
     for i in range(n):
         
         if len(measures_lv1[key[i]]) == 0:
-            disable_status = True
+            hidden_status = True
         else:
-            disable_status = False
-        button_measure_lv1 = dbc.FormGroup(
+            hidden_status = False
+        button_measure_lv1 = html.Div([dbc.FormGroup(
                 [
                     dbc.Row([
                         dbc.Button(
                             u"{}".format(key[i]),
                             id=u"measures-lv1-{}-{}".format(d+1,i+1),
                             color = "link",
-                            disabled = disable_status,
+                            
                         ),
                      dbc.Card(id = u"dashboard-card-selected-{}-{}".format(d+1,i+1),
                                     className="mb-3",
@@ -209,14 +224,15 @@ def checklist_domain_measures_lv1(d):
                         id=u"checklist-domain-measures-lv2-container-{}-{}".format(d+1,i+1),
                     )
                 ]
-            )
+            )],hidden = hidden_status)
         button_group.append(button_measure_lv1)
     return html.Div(button_group)
 
 
 
 
-app.layout = modal_dashboard_domain_selection(7)
+
+app.layout = modal_dashboard_domain_selection(domain_ct)
 
 
 
