@@ -22,7 +22,7 @@ from plotly.subplots import make_subplots
 from dash.dependencies import Input, Output, State
 from utils import Header, make_dash_table
 from figure import bargraph_overall,waterfall_overall,tbl_utilizer,piechart_utilizer,bargraph_h,bargraph_stack3,bubblegraph,bargraph_perform
-from modal_dashboard_domain_selection import modal_dashboard_domain_selection
+from modal_dashboard_domain_selection import *
 
 # Path
 BASE_PATH = pathlib.Path(__file__).parent.resolve()
@@ -452,15 +452,15 @@ def add_close_measure_card( ad, v, h1, h2, h3, h4):
 
 # generate selected domain button
 
-def generate_card_domain_button(d):
-    if d:
+def generate_card_domain_button(color):
+    if color == "info":
         return False
     return True
 
 for i in range(7):
     app.callback(
         Output(f"buttonGroup-domain-selected-{i+1}", "hidden"),
-        [Input(f"dashboard-card-selected-domain-{i+1}", "children")]
+        [Input(f"dashboard-card-domain-selection-{i+1}", "color")]
     )(generate_card_domain_button)
 
     
@@ -591,7 +591,7 @@ def toggle_collapse_domain_selection_measures_1(is_open, v1, v2):
     Input("checklist-domain-measures-lv2-2-1", "value"),
     Input("checklist-domain-measures-lv2-2-2", "value")],
 )
-def toggle_collapse_domain_selection_measures_2(n, v1, v2):
+def toggle_collapse_domain_selection_measures_2(is_open, v1, v2):
     measure_count = len(v1) + len(v2)
     if measure_count > 0 and is_open != True: 
         return  "info", u"{} measures selected".format(measure_count)
@@ -607,7 +607,7 @@ def toggle_collapse_domain_selection_measures_2(n, v1, v2):
     Input("checklist-domain-measures-lv2-3-3", "value"),
     Input("checklist-domain-measures-lv2-3-4", "value")],
 )
-def toggle_collapse_domain_selection_measures_3(n, v1, v2, v3, v4):
+def toggle_collapse_domain_selection_measures_3(is_open, v1, v2, v3, v4):
     measure_count = len(v1) + len(v2) + len(v3) + len(v4)
     if measure_count > 0 and is_open != True: 
         return  "info", u"{} measures selected".format(measure_count)
@@ -620,7 +620,7 @@ def toggle_collapse_domain_selection_measures_3(n, v1, v2, v3, v4):
     [Input("collapse-5", "is_open"),
     Input("checklist-domain-measures-lv2-5-1", "value")],
 )
-def toggle_collapse_domain_selection_measures_5(n, v1):
+def toggle_collapse_domain_selection_measures_5(is_open, v1):
     measure_count = len(v1) 
     if measure_count > 0 and is_open != True: 
         return  "info", u"{} measures selected".format(measure_count)
@@ -633,7 +633,7 @@ def toggle_collapse_domain_selection_measures_5(n, v1):
     [Input("collapse-6", "is_open"),
     Input("checklist-domain-measures-lv2-6-1", "value")],
 )
-def toggle_collapse_domain_selection_measures_6(n, v1):
+def toggle_collapse_domain_selection_measures_6(is_open, v1):
     measure_count = len(v1)
     if measure_count > 0 and is_open != True: 
         return  "info", u"{} measures selected".format(measure_count)
@@ -646,11 +646,12 @@ def toggle_collapse_domain_selection_measures_6(n, v1):
     [Input("collapse-7", "is_open"),
     Input("checklist-domain-measures-lv2-7-1", "value")],
 )
-def toggle_collapse_domain_selection_measures_7(n, v1):
+def toggle_collapse_domain_selection_measures_7(is_open, v1):
     measure_count = len(v1)
     if measure_count > 0 and is_open != True: 
         return  "info", u"{} measures selected".format(measure_count)
     return "light", "" 
+
 
 
 
