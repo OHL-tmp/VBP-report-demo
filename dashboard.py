@@ -21,7 +21,7 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 from dash.dependencies import Input, Output, State
 from utils import Header, make_dash_table
-from figure import bargraph_overall,waterfall_overall,tbl_utilizer,piechart_utilizer,bargraph_h,bargraph_stack3,bubblegraph,bargraph_perform
+from figure import bargraph_overall,waterfall_overall,tbl_utilizer,piechart_utilizer,bargraph_h,bargraph_stack3,bubblegraph,bargraph_perform,waterfall_domain
 from modal_dashboard_domain_selection import modal_dashboard_domain_selection
 
 # Path
@@ -34,43 +34,65 @@ app = dash.Dash(__name__, url_base_pathname='/demo-report/')
 server = app.server
 
 ## load data
-df_overall = pd.read_csv("data/overall_performance.csv")
-df_waterfall = pd.read_csv("data/overall_waterfall.csv")
-df_utilizer= pd.read_csv("data/utilizer_tbl.csv")
-df_util_split=pd.read_csv("data/util_split.csv")
-df_script_per_util=pd.read_csv("data/script_per_util.csv")
-df_tot_script_split=pd.read_csv("data/tot_script_split.csv")
-df_tot_unit_split=pd.read_csv("data/tot_unit_split.csv")
-df_domain_perform=pd.read_csv("data/domain_perform.csv")
-df_measure_perform=pd.read_csv("data/measure_performance.csv")
-df_tot_script=pd.DataFrame(df_tot_script_split.sum(axis=0)[1:4,],columns=['tot_script']).iloc[[2,1,0],]
-df_tot_unit=pd.DataFrame(df_tot_unit_split.sum(axis=0)[1:4,],columns=['tot_unit']).iloc[[2,1,0],]
-
-waterfall_domain1=waterfall_overall(df_waterfall['label'] ,df_waterfall['base'], df_waterfall['adjusted'])
-domain1_perform=bargraph_perform(df_measure_perform['performance'], df_measure_perform['Measure'])
-
-waterfall_domain2=waterfall_overall(df_waterfall['label'] ,df_waterfall['base'], df_waterfall['adjusted'])
-domain2_perform=bargraph_perform(df_measure_perform['performance'], df_measure_perform['Measure'])
-
-waterfall_domain3=waterfall_overall(df_waterfall['label'] ,df_waterfall['base'], df_waterfall['adjusted'])
-domain3_perform=bargraph_perform(df_measure_perform['performance'], df_measure_perform['Measure'])
-
-waterfall_domain4=waterfall_overall(df_waterfall['label'] ,df_waterfall['base'], df_waterfall['adjusted'])
-domain4_perform=bargraph_perform(df_measure_perform['performance'], df_measure_perform['Measure'])
-
-waterfall_domain5=waterfall_overall(df_waterfall['label'] ,df_waterfall['base'], df_waterfall['adjusted'])
-domain5_perform=bargraph_perform(df_measure_perform['performance'], df_measure_perform['Measure'])
-
-waterfall_domain6=waterfall_overall(df_waterfall['label'] ,df_waterfall['base'], df_waterfall['adjusted'])
-domain6_perform=bargraph_perform(df_measure_perform['performance'], df_measure_perform['Measure'])
-
-waterfall_domain7=waterfall_overall(df_waterfall['label'] ,df_waterfall['base'], df_waterfall['adjusted'])
-domain7_perform=bargraph_perform(df_measure_perform['performance'], df_measure_perform['Measure'])
-
+def load_data():
+    global waterfall_domain1, waterfall_domain2, waterfall_domain3, waterfall_domain4, waterfall_domain5, waterfall_domain6, waterfall_domain7
+    global bargraph_overall1, waterfall_overall1
+    global tbl_utilizer1, piechart_utilizer1, bargraph_script_per_util, bargraph_tot_script, bargraph_tot_script_split, bargraph_tot_unit_split, bargraph_tot_unit
+    global bubble_graph_domain
+    
+    df_overall = pd.read_csv("data/overall_performance.csv")
+    df_waterfall = pd.read_csv("data/overall_waterfall.csv")
+    df_utilizer= pd.read_csv("data/utilizer_tbl.csv")
+    df_util_split=pd.read_csv("data/util_split.csv")
+    df_script_per_util=pd.read_csv("data/script_per_util.csv")
+    df_tot_script_split=pd.read_csv("data/tot_script_split.csv")
+    df_tot_unit_split=pd.read_csv("data/tot_unit_split.csv")
+    df_domain_perform=pd.read_csv("data/domain_perform.csv")
+    df_domain_waterfall = pd.read_csv("data/domain_waterfall.csv")
+    df_measure_perform=pd.read_csv("data/measure_performance.csv")
+    df_tot_script=pd.DataFrame(df_tot_script_split.sum(axis=0)[1:4,],columns=['tot_script']).iloc[[2,1,0],]
+    df_tot_unit=pd.DataFrame(df_tot_unit_split.sum(axis=0)[1:4,],columns=['tot_unit']).iloc[[2,1,0],]
+    
+    waterfall_domain1=waterfall_domain(df_domain_waterfall['label'] ,df_domain_waterfall['base'], df_domain_waterfall['adjusted'])
+    domain1_perform=bargraph_perform(df_measure_perform['performance'], df_measure_perform['Measure'])
+    
+    waterfall_domain2=waterfall_domain(df_domain_waterfall['label'] ,df_domain_waterfall['base'], df_domain_waterfall['adjusted'])
+    domain2_perform=bargraph_perform(df_measure_perform['performance'], df_measure_perform['Measure'])
+    
+    waterfall_domain3=waterfall_domain(df_domain_waterfall['label'] ,df_domain_waterfall['base'], df_domain_waterfall['adjusted'])
+    domain3_perform=bargraph_perform(df_measure_perform['performance'], df_measure_perform['Measure'])
+    
+    waterfall_domain4=waterfall_domain(df_domain_waterfall['label'] ,df_domain_waterfall['base'], df_domain_waterfall['adjusted'])
+    domain4_perform=bargraph_perform(df_measure_perform['performance'], df_measure_perform['Measure'])
+    
+    waterfall_domain5=waterfall_domain(df_domain_waterfall['label'] ,df_domain_waterfall['base'], df_domain_waterfall['adjusted'])
+    domain5_perform=bargraph_perform(df_measure_perform['performance'], df_measure_perform['Measure'])
+    
+    waterfall_domain6=waterfall_domain(df_domain_waterfall['label'] ,df_domain_waterfall['base'], df_domain_waterfall['adjusted'])
+    domain6_perform=bargraph_perform(df_measure_perform['performance'], df_measure_perform['Measure'])
+    
+    waterfall_domain7=waterfall_domain(df_domain_waterfall['label'] ,df_domain_waterfall['base'], df_domain_waterfall['adjusted'])
+    domain7_perform=bargraph_perform(df_measure_perform['performance'], df_measure_perform['Measure'])
+    
+    
+    bargraph_overall1=bargraph_overall(df_overall['month'],df_overall['base'],df_overall['adjusted'])
+    waterfall_overall1=waterfall_overall(df_waterfall['label'] ,df_waterfall['base'], df_waterfall['adjusted'])
+    
+    tbl_utilizer1=tbl_utilizer(df_utilizer)
+    piechart_utilizer1=piechart_utilizer(df_util_split['Class'],df_util_split['%'])
+    bargraph_script_per_util=bargraph_h(df_script_per_util['avg script'] , df_script_per_util['label'])
+    bargraph_tot_script=bargraph_h(df_tot_script['tot_script'] , df_tot_script.index)
+    bargraph_tot_script_split=bargraph_stack3(df_tot_script_split['dosage'], df_tot_script_split['YTD'], df_tot_script_split['Annualized'] ,df_tot_script_split['Plan Target'])
+    bargraph_tot_unit_split=bargraph_stack3(df_tot_unit_split['dosage'], df_tot_unit_split['YTD'], df_tot_unit_split['Annualized'] ,df_tot_unit_split['Plan Target'])
+    bargraph_tot_unit=bargraph_h(df_tot_unit['tot_unit'] , df_tot_unit.index)
+    
+    bubble_graph_domain=bubblegraph(df_domain_perform['weight'] ,df_domain_perform['performance'] ,df_domain_perform['domain'])
+    
 
 def create_layout():
+    load_data()
     return html.Div(
-                [
+                [ 
                     html.Div([Header(app)], style={"height":"6rem"}),
                     
                     html.Div(
@@ -105,10 +127,10 @@ def div_year_to_date_metrics():
     return html.Div(
                 [
                     html.H2("Year to Date Metrics", style={"padding-top":"2rem", "font-weight":"lighter", "font-size":"1rem"}),
-                    card_year_to_date_metrics("Total Patients", "1,000"),
-                    card_year_to_date_metrics("Total Gross Scripts", "3,000"),
-                    card_year_to_date_metrics("Total Scripts(30-day adjusted)", "4,000"),
-                    card_year_to_date_metrics("Total Units(Tablets)", "120,000"),
+                    card_year_to_date_metrics("Total Patients", "464"),
+                    card_year_to_date_metrics("Total Gross Scripts", "1,088"),
+                    card_year_to_date_metrics("Total Scripts(30-day adjusted)", "1,457"),
+                    card_year_to_date_metrics("Total Units(Tablets)", "87,426"),
                 ],
                 className="mb-3",
                 style={"text-align":"center"},
@@ -127,12 +149,11 @@ def card_year_to_date_metrics(title, value):
                     )
                 ],
                 className="mb-3",
-                style={"background-color":"#efefef", "border":"none", "border-radius":"0.5rem"}
+                style={"background-color":"#dfdfdf", "border":"none", "border-radius":"0.5rem"}
             )
 
 def div_overall_performance():
-    bargraph_overall1=bargraph_overall(df_overall['month'],df_overall['base'],df_overall['adjusted'])
-    waterfall_overall1=waterfall_overall(df_waterfall['label'] ,df_waterfall['base'], df_waterfall['adjusted'])
+
     return html.Div(
                 [
                     dbc.Row(
@@ -142,7 +163,7 @@ def div_overall_performance():
                                 dbc.CardBody(
                                     [
                                         html.H3("Total Scripts (30-day adjusted)", style={"font-size":"0.5rem", "color":"#fff"}),
-                                        html.H2("4000", style={"font-size":"1.5rem", "margin-top":"-5px", "color":"#fff"}),
+                                        html.H2("$ 12,261,985", style={"font-size":"1.5rem", "margin-top":"-5px", "color":"#fff"}),
                                     ],
                                     style={"margin-top":"-16px"}
                                 ),
@@ -150,25 +171,18 @@ def div_overall_performance():
                             ),
                         ]
                     ),
-                    html.P("Placeholder Placeholder Placeholder Placeholder Placeholder Placeholder Placeholder Placeholder Placeholder Placeholder Placeholder Placeholder Placeholder ", style={"color":"#000", "font-size":"0.8rem"}),
+                    html.P("As for April 30th.", style={"color":"#000", "font-size":"0.8rem"}),
                     dbc.Row(
                         [
-                            dbc.Col(dcc.Graph(figure=bargraph_overall1, style={"height" : "23.25rem", "width" : "30rem"})),
-                            dbc.Col(dcc.Graph(figure=waterfall_overall1, style={"height" : "23.5rem", "width" : "20rem"})),
+                            dbc.Col(dcc.Graph(figure=bargraph_overall1), width=7),
+                            dbc.Col(dcc.Graph(figure=waterfall_overall1), width=5),
                         ],
                     ),
                 ],
-                style={"padding":"1rem", "padding-right":"2rem", "max-height":"10rem"},
+                style={"padding-bottom":"30rem", "padding-right":"2rem", "max-height":"5rem"},
             )
 
 def card_main_volumn_based_measures():
-    tbl_utilizer1=tbl_utilizer(df_utilizer)
-    piechart_utilizer1=piechart_utilizer(df_util_split['Class'],df_util_split['%'])
-    bargraph_script_per_util=bargraph_h(df_script_per_util['avg script'] , df_script_per_util['label'])
-    bargraph_tot_script=bargraph_h(df_tot_script['tot_script'] , df_tot_script.index)
-    bargraph_tot_script_split=bargraph_stack3(df_tot_script_split['dosage'], df_tot_script_split['YTD'], df_tot_script_split['Annualized'] ,df_tot_script_split['Plan Target'])
-    bargraph_tot_unit_split=bargraph_stack3(df_tot_unit_split['dosage'], df_tot_unit_split['YTD'], df_tot_unit_split['Annualized'] ,df_tot_unit_split['Plan Target'])
-    bargraph_tot_unit=bargraph_h(df_tot_unit['tot_unit'] , df_tot_unit.index)
 
     return dbc.Card(
                 dbc.CardBody(
@@ -185,27 +199,47 @@ def card_main_volumn_based_measures():
                                 dbc.Popover([
                                     dbc.PopoverHeader("Eidt Measures"),
                                     dbc.PopoverBody([
-                                        dbc.Checklist(
-                                            options = [{'label':"Utilizer Count and Market Share" , 'value':"Utilizer Count and Market Share" },
-                                                      {'label':"Avg Script (30-day adj) per Utilizer" , 'value':"Avg Script (30-day adj) per Utilizer" },
-                                                      {'label':"Total Script Count (30-day adj) by Dosage (in thousand)" , 'value':"Total Script Count (30-day adj) by Dosage (in thousand)" },
-                                                      {'label':"Total Units by Dosage (Mn)", 'value': "Total Units by Dosage (Mn)"},],
-                                            value = ["Utilizer Count and Market Share","Avg Script (30-day adj) per Utilizer","Total Script Count (30-day adj) by Dosage (in thousand)","Total Units by Dosage (Mn)"],
-                                            labelCheckedStyle={"color": "red"},
-                                            id = "checklist-add-measure"),
-                                        dbc.Button("ADD", id = "add-button-add-measure")
-                                    ]),
+                                        html.Div(
+                                            [
+                                                dbc.Checklist(
+                                                    options = [{'label':"Utilizer Count and Market Share" , 'value':"Utilizer Count and Market Share" },
+                                                              {'label':"Avg Script (30-day adj) per Utilizer" , 'value':"Avg Script (30-day adj) per Utilizer" },
+                                                              {'label':"Total Script Count (30-day adj) by Dosage (in thousand)" , 'value':"Total Script Count (30-day adj) by Dosage (in thousand)" },
+                                                              {'label':"Total Units by Dosage (Mn)", 'value': "Total Units by Dosage (Mn)"},],
+                                                    value = ["Utilizer Count and Market Share","Avg Script (30-day adj) per Utilizer","Total Script Count (30-day adj) by Dosage (in thousand)","Total Units by Dosage (Mn)"],
+                                                    labelCheckedStyle={"color": "#057aff"},
+                                                    id = "checklist-add-measure",
+                                                    style={"font-family":"NotoSans-CondensedBlack", "font-size":"0.8rem", "padding":"1rem"},
+                                                ),
+                                            ],
+                                            style={"padding-top":"0.5rem", "padding-bottom":"2rem"}
+                                        ),
+                                         
+                                        html.Div(
+                                            [
+                                                dbc.Button("ADD", id = "add-button-add-measure",
+                                                   className="mb-3",
+                                                   style={"background-color":"#38160f", "border":"none", "border-radius":"10rem", "font-family":"NotoSans-Regular", "font-size":"0.6rem"},
+                                                )
+                                            ],
+                                            style={"text-align":"center"}
+                                        )
+                                        
+                                    ]
+                                    ),
                                 ],
                                 id = "popover-add-measure",
                                 is_open = False,
                                 target = "button-add-measure",
-                                placement = "top"),
+                                placement = "top",
+                                ),
+                                
                             ],
                             style={"text-align":"end"},
                         ),
                         html.Div(
                             [
-                                card_sub2_volumn_based_measures("Utilizer Count and Market Share",tbl_utilizer1,piechart_utilizer1,0.7,0.3),
+                                card_sub2_volumn_based_measures("Utilizer Count and Market Share",tbl_utilizer1,piechart_utilizer1,0.6,0.4),
                                 card_sub1_volumn_based_measures("Avg Script (30-day adj) per Utilizer",bargraph_script_per_util),
                                 card_sub2_volumn_based_measures("Total Script Count (30-day adj) by Dosage (in thousand)",bargraph_tot_script,bargraph_tot_script_split,0.5,0.5),
                                 card_sub2_volumn_based_measures("Total Units by Dosage (Mn)",bargraph_tot_unit,bargraph_tot_unit_split,0.5,0.5),
@@ -234,7 +268,7 @@ def card_sub1_volumn_based_measures(volumn_measure, fig):
 		                        ),
 		                        dbc.Row(
 		                            [
-		                                dbc.Col(dcc.Graph(figure=fig, style={"height" : "12rem", "width" : "28rem"}), width=12),
+		                                dbc.Col(dcc.Graph(figure=fig, style={"height" : "12rem"}), width=12),
 		                            ],
 		                        ),
 		                    ]
@@ -249,8 +283,8 @@ def card_sub1_volumn_based_measures(volumn_measure, fig):
 
 
 def card_sub2_volumn_based_measures(volumn_measure,fig1,fig2,size1,size2):
-    size1 = str(int(size1*28)) + "rem"
-    size2 = str(int(size2*28)) + "rem"
+    size1 = int(size1*12)
+    size2 = int(size2*12)
     return html.Div(
 			    [
 			        dbc.Card(
@@ -265,8 +299,8 @@ def card_sub2_volumn_based_measures(volumn_measure,fig1,fig2,size1,size2):
 		                        ),
 		                        dbc.Row(
 		                            [
-		                                dbc.Col(dcc.Graph(figure=fig1, style={"height" : "12rem", "width" : size1})),
-		                                dbc.Col(dcc.Graph(figure=fig2, style={"height" : "12rem", "width" : size2})),
+		                                dbc.Col(dcc.Graph(figure=fig1, style={"height" : "14rem"}), width=size1),
+		                                dbc.Col(dcc.Graph(figure=fig2, style={"height" : "14rem"}), width=size2),
 		                            ],
 		                        ),
 		                    ]
@@ -297,11 +331,11 @@ def card_main_value_based_measures():
             )
 
 def card_overview_value_based_measures():
-    bubble_graph_domain=bubblegraph(df_domain_perform['weight'] ,df_domain_perform['performance'] ,df_domain_perform['domain'])
+
     return dbc.Card(
                 dbc.CardBody(
                     [
-                       dcc.Graph(figure=bubble_graph_domain, style={"height":"20rem", "width" : "28rem"})
+                       dcc.Graph(figure=bubble_graph_domain, style={"height":"20rem"})
                     ]
                 ),
                 className="mb-3",
@@ -329,10 +363,12 @@ def card_modify_value_based_measures():
                                     width="100%"
                                 ),
                             ],
+                            style = {"border":"none", "border-radius":"0.5rem"},
                         ),
                     ]
                 ),
-                className="mb-3"
+                className="mb-3",
+                style = {"border-radius":"0.5rem"},
             )
 
 def card_buttonGroup_domain_selected():
@@ -385,8 +421,8 @@ def card_sub_value_based_measures(volumn_measure):
                         ),
                         html.Div(
                             [
-                                dcc.Graph(id = "graph-container-domain-selected-1"),
-                                dcc.Graph(id = "graph-container-domain-selected-2"),
+                                dcc.Graph(id = "graph-container-domain-selected-1", style={"height":"20rem"}),
+                                dcc.Graph(id = "graph-container-domain-selected-2", style={"height":"20rem"}),
                             ],
                         ),
                     ]
