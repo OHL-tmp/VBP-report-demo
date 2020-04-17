@@ -31,7 +31,53 @@ app = dash.Dash(__name__, url_base_pathname='/demo-report/', external_stylesheet
 
 server = app.server
 
+Domain_options ={
+"checklist-domain-measures-lv1-1" : {
+    "Average Cost per Patient" : ["All Causes Average Cost per Patient", "CHF Related Average Cost per Patient "],
+    "Average IP Cost per Patient" : ["All Causes Average IP Cost per Patient", "CHF Related Average IP Cost per Patient"  ]
+},
 
+"checklist-domain-measures-lv1-2" : {
+    "Hospitalization Rate" : ["All Causes Hospitalization Rate", "CHF Related Hospitalization Rate"],
+    "ER Rate" : ["All Causes ER Rate", "CHF Related ER Rate"  ],
+    "Readmission Rate" : [],
+    "Incidence Rate of Medical Procedures" : []
+},
+
+"checklist-domain-measures-lv1-3" : {
+    "Improvement in Clinical Measures" : ["NT-proBNP Improvement %", "LVEF Improvement %", "LAVi Improvement %",
+                                         "LVEDVi Improvement %", "LVESVi and E/e’ Improvement %"],
+    "Functional Outcomes" : ["Change in Self-Care Score", "Change in Mobility Score"  ],
+    "Life Expectancy" : ["CV Mortality Rate"],
+    "Disease Progression" : ["Rate of CHF Progression for 24 months"],
+    "Clinical Measures Adherence Level" : [],
+    "Depressive Symptom Measures" : [],
+    "Psychosocial Outcome" : []
+},
+
+"checklist-domain-measures-lv1-4" : {
+    "Benefit Coverage Parity" : [],
+    "Screening Rate" : []
+},
+
+"checklist-domain-measures-lv1-5" : {
+    "Occurrence of Side Effects" : ["Emergent care rate for medication side effect", "Hospitalization rate for medication side effect"],
+    "Occurrence of Adverse Event" : [],
+    "Occurrence of Complications" : [],
+    "Inappropriate Use" :[]
+},
+
+"checklist-domain-measures-lv1-6" : {
+    "Medication Adherence" : ["DOT", "PDC", "MPR"],
+    "Healthcare-Associated Infections" : [],
+    "Patient-reported Care quality outcome" : []
+},
+
+"checklist-domain-measures-lv1-7" : {
+    "Symptom management" : ["Patient Reported SOB changes", "Patient Reported Fatigue and Tiredness Changes",
+                           "Patient Reported Peripheral Oedema Changes", "Patient Reported Disturbed Sleep Changes"],
+    "Patient Satisfaction" : []
+}}
 
 def modal_dashboard_domain_selection(n):
     return html.Div(
@@ -42,8 +88,12 @@ def modal_dashboard_domain_selection(n):
                             dbc.ModalHeader([
                                 dbc.Row([
                                      dbc.Col(html.Div("Select Domain")),
-#                                    dbc.Card(id = "dashboard-card-selected-domain",
-#                                            className="mb-3",),
+                                     html.Div([
+                                         html.Div("Disease"),
+                                         dbc.Input(placeholder = "CHF",
+                                                  className = "mb-3",
+                                                  disabled = True)
+                                     ], style = {"display" : "flex"})
                                 ]),
                             ]),
                             dbc.ModalBody(
@@ -83,11 +133,14 @@ def card_domain_selection(n):
     return html.Div(domain_card)
 
 def collapse_domain_selection_measures(n):
+    domain_set = ["Cost Reduction", "Utilization Reduction", "Improving Disease Outcome",
+                 "Decreasing Health Disparities", "Increasing Patient Safety",
+                 "Enhancing Care Quality", "Better Patient Experience"]
     return html.Div(
                 [
                     dbc.Row(
                         [
-                            dbc.Col(html.Div(u'Domain {}'.format(n+1))),
+                            dbc.Col(html.Div(domain_set[n])),
                             dbc.Card(id = u"dashboard-card-selected-domain-{}".format(n+1),
                                     className="mb-3",
                                     color="info"),
@@ -105,9 +158,8 @@ def collapse_domain_selection_measures(n):
                             dbc.CardBody(
                                 [
                                     html.H5("Choose Measures", className="card-title"),
-                                    eval("checklist_domain_measures_lv1_"+str(n+1)+"()"),
-                                    html.Hr(className="my-2"),
-                                    html.Div(id=u"checklist-domain-measures-lv2-container-{}".format(n+1)),
+                                    checklist_domain_measures_lv1(n),
+                                    html.Hr(className="my-2")
                                 ]
                             )
                         ),
@@ -117,292 +169,51 @@ def collapse_domain_selection_measures(n):
             )
 
 #domain 1
-def checklist_domain_measures_lv1_1():
-    return dbc.FormGroup(
+def checklist_domain_measures_lv1(d):
+    domain_focus = list(Domain_options.keys())
+    measures_lv1 = Domain_options[domain_focus[d]]
+    key = list(measures_lv1.keys())
+    n = len(key)
+    button_group = []
+    for i in range(n):
+        
+        if len(measures_lv1[key[i]]) == 0:
+            disable_status = True
+        else:
+            disable_status = False
+        button_measure_lv1 = dbc.FormGroup(
                 [
-                    #dbc.Label("Choose measures"),
-                    dbc.Checklist(
-                        options=[
-                            {"label": "Option 1", "value": 1},
-                            {"label": "Option 2", "value": 2},
-                            {"label": "Option 3", "value": 3},
-                            {"label": "Option 4", "value": 4},
-                            {"label": "Option 5", "value": 5},
-                            {"label": "Option 6", "value": 6},
-                        ],
-                        value=[],
-                        id="checklist-domain-measures-lv1-1",
-                        inline=True,
-                    ),
+                    dbc.Row([
+                        dbc.Button(
+                            u"{}".format(key[i]),
+                            id=u"measures-lv1-{}-{}".format(d+1,i+1),
+                            color = "link",
+                            disabled = disable_status,
+                        ),
+                     dbc.Card(id = u"dashboard-card-selected-{}-{}".format(d+1,i+1),
+                                    className="mb-3",
+ #                                   color="info"
+                             ),   
+                    ]),
+                    dbc.Collapse(
+                           dbc.FormGroup([
+                               dbc.Checklist(
+                                   options = [{"label" : k, "value": k} for k in measures_lv1[key[i]]],
+                                   value=[],
+                                   id=u"checklist-domain-measures-lv2-{}-{}".format(d+1,i+1),
+                                   inline=True,
+                                   persistence = True,
+                                   persistence_type = 'session',
+                               ),
+                           ]),
+                        id=u"checklist-domain-measures-lv2-container-{}-{}".format(d+1,i+1),
+                    )
                 ]
             )
-
-def checklist_domain_measures_lv2_1_1():
-    return dbc.FormGroup(
-                [
-                    #dbc.Label("Choose measures"),
-                    dbc.Checklist(
-                        options=[
-                            {"label": "Option 1", "value": 1},
-                            {"label": "Option 2", "value": 2},
-                            {"label": "Option 3", "value": 3},
-                            {"label": "Option 4", "value": 4},
-                            {"label": "Option 5", "value": 5},
-                            {"label": "Option 6", "value": 6},
-                        ],
-                        value=[],
-                        id="checklist-domain-measures-lv2-1",
-                        inline=True,
-                    ),
-                ]
-            )
-
-#domain 2
-def checklist_domain_measures_lv1_2():
-    return dbc.FormGroup(
-                [
-                    #dbc.Label("Choose measures"),
-                    dbc.Checklist(
-                        options=[
-                            {"label": "Option 1", "value": 1},
-                            {"label": "Option 2", "value": 2},
-                            {"label": "Option 3", "value": 3},
-                            {"label": "Option 4", "value": 4},
-                            {"label": "Option 5", "value": 5},
-                            {"label": "Option 6", "value": 6},
-                        ],
-                        value=[],
-                        id="checklist-domain-measures-lv1-2",
-                        inline=True,
-                    ),
-                ]
-            )
-
-def checklist_domain_measures_lv2_2_1():
-    return dbc.FormGroup(
-                [
-                    #dbc.Label("Choose measures"),
-                    dbc.Checklist(
-                        options=[
-                            {"label": "Option 1", "value": 1},
-                            {"label": "Option 2", "value": 2},
-                            {"label": "Option 3", "value": 3},
-                            {"label": "Option 4", "value": 4},
-                            {"label": "Option 5", "value": 5},
-                            {"label": "Option 6", "value": 6},
-                        ],
-                        value=[],
-                        id="checklist-domain-measures-lv2-2",
-                        inline=True,
-                    ),
-                ]
-            )
-
-#domain 3
-def checklist_domain_measures_lv1_3():
-    return dbc.FormGroup(
-                [
-                    #dbc.Label("Choose measures"),
-                    dbc.Checklist(
-                        options=[
-                            {"label": "Option 1", "value": 1},
-                            {"label": "Option 2", "value": 2},
-                            {"label": "Option 3", "value": 3},
-                            {"label": "Option 4", "value": 4},
-                            {"label": "Option 5", "value": 5},
-                            {"label": "Option 6", "value": 6},
-                        ],
-                        value=[],
-                        id="checklist-domain-measures-lv1-3",
-                        inline=True,
-                    ),
-                ]
-            )
-
-def checklist_domain_measures_lv2_3_1():
-    return dbc.FormGroup(
-                [
-                    #dbc.Label("Choose measures"),
-                    dbc.Checklist(
-                        options=[
-                            {"label": "Option 1", "value": 1},
-                            {"label": "Option 2", "value": 2},
-                            {"label": "Option 3", "value": 3},
-                            {"label": "Option 4", "value": 4},
-                            {"label": "Option 5", "value": 5},
-                            {"label": "Option 6", "value": 6},
-                        ],
-                        value=[],
-                        id="checklist-domain-measures-lv2-3",
-                        inline=True,
-                    ),
-                ]
-            )
-
-#domain 4
-def checklist_domain_measures_lv1_4():
-    return dbc.FormGroup(
-                [
-                    #dbc.Label("Choose measures"),
-                    dbc.Checklist(
-                        options=[
-                            {"label": "Option 1", "value": 1},
-                            {"label": "Option 2", "value": 2},
-                            {"label": "Option 3", "value": 3},
-                            {"label": "Option 4", "value": 4},
-                            {"label": "Option 5", "value": 5},
-                            {"label": "Option 6", "value": 6},
-                        ],
-                        value=[],
-                        id="checklist-domain-measures-lv1-4",
-                        inline=True,
-                    ),
-                ]
-            )
-
-def checklist_domain_measures_lv2_4_1():
-    return dbc.FormGroup(
-                [
-                    #dbc.Label("Choose measures"),
-                    dbc.Checklist(
-                        options=[
-                            {"label": "Option 1", "value": 1},
-                            {"label": "Option 2", "value": 2},
-                            {"label": "Option 3", "value": 3},
-                            {"label": "Option 4", "value": 4},
-                            {"label": "Option 5", "value": 5},
-                            {"label": "Option 6", "value": 6},
-                        ],
-                        value=[],
-                        id="checklist-domain-measures-lv2-4",
-                        inline=True,
-                    ),
-                ]
-            )
-
-#domain 5
-def checklist_domain_measures_lv1_5():
-    return dbc.FormGroup(
-                [
-                    #dbc.Label("Choose measures"),
-                    dbc.Checklist(
-                        options=[
-                            {"label": "Option 1", "value": 1},
-                            {"label": "Option 2", "value": 2},
-                            {"label": "Option 3", "value": 3},
-                            {"label": "Option 4", "value": 4},
-                            {"label": "Option 5", "value": 5},
-                            {"label": "Option 6", "value": 6},
-                        ],
-                        value=[],
-                        id="checklist-domain-measures-lv1-5",
-                        inline=True,
-                    ),
-                ]
-            )
-
-def checklist_domain_measures_lv2_5_1():
-    return dbc.FormGroup(
-                [
-                    #dbc.Label("Choose measures"),
-                    dbc.Checklist(
-                        options=[
-                            {"label": "Option 1", "value": 1},
-                            {"label": "Option 2", "value": 2},
-                            {"label": "Option 3", "value": 3},
-                            {"label": "Option 4", "value": 4},
-                            {"label": "Option 5", "value": 5},
-                            {"label": "Option 6", "value": 6},
-                        ],
-                        value=[],
-                        id="checklist-domain-measures-lv2-5",
-                        inline=True,
-                    ),
-                ]
-            )
+        button_group.append(button_measure_lv1)
+    return html.Div(button_group)
 
 
-#domain 6
-def checklist_domain_measures_lv1_6():
-    return dbc.FormGroup(
-                [
-                    #dbc.Label("Choose measures"),
-                    dbc.Checklist(
-                        options=[
-                            {"label": "Option 1", "value": 1},
-                            {"label": "Option 2", "value": 2},
-                            {"label": "Option 3", "value": 3},
-                            {"label": "Option 4", "value": 4},
-                            {"label": "Option 5", "value": 5},
-                            {"label": "Option 6", "value": 6},
-                        ],
-                        value=[],
-                        id="checklist-domain-measures-lv1-6",
-                        inline=True,
-                    ),
-                ]
-            )
-
-def checklist_domain_measures_lv2_6_1():
-    return dbc.FormGroup(
-                [
-                    #dbc.Label("Choose measures"),
-                    dbc.Checklist(
-                        options=[
-                            {"label": "Option 1", "value": 1},
-                            {"label": "Option 2", "value": 2},
-                            {"label": "Option 3", "value": 3},
-                            {"label": "Option 4", "value": 4},
-                            {"label": "Option 5", "value": 5},
-                            {"label": "Option 6", "value": 6},
-                        ],
-                        value=[],
-                        id="checklist-domain-measures-lv2-6",
-                        inline=True,
-                    ),
-                ]
-            )
-
-#domain 7
-def checklist_domain_measures_lv1_7():
-    return dbc.FormGroup(
-                [
-                    #dbc.Label("Choose measures"),
-                    dbc.Checklist(
-                        options=[
-                            {"label": "Option 1", "value": 1},
-                            {"label": "Option 2", "value": 2},
-                            {"label": "Option 3", "value": 3},
-                            {"label": "Option 4", "value": 4},
-                            {"label": "Option 5", "value": 5},
-                            {"label": "Option 6", "value": 6},
-                        ],
-                        value=[],
-                        id="checklist-domain-measures-lv1-7",
-                        inline=True,
-                    ),
-                ]
-            )
-
-def checklist_domain_measures_lv2_7_1():
-    return dbc.FormGroup(
-                [
-                    #dbc.Label("Choose measures"),
-                    dbc.Checklist(
-                        options=[
-                            {"label": "Option 1", "value": 1},
-                            {"label": "Option 2", "value": 2},
-                            {"label": "Option 3", "value": 3},
-                            {"label": "Option 4", "value": 4},
-                            {"label": "Option 5", "value": 5},
-                            {"label": "Option 6", "value": 6},
-                        ],
-                        value=[],
-                        id="checklist-domain-measures-lv2-7",
-                        inline=True,
-                    ),
-                ]
-            )
 
 
 app.layout = modal_dashboard_domain_selection(7)
