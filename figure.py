@@ -223,7 +223,7 @@ def piechart_utilizer(label,value): #df_util_split['Class']  df_util_split['%']
         go.Pie(        
             labels=label_pie, 
             values=value_pie,
-            pull=[0.1,0,0],
+            pull=[0,0,0.1,0],
             marker=dict(
                     colors=["#1357DD","F5B111","#df8885"]            
                     ),
