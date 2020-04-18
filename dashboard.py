@@ -21,7 +21,7 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 from dash.dependencies import Input, Output, State
 from utils import Header, make_dash_table
-from figure import bargraph_overall,waterfall_overall,tbl_utilizer,piechart_utilizer,bargraph_h,bargraph_stack3,bubblegraph,bargraph_perform,waterfall_domain
+from figure import *
 from modal_dashboard_domain_selection import *
 
 # Path
@@ -54,28 +54,27 @@ def load_data():
     df_tot_unit=pd.DataFrame(df_tot_unit_split.sum(axis=0)[1:4,],columns=['tot_unit']).iloc[[2,1,0],]
     
     waterfall_domain1=waterfall_domain(df_domain_waterfall['label'] ,df_domain_waterfall['base'], df_domain_waterfall['adjusted'])
-    domain1_perform=bargraph_perform(df_measure_perform['performance'], df_measure_perform['Measure'])
+    domain1_perform=bargraph_perform(df_measure_perform,0)
     
     waterfall_domain2=waterfall_domain(df_domain_waterfall['label'] ,df_domain_waterfall['base'], df_domain_waterfall['adjusted'])
-    domain2_perform=bargraph_perform(df_measure_perform['performance'], df_measure_perform['Measure'])
+    domain2_perform=bargraph_perform(df_measure_perform,1)
     
     waterfall_domain3=waterfall_domain(df_domain_waterfall['label'] ,df_domain_waterfall['base'], df_domain_waterfall['adjusted'])
-    domain3_perform=bargraph_perform(df_measure_perform['performance'], df_measure_perform['Measure'])
+    domain3_perform=bargraph_perform(df_measure_perform,2)
     
     waterfall_domain4=waterfall_domain(df_domain_waterfall['label'] ,df_domain_waterfall['base'], df_domain_waterfall['adjusted'])
-    domain4_perform=bargraph_perform(df_measure_perform['performance'], df_measure_perform['Measure'])
+    domain4_perform=bargraph_perform(df_measure_perform,3)
     
     waterfall_domain5=waterfall_domain(df_domain_waterfall['label'] ,df_domain_waterfall['base'], df_domain_waterfall['adjusted'])
-    domain5_perform=bargraph_perform(df_measure_perform['performance'], df_measure_perform['Measure'])
+    domain5_perform=bargraph_perform(df_measure_perform,4)
     
     waterfall_domain6=waterfall_domain(df_domain_waterfall['label'] ,df_domain_waterfall['base'], df_domain_waterfall['adjusted'])
-    domain6_perform=bargraph_perform(df_measure_perform['performance'], df_measure_perform['Measure'])
+    domain6_perform=bargraph_perform(df_measure_perform,5)
     
     waterfall_domain7=waterfall_domain(df_domain_waterfall['label'] ,df_domain_waterfall['base'], df_domain_waterfall['adjusted'])
-    domain7_perform=bargraph_perform(df_measure_perform['performance'], df_measure_perform['Measure'])
+    domain7_perform=bargraph_perform(df_measure_perform,5)    
     
-    
-    bargraph_overall1=bargraph_overall(df_overall['month'],df_overall['base'],df_overall['adjusted'])
+    bargraph_overall1=bargraph_overall(df_overall)
     waterfall_overall1=waterfall_overall(df_waterfall['label'] ,df_waterfall['base'], df_waterfall['adjusted'])
     
     tbl_utilizer1=tbl_utilizer(df_utilizer)
@@ -86,7 +85,7 @@ def load_data():
     bargraph_tot_unit_split=bargraph_stack3(df_tot_unit_split['dosage'], df_tot_unit_split['YTD'], df_tot_unit_split['Annualized'] ,df_tot_unit_split['Plan Target'])
     bargraph_tot_unit=bargraph_h(df_tot_unit['tot_unit'] , df_tot_unit.index)
     
-    bubble_graph_domain=bubblegraph(df_domain_perform['weight'] ,df_domain_perform['performance'] ,df_domain_perform['domain'])
+    bubble_graph_domain=(df_domain_perform,[0,1],'Domain')
     
 
 def create_layout():
