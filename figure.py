@@ -9,6 +9,7 @@ import pandas as pd
 from numpy import arange
 import plotly
 import plotly.graph_objects as go
+from plotly.subplots import make_subplots
 
 colors={'blue':'rgba(18,85,222,100)','yellow':'rgba(246,177,17,100)','transparent':'rgba(255,255,255,0)','grey':'rgba(191,191,191,100)',
        'lightblue':'rgba(143,170,220,100)'}
@@ -148,7 +149,7 @@ def waterfall_overall(x,y1,y2): #df_waterfall['label']  df_waterfall['base'] df_
             x=x_waterfall, 
             y=y2_waterfall,
             text=y2_waterfall,
-            textposition='inside',
+            textposition='outside',
             texttemplate='%{y:.2s}',
             marker=dict(
                     color=colors['yellow'],
@@ -286,6 +287,7 @@ def bargraph_stack3(x,y1,y2,y3) : #   df_tot_script_split['dosage'] df_tot_scrip
             y=y1_tot_script_split,
             text=y1_tot_script_split,
             textposition='auto',
+            textangle=0,
             texttemplate='%{y:.2s}',
             marker=dict(
                     color=colors['blue'],
@@ -298,6 +300,7 @@ def bargraph_stack3(x,y1,y2,y3) : #   df_tot_script_split['dosage'] df_tot_scrip
             y=y2_tot_script_split,
             text=y2_tot_script_split,
             textposition='inside',
+            textangle=0,
             texttemplate='%{y:.2s}',
             marker=dict(
                     color=colors['blue'],
@@ -310,6 +313,7 @@ def bargraph_stack3(x,y1,y2,y3) : #   df_tot_script_split['dosage'] df_tot_scrip
             y=y3_tot_script_split,
             text=y3_tot_script_split,
             textposition='inside',
+            textangle=0,
             texttemplate='%{y:.2s}',
             marker=dict(
                     color=colors['grey'],
@@ -345,7 +349,7 @@ def bargraph_stack3(x,y1,y2,y3) : #   df_tot_script_split['dosage'] df_tot_scrip
     )    
     return fig_tot_script_split
 
-<<<<<<< HEAD
+
 def bubblegraph(df_domain_perform,traces,obj): # 数据，[0,1] ,'Domain' or 'Measure'
     
     x = [0+1*i/100 for i in range(100)]
@@ -383,26 +387,8 @@ def bubblegraph(df_domain_perform,traces,obj): # 数据，[0,1] ,'Domain' or 'Me
                     color=domain_colordict[domain_set[k]],
                     opacity=0.8
                 )
-=======
-'''def bubblegraph(x,y,t):#df_domain_perform['weight'] df_domain_perform['performance'] df_domain_perform['domain']
-    x_domain_perform=x
-    y_domain_perform=y
-    t_domain_perform=t
-    fig_domain_perform = go.Figure(data=[
-        go.Scatter(        
-            x=x_domain_perform, 
-            y=y_domain_perform,
-            x0=0,y0=0,
-            text=t_domain_perform,
-            mode='markers+text',
-            #dx=0.1,dy=0.1,
-            marker=dict(
-                size=60,
-                color=["#df8885", 'rgb(255, 144, 14)', 'rgb(250, 206, 115)', 'rgb(183, 156, 205)'],
-                opacity=[0.8, 0.8, 0.8, 0.8]
->>>>>>> cc3562e14bfd0f59acce9946e4c9818d9d203e16
-            )
 
+            )
         )
 
     annotations = []
@@ -523,7 +509,7 @@ def bubblegraph_layout():
         hovermode=False
     )
     return bubble_layout
-
+'''
 def waterfall_domain(x,y1,y2): #df_waterfall['label']  df_waterfall['base'] df_waterfall['adjusted']
 
     x_waterfall=x
