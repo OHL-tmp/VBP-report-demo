@@ -345,6 +345,7 @@ def bargraph_stack3(x,y1,y2,y3) : #   df_tot_script_split['dosage'] df_tot_scrip
     )    
     return fig_tot_script_split
 
+<<<<<<< HEAD
 def bubblegraph(df_domain_perform,traces,obj): # 数据，[0,1] ,'Domain' or 'Measure'
     
     x = [0+1*i/100 for i in range(100)]
@@ -382,6 +383,24 @@ def bubblegraph(df_domain_perform,traces,obj): # 数据，[0,1] ,'Domain' or 'Me
                     color=domain_colordict[domain_set[k]],
                     opacity=0.8
                 )
+=======
+'''def bubblegraph(x,y,t):#df_domain_perform['weight'] df_domain_perform['performance'] df_domain_perform['domain']
+    x_domain_perform=x
+    y_domain_perform=y
+    t_domain_perform=t
+    fig_domain_perform = go.Figure(data=[
+        go.Scatter(        
+            x=x_domain_perform, 
+            y=y_domain_perform,
+            x0=0,y0=0,
+            text=t_domain_perform,
+            mode='markers+text',
+            #dx=0.1,dy=0.1,
+            marker=dict(
+                size=60,
+                color=["#df8885", 'rgb(255, 144, 14)', 'rgb(250, 206, 115)', 'rgb(183, 156, 205)'],
+                opacity=[0.8, 0.8, 0.8, 0.8]
+>>>>>>> cc3562e14bfd0f59acce9946e4c9818d9d203e16
             )
 
         )
@@ -444,6 +463,66 @@ def bubblegraph(df_domain_perform,traces,obj): # 数据，[0,1] ,'Domain' or 'Me
         ),
     )
     return fig_domain_perform
+    '''
+def bubblegraph(x,y,t):#df_domain_perform['weight'] df_domain_perform['performance'] df_domain_perform['domain']
+    x_domain_perform=x
+    y_domain_perform=y
+    t_domain_perform=t
+    color_set=['rgb(93, 164, 214)', 'rgb(255, 144, 14)', 'rgb(44, 160, 101)', 'rgb(255, 65, 54)']
+    opacity_set=[1, 0.8, 0.6, 0.4]
+    bubble_traces = []
+    for i in range(len(x)):
+        bubble_traces.append(go.Scatter(dict(x = [x_domain_perform[i]], y = [y_domain_perform[i]],
+                                      x0=0,y0=0,
+            text=t_domain_perform[i],
+            mode='markers+text',
+            #dx=0.1,dy=0.1,
+            marker=dict(
+                size=60,
+                color=color_set[i],
+                opacity=opacity_set[i]),
+            name = i+1)))
+    return bubble_traces
+
+
+
+def bubblegraph_layout():
+    bubble_layout = dict(
+        paper_bgcolor=colors['transparent'],
+        plot_bgcolor=colors['transparent'],
+        #showlegend=True,
+       # shapes=dict(x0=0,y0=0),
+        xaxis = dict(
+            tickmode='linear',
+            tick0=0,
+            dtick=0.1,
+            showticklabels=True,
+            tickformat='%',
+            position=0.37,
+            
+            showgrid=True,
+            gridcolor =colors['grey'],
+            
+            zeroline=False,
+            zerolinecolor='grey',
+            rangemode="tozero"
+        ),
+        yaxis = dict(
+            #showgrid = True, 
+            #gridcolor =colors[3],
+            showline=True,
+            linecolor='grey',
+            tickmode='linear',
+            dtick=0.1,
+            tickformat='%',
+            showticklabels=True,
+            zeroline=True,
+            zerolinecolor='grey',
+            ticks='inside'
+        ),
+        hovermode=False
+    )
+    return bubble_layout
 
 def waterfall_domain(x,y1,y2): #df_waterfall['label']  df_waterfall['base'] df_waterfall['adjusted']
 
