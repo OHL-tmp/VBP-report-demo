@@ -67,3 +67,11 @@
   visibility: hidden;
 }
 
+._dash-loading {
+  font-family: "NotoSans-CondensedBlackItalic";
+  font-size: 4rem;
+  text-align: center;
+  margin-top: 20rem;
+  color: #1357DD;
+  
+}

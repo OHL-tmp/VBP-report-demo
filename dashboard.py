@@ -171,7 +171,7 @@ def div_overall_performance():
                             ),
                         ]
                     ),
-                    html.P("As for April 30th.", style={"color":"#000", "font-size":"0.8rem"}),
+                    html.P("As of June 30th.", style={"color":"#000", "font-size":"0.8rem"}),
                     dbc.Row(
                         [
                             dbc.Col(dcc.Graph(figure=bargraph_overall1), width=7),
@@ -202,14 +202,15 @@ def card_main_volumn_based_measures():
                                         html.Div(
                                             [
                                                 dbc.Checklist(
-                                                    options = [{'label':"Utilizer Count and Market Share" , 'value':"Utilizer Count and Market Share" },
+                                                    options = [{'label':"Market Share" , 'value':"Market Share" },
+                                                              {'label':"Utilizer Count" , 'value':"Utilizer Count" },
                                                               {'label':"Avg Script (30-day adj) per Utilizer" , 'value':"Avg Script (30-day adj) per Utilizer" },
                                                               {'label':"Total Script Count (30-day adj) by Dosage (in thousand)" , 'value':"Total Script Count (30-day adj) by Dosage (in thousand)" },
                                                               {'label':"Total Units by Dosage (Mn)", 'value': "Total Units by Dosage (Mn)"},],
-                                                    value = ["Utilizer Count and Market Share","Avg Script (30-day adj) per Utilizer","Total Script Count (30-day adj) by Dosage (in thousand)","Total Units by Dosage (Mn)"],
+                                                    value = ["Market Share","Utilizer Count","Avg Script (30-day adj) per Utilizer","Total Script Count (30-day adj) by Dosage (in thousand)","Total Units by Dosage (Mn)"],
                                                     labelCheckedStyle={"color": "#057aff"},
                                                     id = "checklist-add-measure",
-                                                    style={"font-family":"NotoSans-CondensedBlack", "font-size":"0.8rem", "padding":"1rem"},
+                                                    style={"font-family":"NotoSans-Condensed", "font-size":"0.8rem", "padding":"1rem"},
                                                 ),
                                             ],
                                             style={"padding-top":"0.5rem", "padding-bottom":"2rem"}
@@ -217,7 +218,7 @@ def card_main_volumn_based_measures():
                                          
                                         html.Div(
                                             [
-                                                dbc.Button("ADD", id = "add-button-add-measure",
+                                                dbc.Button("Comfirm", id = "add-button-add-measure",
                                                    className="mb-3",
                                                    style={"background-color":"#38160f", "border":"none", "border-radius":"10rem", "font-family":"NotoSans-Regular", "font-size":"0.6rem"},
                                                 )
@@ -239,10 +240,11 @@ def card_main_volumn_based_measures():
                         ),
                         html.Div(
                             [
-                                card_sub2_volumn_based_measures("Utilizer Count and Market Share",tbl_utilizer1,piechart_utilizer1,0.6,0.4),
-                                card_sub1_volumn_based_measures("Avg Script (30-day adj) per Utilizer",bargraph_script_per_util),
-                                card_sub2_volumn_based_measures("Total Script Count (30-day adj) by Dosage (in thousand)",bargraph_tot_script,bargraph_tot_script_split,0.5,0.5),
-                                card_sub2_volumn_based_measures("Total Units by Dosage (Mn)",bargraph_tot_unit,bargraph_tot_unit_split,0.5,0.5),
+                                card_sub1_volumn_based_measures("Market Share",piechart_utilizer1,0.85),
+                                card_sub1_volumn_based_measures("Utilizer Count",tbl_utilizer1,0.6),
+                                card_sub1_volumn_based_measures("Avg Script (30-day adj) per Utilizer",bargraph_script_per_util,0.6),
+                                card_sub2_volumn_based_measures("Total Script Count (30-day adj) by Dosage (in thousand)",bargraph_tot_script,bargraph_tot_script_split,1,1),
+                                card_sub2_volumn_based_measures("Total Units by Dosage (Mn)",bargraph_tot_unit,bargraph_tot_unit_split,1,1),
                             ],
                             className="mb-3",
                         ),
@@ -252,7 +254,8 @@ def card_main_volumn_based_measures():
                 style={"box-shadow":"0 4px 8px 0 rgba(0, 0, 0, 0.05), 0 6px 20px 0 rgba(0, 0, 0, 0.05)", "border":"none", "border-radius":"0.5rem"}
             )
 
-def card_sub1_volumn_based_measures(volumn_measure, fig):
+def card_sub1_volumn_based_measures(volumn_measure, fig, size):
+    size = str(int(size*22)) + "rem"
     return html.Div(
 	    		[
 			        dbc.Card(
@@ -261,19 +264,19 @@ def card_sub1_volumn_based_measures(volumn_measure, fig):
 		                        dbc.Row(
 		                            [
 		                                dbc.Col(html.Img(src=app.get_asset_url("bullet-round-blue.png"), width="20%"), width=1, align="start", style={"margin-right":"-20px", "margin-top":"-4px"}),
-		                                dbc.Col(html.H6(volumn_measure)),
+		                                dbc.Col(html.H4(volumn_measure, style={"font-size":"1rem"})),
 		                            ],
 		                            no_gutters=True,
 		                        ),
 		                        dbc.Row(
 		                            [
-		                                dbc.Col(dcc.Graph(figure=fig, style={"height" : "12rem"}), width=12),
+		                                dbc.Col(dcc.Graph(figure=fig, style={"height" : size}), width=12),
 		                            ],
 		                        ),
 		                    ]
 		                ),
 		                className="mb-3",
-		                style={"background-color":"#f7f7f7", "border":"none", "border-radius":"0.5rem", "max-height":"20rem"}
+		                style={"background-color":"#f7f7f7", "border":"none", "border-radius":"0.5rem", "max-height":"22rem"}
 			        )
 	            ],
                 id = u"card-container-{}".format(volumn_measure),
@@ -281,9 +284,9 @@ def card_sub1_volumn_based_measures(volumn_measure, fig):
             )
 
 
-def card_sub2_volumn_based_measures(volumn_measure,fig1,fig2,size1,size2):
-    size1 = int(size1*12)
-    size2 = int(size2*12)
+def card_sub2_volumn_based_measures(volumn_measure,fig1,fig2,height1,height2):
+    size1 = str(int(height1*14))+"rem"
+    size2 = str(int(height2*14))+"rem"
     return html.Div(
 			    [
 			        dbc.Card(
@@ -292,20 +295,21 @@ def card_sub2_volumn_based_measures(volumn_measure,fig1,fig2,size1,size2):
 		                        dbc.Row(
 		                            [
 		                                dbc.Col(html.Img(src=app.get_asset_url("bullet-round-blue.png"), width="20%"), width=1, align="start", style={"margin-right":"-20px", "margin-top":"-4px"}),
-		                                dbc.Col(html.H6(volumn_measure)),
+		                                dbc.Col(html.H4(volumn_measure, style={"font-size":"1rem"})),
 		                            ],
 		                            no_gutters=True,
 		                        ),
-		                        dbc.Row(
+		                        html.Div(
 		                            [
-		                                dbc.Col(dcc.Graph(figure=fig1, style={"height" : "14rem"}), width=size1),
-		                                dbc.Col(dcc.Graph(figure=fig2, style={"height" : "14rem"}), width=size2),
+		                                dcc.Graph(figure=fig1, style={"height" : size1}),
+		                                dcc.Graph(figure=fig2, style={"height" : size2}),
 		                            ],
+                                    style={"padding":"1rem"}
 		                        ),
 		                    ]
 		                ),
 		                className="mb-3",
-		                style={"background-color":"#f7f7f7", "border":"none", "border-radius":"0.5rem", "max-height":"20rem"}
+		                style={"background-color":"#f7f7f7", "border":"none", "border-radius":"0.5rem", "max-height":"40rem"}
 		            )
 		        ], id = u"card-container-{}".format(volumn_measure)
             )
@@ -315,11 +319,11 @@ def card_main_value_based_measures():
     return dbc.Card(
                 dbc.CardBody(
                     [
-                        html.H1("Volumn Based Measures", className="mb-3", style={"font-size":"1.5rem"}),
+                        html.H1("Value Based Measures", className="mb-3", style={"font-size":"1.5rem"}),
                         html.Div(
                             [
-                                card_overview_value_based_measures(),
                                 card_modify_value_based_measures(),
+                                card_overview_value_based_measures(),
                                 card_sub_value_based_measures("Domain 1"),
                             ],
                             className="mb-3",
@@ -334,11 +338,18 @@ def card_overview_value_based_measures():
     return dbc.Card(
                 dbc.CardBody(
                     [
+                        dbc.Row(
+                            [
+                                dbc.Col(html.Img(src=app.get_asset_url("bullet-round-blue.png"), width="20%"), width=1, align="start", style={"margin-right":"-20px", "margin-top":"-4px"}),
+                                dbc.Col(html.H4("Performance Result of Each Domain", style={"font-size":"1rem"})),
+                            ],
+                            no_gutters=True,
+                        ),
                        dcc.Graph(figure=bubble_graph_domain, style={"height":"20rem"})
                     ]
                 ),
                 className="mb-3",
-                style={"background-color":"#f7f7f7", "border":"none", "border-radius":"0.5rem", "max-height":"20rem"}
+                style={"background-color":"#f7f7f7", "border":"none", "border-radius":"0.5rem", "max-height":"23rem"}
             )
 
 def card_modify_value_based_measures():
@@ -348,7 +359,7 @@ def card_modify_value_based_measures():
                         dbc.Row(
                             [
                                 dbc.Col(html.Img(src=app.get_asset_url("bullet-round-blue.png"), width="20%"), width=1, align="start", style={"margin-right":"-20px", "margin-top":"-4px"}),
-                                dbc.Col(html.H6("Domain Detail")),
+                                dbc.Col(html.H4("Domain Detail", style={"font-size":"1rem"})),
                                 dbc.Col(modal_dashboard_domain_selection(7), width=3),
                             ],
                             no_gutters=True,
@@ -452,38 +463,42 @@ def toggle_popover_add_measure(n1, n2, is_open):
 
 # add/close measure card
 
-states = {"Utilizer Count and Market Share": True, 
-      "Avg Script (30-day adj) per Utilizer": True,
-     "Total Script Count (30-day adj) by Dosage (in thousand)": True,
-     "Total Units by Dosage (Mn)": True}
+states = {"Market Share": True, 
+    "Utilizer Count": True, 
+    "Avg Script (30-day adj) per Utilizer": True,
+    "Total Script Count (30-day adj) by Dosage (in thousand)": True,
+    "Total Units by Dosage (Mn)": True}
 
 @app.callback(
-    [Output("card-container-Utilizer Count and Market Share","hidden"),
+    [Output("card-container-Market Share","hidden"),
+    Output("card-container-Utilizer Count","hidden"),
     Output("card-container-Avg Script (30-day adj) per Utilizer","hidden"),
     Output("card-container-Total Script Count (30-day adj) by Dosage (in thousand)","hidden"),
     Output("card-container-Total Units by Dosage (Mn)","hidden"),],
     [Input("add-button-add-measure","n_clicks"),
     Input("checklist-add-measure","value")],
-    [State("card-container-Utilizer Count and Market Share","hidden"),
+    [State("card-container-Market Share","hidden"),
+    State("card-container-Utilizer Count","hidden"),
     State("card-container-Avg Script (30-day adj) per Utilizer","hidden"),
     State("card-container-Total Script Count (30-day adj) by Dosage (in thousand)","hidden"),
     State("card-container-Total Units by Dosage (Mn)","hidden"),],
 )
-def add_close_measure_card( ad, v, h1, h2, h3, h4):
+def add_close_measure_card( ad, v, h1, h2, h3, h4, h5):
     triggered = [t["prop_id"] for t in dash.callback_context.triggered]
     edit = len([1 for i in triggered if i == "add-button-add-measure.n_clicks"])
     checked = v
     if edit:
-        for p in ["Utilizer Count and Market Share", 
-              "Avg Script (30-day adj) per Utilizer",
-             "Total Script Count (30-day adj) by Dosage (in thousand)",
-             "Total Units by Dosage (Mn)"]:
+        for p in ["Market Share", 
+            "Utilizer Count",
+            "Avg Script (30-day adj) per Utilizer",
+            "Total Script Count (30-day adj) by Dosage (in thousand)",
+            "Total Units by Dosage (Mn)"]:
             if p in checked:
                 states[p] = False
             else:
                 states[p] = True
-        return states["Utilizer Count and Market Share"], states["Avg Script (30-day adj) per Utilizer"],states["Total Script Count (30-day adj) by Dosage (in thousand)"],states["Total Units by Dosage (Mn)"]
-    return h1, h2, h3, h4
+        return states["Market Share"], states["Utilizer Count"], states["Avg Script (30-day adj) per Utilizer"],states["Total Script Count (30-day adj) by Dosage (in thousand)"],states["Total Units by Dosage (Mn)"]
+    return h1, h2, h3, h4, h5
 
 
 # generate selected domain button

@@ -72,9 +72,9 @@ def bargraph_overall(x,y1,y2):  #df_overall['month'] df_overall['base'] df_overa
         
         margin=dict(l=10,r=10,b=100,t=40,pad=0),
         font=dict(
-            family="NotoSans-CondensedLight",
-            size=12,
-            color="#7f7f7f"
+            family="NotoSans-Condensed",
+            size=14,
+            color="#38160f"
         ),
     )
     return fig_overall
@@ -132,9 +132,9 @@ def waterfall_overall(x,y1,y2): #df_waterfall['label']  df_waterfall['base'] df_
         ),
         margin=dict(l=10,r=10,b=100,t=40,pad=0),
         font=dict(
-            family="NotoSans-CondensedLight",
-            size=12,
-            color="#7f7f7f"
+            family="NotoSans-Condensed",
+            size=14,
+            color="#38160f"
         ),
     )
     return fig_waterfall   
@@ -143,28 +143,31 @@ def tbl_utilizer(df_utilizer):
     utilizer_tbl = go.Figure(data=[
         go.Table(
             header=dict(
+                height=30,
                 values=df_utilizer.columns,
                 line_color='white' ,       
                 fill_color=colors['yellow'],
-                align=['left','center'],
-                font=dict(color='white',size=10)
+                align=['center','center'],
+                font=dict(family="NotoSans-CondensedBlack",color='white',size=12)
             ),
             cells=dict(
+                height=30,
                 values=df_utilizer.T,
                 line_color='white' ,       
-                fill_color='lightgrey',
-                font=dict(size=10)
+                fill_color='#d0d0d0',
+                align=['center','center'],
+                font=dict(size=16)
             )
         )
     ])
     
     utilizer_tbl.update_layout(
        autosize=True,
-       margin=dict(l=0,r=0,b=30,t=50,pad=0),
+       margin=dict(l=0,r=0,b=0,t=40,pad=0),
        paper_bgcolor=colors["transparent"],
        font=dict(
-            family="NotoSans-CondensedLight",
-            size=12,
+            family="NotoSans-Condensed",
+            size=14,
             color="#38160f"
         ),
     )     
@@ -177,11 +180,12 @@ def piechart_utilizer(label,value): #df_util_split['Class']  df_util_split['%']
         go.Pie(        
             labels=label_pie, 
             values=value_pie,
-            pull=[0.1,0,0],
+            pull=[0,0,0.1,0],
             marker=dict(
                     colors=["#1357DD","F5B111","#df8885"]            
                     ),
-            textinfo='label+percent'
+            textinfo='label+percent',
+            textposition='auto'
         )
     ])
     fig_util_split.update_layout(
@@ -189,9 +193,9 @@ def piechart_utilizer(label,value): #df_util_split['Class']  df_util_split['%']
        margin=dict(l=0,r=0,b=0,t=0,pad=0),
        paper_bgcolor=colors["transparent"],
        font=dict(
-            family="NotoSans-CondensedLight",
-            size=12,
-            color="#7f7f7f"
+            family="NotoSans-Condensed",
+            size=14,
+            color="#38160f"
         ),
     )   
     return fig_util_split
@@ -208,7 +212,7 @@ def bargraph_h(x,y):#df_script_per_util['avg script']  df_script_per_util['label
             texttemplate='%{x:.2s}',
             width=0.5,
             marker=dict(
-                    color=[colors['grey'],colors['blue'],colors['blue']],
+                    color=[colors['grey'],'#1357DD','#1357DD'],
                     opacity=[0.7,0.7,1]
                     ),
             orientation='h'
@@ -221,8 +225,8 @@ def bargraph_h(x,y):#df_script_per_util['avg script']  df_script_per_util['label
         showlegend=False,
         margin=dict(l=0,r=0,b=30,t=30,pad=10),
        font=dict(
-            family="NotoSans-CondensedLight",
-            size=12,
+            family="NotoSans-Condensed",
+            size=14,
             color="#38160f"
         ),
     )
@@ -242,7 +246,7 @@ def bargraph_stack3(x,y1,y2,y3) : #   df_tot_script_split['dosage'] df_tot_scrip
             textposition='auto',
             texttemplate='%{y:.2s}',
             marker=dict(
-                    color=colors['blue'],
+                    color='#1357DD',
                     opacity=1
                     )
         ),
@@ -254,7 +258,7 @@ def bargraph_stack3(x,y1,y2,y3) : #   df_tot_script_split['dosage'] df_tot_scrip
             textposition='inside',
             texttemplate='%{y:.2s}',
             marker=dict(
-                    color=colors['blue'],
+                    color='#1357DD',
                     opacity=0.7
                     )
         ),
@@ -278,7 +282,7 @@ def bargraph_stack3(x,y1,y2,y3) : #   df_tot_script_split['dosage'] df_tot_scrip
         plot_bgcolor=colors['transparent'],
         legend=dict(
             orientation='h',
-            x=0,y=-0.05
+            x=0.2,y=-0.2
         ),
         yaxis = dict(
             showgrid = True, 
@@ -291,9 +295,9 @@ def bargraph_stack3(x,y1,y2,y3) : #   df_tot_script_split['dosage'] df_tot_scrip
         ),
         #hovermode=True,
         margin=dict(l=0,r=0,b=30,t=50,pad=0),
-       font=dict(
-            family="NotoSans-CondensedLight",
-            size=8,
+        font=dict(
+            family="NotoSans-Condensed",
+            size=14,
             color="#38160f"
         ),
     )    
@@ -338,10 +342,10 @@ def bubblegraph(x,y,t):#df_domain_perform['weight'] df_domain_perform['performan
             zerolinecolor='grey',
             rangemode="tozero"
         ),
-        margin=dict(l=0,r=0,b=50,t=10,pad=0),
-       font=dict(
-            family="NotoSans-CondensedLight",
-            size=8,
+        margin=dict(l=0,r=10,b=50,t=10,pad=0),
+        font=dict(
+            family="NotoSans-Condensed",
+            size=14,
             color="#38160f"
         ),
         yaxis = dict(
@@ -413,9 +417,9 @@ def waterfall_domain(x,y1,y2): #df_waterfall['label']  df_waterfall['base'] df_w
         ),
         margin=dict(l=10,r=10,b=100,t=40,pad=0),
         font=dict(
-            family="NotoSans-CondensedLight",
-            size=12,
-            color="#7f7f7f"
+            family="NotoSans-Condensed",
+            size=14,
+            color="#38160f"
         ),
     )
     return fig_waterfall  
@@ -452,8 +456,8 @@ def bargraph_perform(x,y): #df_measure_perform['performance'] df_measure_perform
                 bgcolor=colors['transparent']
                 ),
         margin=dict(l=0,r=0,b=30,t=50,pad=0),
-       font=dict(
-            family="NotoSans-CondensedLight",
+        font=dict(
+            family="NotoSans-Condensed",
             size=14,
             color="#38160f"
         ),

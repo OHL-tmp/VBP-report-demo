@@ -86,16 +86,43 @@ def modal_dashboard_domain_selection(n):
                     dbc.Modal(
                         [
                             dbc.ModalHeader([
-                                dbc.Row([
-                                     dbc.Col(html.Div("Select Domain")),
-                                     html.Div([
-                                         html.Div("Disease"),
-                                         dbc.Input(placeholder = "CHF",
-                                                  className = "mb-3",
-                                                  disabled = True)
-                                     ], style = {"display" : "flex"})
-                                ]),
-                            ]),
+                                html.Div(
+                                    [
+                                        dbc.Row([
+                                             dbc.Col(html.H2("Select Domain", style={"font-size":"2rem"}), width=7),
+                                             dbc.Col(
+                                                [
+                                                    dbc.Card(
+                                                        dbc.CardBody(
+                                                            [
+                                                                html.Div(
+                                                                    [
+                                                                        dbc.Row(
+                                                                            [
+                                                                                dbc.Col(html.H2("Disease", style={"font-size":"1rem","padding":"0.6rem"})),
+                                                                                dbc.Col(dbc.Input(placeholder = "CHF",className = "mb-3",disabled = True, style={"font-family":"NotoSans-SemiBold", "font-size":"1rem", "border":"none"}))
+                                                                            ]
+                                                                        )
+                                                                    ],
+                                                                    style={"margin-top":"-1rem"}
+                                                                ),
+                                                                html.Div(
+                                                                    html.P("placeholder placeholder placeholder placeholder")
+                                                                )
+                                                            ],
+                                                            style={"background-color":"#none", "border":"none", "border-radius":"0.5rem"}
+                                                        )
+                                                    )
+                                                ],
+                                                width=5
+                                            )
+                                             
+                                        ]),
+                                    ]
+                                )
+                            ],
+                            style={"background-image":"url('./assets/domain_selection_bg_s.png')","backgroud-size":"auto"}
+                            ),
                             dbc.ModalBody(
                                 card_domain_selection(n)
                             ),
@@ -120,14 +147,14 @@ def card_domain_selection(n):
                     dbc.CardBody(
                         dbc.Row(
                             [
-
                                 dbc.Col(collapse_domain_selection_measures(i)),
                             ]
                         )
                     ),
                 ],
                 id=u"dashboard-card-domain-selection-{}".format(i+1),
-                className="mb-3"
+                className="mb-3",
+                style={"background-color":"none", "border":"none", "border-radius":"0.5rem"}
             )
         domain_card.append(card)
     return html.Div(domain_card)
@@ -140,15 +167,22 @@ def collapse_domain_selection_measures(n):
                 [
                     dbc.Row(
                         [
-                            dbc.Col(html.Div(domain_set[n])),
-                            dbc.Card(id = u"dashboard-card-selected-domain-{}".format(n+1),
+                            dbc.Col(html.Div(
+                                    [
+                                        dbc.Badge("????",color="primary", className="mr-1"),
+                                        domain_set[n],
+                                    ],
+                                    style={"font-family":"NotoSans-SemiBold", "font-size":"1rem"}
+                                )
+                            ),
+                            html.Div(id = u"dashboard-card-selected-domain-{}".format(n+1),
                                     className="mb-3",
-                                    color="info"),
+                                    ),
                             dbc.Button(
                                 children = "Select",
                                 id=u"collapse-button-{}".format(n+1),
                                 className="mb-3",
-                                color="primary",
+                                style={"margin-right":"20px", "background-color":"#38160f", "border":"none", "border-radius":"10rem", "font-family":"NotoSans-Regular", "font-size":"0.6rem"}
                             ),
                         ]
                     ),

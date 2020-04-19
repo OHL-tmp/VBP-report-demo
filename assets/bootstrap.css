@@ -60,7 +60,7 @@ body {
   line-height: 1.5;
   color: #212529;
   text-align: left;
-  background-color: #f6f6f6;
+  background-color: #f5f5f5;
 }
 
 [tabindex="-1"]:focus:not(:focus-visible) {
@@ -380,7 +380,7 @@ h3, .h3 {
 }
 
 h4, .h4 {
-  font-family: 'NotoSans-Regular';
+  font-family: 'NotoSans-SemiBold';
   font-size: 1.5rem;
 }
 
