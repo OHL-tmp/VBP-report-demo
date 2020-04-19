@@ -529,10 +529,10 @@ def bubble_graph_domain(cr1, cr2, cr3, cr4, cr5, cr6, n):
     '''for i in range(len(trace_selected_number)):
         bubble_show_traces.append(bubble_graph_domain[trace_selected_number[i]])'''
     
-    if n%2 == 1:
-        return bubble_graph_domain, "Switch to Domains View" #需要替换成measure的图
+    if n and n%2 == 1:
+        return bubble_graph_measure, "Switch to Domains View" #需要替换成measure的图
         
-    return bubble_graph_measure, "Switch to Measures View"
+    return bubble_graph_domain, "Switch to Measures View"
     
         
 
@@ -554,12 +554,14 @@ def generate_domain_related_graph(b1, b2, b3, b4, b5, b6):
     ctx = dash.callback_context
     
     if not ctx.triggered:
-        button_id = 'No clicks yet'
+        button_id = 'button-domain-1'
     else:
         button_id = ctx.triggered[0]['prop_id'].split('.')[0]
     
-    fig1 = {}
-    fig2 = {}
+    fig1 = waterfall_domain1
+    fig2 = domain1_perform
+    name = domain_set[0]
+    
     if button_id == "button-domain-1":
         fig1 = waterfall_domain1
         fig2 = domain1_perform
@@ -584,6 +586,10 @@ def generate_domain_related_graph(b1, b2, b3, b4, b5, b6):
         fig1 = waterfall_domain6
         fig2 = domain6_perform
         name = domain_set[5]
+    else:
+        fig1 = waterfall_domain1
+        fig2 = domain1_perform
+        name = domain_set[0]
 
 
     
