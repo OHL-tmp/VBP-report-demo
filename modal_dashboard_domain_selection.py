@@ -33,7 +33,7 @@ server = app.server
 
 Domain_options ={
 "checklist-domain-measures-lv1-1" : {
-    "Average Cost per Patient" : ["All Causes Average Cost per Patient", "CHF Related Average Cost per Patient "],
+    "Average Cost per Patient" : ["All Causes Average Cost per Patient", "CHF Related Average Cost per Patient"],
     "Average IP Cost per Patient" : ["All Causes Average IP Cost per Patient", "CHF Related Average IP Cost per Patient"  ],
     "Hospitalization Rate" : ["All Causes Hospitalization Rate", "CHF Related Hospitalization Rate"],
     "ER Rate" : ["All Causes ER Rate", "CHF Related ER Rate"  ],
@@ -75,6 +75,8 @@ Domain_options ={
                            "Patient Reported Peripheral Oedema Changes", "Patient Reported Disturbed Sleep Changes"],
     "Patient Satisfaction" : []
 }}
+
+default_measure = ["CHF Related Average Cost per Patient", "CHF Related Hospitalization Rate", "NT-proBNP Improvement %", "LVEF Improvement %"]
 
 domain_focus = list(Domain_options.keys())
 
@@ -196,6 +198,10 @@ def checklist_domain_measures_lv1(d):
             hidden_status = True
         else:
             hidden_status = False
+        default = []    
+        for v in measures_lv1[key[i]]:
+            if v in default_measure:
+                default.append(v)
         button_measure_lv1 = html.Div([dbc.FormGroup(
                 [
                     dbc.Row([
@@ -214,7 +220,7 @@ def checklist_domain_measures_lv1(d):
                            dbc.FormGroup([
                                dbc.Checklist(
                                    options = [{"label" : k, "value": k} for k in measures_lv1[key[i]]],
-                                   value=[],
+                                   value=default,
                                    id=u"checklist-domain-measures-lv2-{}-{}".format(d+1,i+1),
                                    inline=True,
                                    persistence = True,
