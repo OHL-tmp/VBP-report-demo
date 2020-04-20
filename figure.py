@@ -10,6 +10,10 @@ from numpy import arange
 import plotly
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
+import dash
+import dash_table
+import dash_html_components as html
+import dash_core_components as dcc 
 
 colors={'blue':'rgba(18,85,222,100)','yellow':'rgba(246,177,17,100)','transparent':'rgba(255,255,255,0)','grey':'rgba(191,191,191,100)',
        'lightblue':'rgba(143,170,220,100)'}
@@ -184,37 +188,41 @@ def waterfall_overall(x,y1,y2): #df_waterfall['label']  df_waterfall['base'] df_
             color="#7f7f7f"
         ),
     )
-    return fig_waterfall   
+    return fig_waterfall  
 
 def tbl_utilizer(df_utilizer):
-    utilizer_tbl = go.Figure(data=[
-        go.Table(
-            header=dict(
-                values=df_utilizer.columns,
-                line_color='white' ,       
-                fill_color=colors['yellow'],
-                align=['left','center'],
-                font=dict(color='white',size=10)
-            ),
-            cells=dict(
-                values=df_utilizer.T,
-                line_color='white' ,       
-                fill_color='lightgrey',
-                font=dict(size=10)
-            )
-        )
-    ])
+    utilizer_tbl=dash_table.DataTable(
+        data=df_utilizer.to_dict('records'),
+        columns=[{'id': c, 'name': c} for c in df_utilizer.columns],
+        style_data={
+            'whiteSpace': 'normal',
+            'height': 'auto'
+        },
+        style_cell={
+            'textAlign': 'center',
+            'font-family':'NotoSans-CondensedLight',
+            'fontSize':8
+        },
+        style_cell_conditional=[
+            {'if': {'column_id': df_utilizer.columns[0]},
+             'width': '250px',
+             'fontWeight': 'bold',
+            },     
+        ],
+        style_table={
+            'back':  colors['blue']
+        },
+        style_header={
+            'height': '60px',
+            'backgroundColor': colors['yellow'],
+            'fontWeight': 'bold',
+            'font-family':'NotoSans-CondensedLight',
+            'fontSize':10,
+            'color': 'white'
+        },
+    )
     
-    utilizer_tbl.update_layout(
-       autosize=True,
-       margin=dict(l=0,r=0,b=30,t=50,pad=0),
-       paper_bgcolor=colors["transparent"],
-       font=dict(
-            family="NotoSans-CondensedLight",
-            size=12,
-            color="#38160f"
-        ),
-    )     
+       
     return utilizer_tbl
 
 def piechart_utilizer(label,value): #df_util_split['Class']  df_util_split['%']
@@ -368,10 +376,12 @@ def bubblegraph(df_domain_perform,traces,obj): # 数据，[0,1] ,'Domain' or 'Me
     fig_domain_perform.add_trace( go.Heatmap(x=x,y=y,z=z,
                                              colorscale=[[0, 'rgba(241,0,28,0.6)'], [0.3, 'rgba(241,0,28,0.2)'], 
                                                          [0.5, 'rgba(241,0,28,0)'],[1, 'rgba(241,0,28,0)']],
-                                             colorbar=dict(len=0.5,
+                                             colorbar=dict(len=1,
                                                            tickmode='array',
-                                                           tickvals=[0.1,0.5,0.9],
-                                                           ticktext=['High risk','Medium risk','Low risk'])))
+                                                           tickvals=[0.08,0.6],
+                                                           ticktext=['High risk','Low risk'],
+                                                           x=1,y=0.7
+                                                           )))
 
     for k in traces:
         fig_domain_perform.add_trace(
@@ -379,14 +389,15 @@ def bubblegraph(df_domain_perform,traces,obj): # 数据，[0,1] ,'Domain' or 'Me
                 x=df_domain_perform[df_domain_perform['Domain']==domain_set[k]]['Weight'] , 
                 y=df_domain_perform[df_domain_perform['Domain']==domain_set[k]]['Performance Diff from Target'] ,
                 x0=0,y0=0,
-                text=df_domain_perform[df_domain_perform['Domain']==domain_set[k]][obj],
-                mode='markers+text',
+                #text=df_domain_perform[df_domain_perform['Domain']==domain_set[k]][obj],
+                mode='markers+text',             
                 name=domain_set[k],
                 #dx=0.1,dy=0.1,
                 marker=dict(
-                    size=df_domain_perform[df_domain_perform['Domain']==domain_set[k]]['Weight']*200,
+                    size=df_domain_perform[df_domain_perform['Domain']==domain_set[k]]['Weight']*4000,
                     color=domain_colordict[domain_set[k]],
-                    opacity=0.8
+                    opacity=0.8,
+                    sizemode='area',
                 )
 
             )
@@ -444,6 +455,10 @@ def bubblegraph(df_domain_perform,traces,obj): # 数据，[0,1] ,'Domain' or 'Me
             zeroline=True,
             zerolinecolor='grey',
             ticks='inside'
+        ),
+        legend=dict(
+            orientation='h',
+            x=0,y=-0.05
         ),
         hovermode=False,
         modebar=dict(
@@ -614,7 +629,7 @@ def bargraph_perform(df_measure_perform,d): #df_measure_perform, 0 or 1 or 2....
     )
     return fig_measure_perform
 
-def tbl_measure(df_measure_perform,d): # data, 0 or 1 or 2..... domain number
+'''def tbl_measure(df_measure_perform,d): 
 
     df=df_measure_perform[df_measure_perform['Domain']==domain_set[d]].iloc[:,1:6]
     tbl = go.Figure(data=[
@@ -646,4 +661,56 @@ def tbl_measure(df_measure_perform,d): # data, 0 or 1 or 2..... domain number
             color="#38160f"
         ),
     )     
-    return tbl
+    return tbl'''
+
+def tbl_measure(df_measure_perform,d):
+    df=df_measure_perform[df_measure_perform['Domain']==domain_set[d]].iloc[:,1:]
+    if len(df)>0 :
+        df['highlight']=df.apply(lambda x : 1 if (x['Performance Diff from Target']<0.05)& (x['Weight']>0.3)  else 0, axis=1)
+    else: df['highlight']=1
+    
+    measure_tbl=dash_table.DataTable(
+        data=df.to_dict('records'),
+        columns=[ {'id': c, 'name': c} for c in df.columns ],
+        sort_action="native",
+        sort_mode='multi',
+        style_data={
+            'whiteSpace': 'normal',
+            'height': 'auto'
+        },
+        style_data_conditional=[
+        {
+            'if': {'column_id':c,
+                'filter_query': '{highlight} eq 1' },
+            'backgroundColor': '#3D9970',
+            'color': 'white',
+        }  for c in df.columns
+        ],
+        style_cell={
+            'textAlign': 'center',
+            'font-family':'NotoSans-CondensedLight',
+            'fontSize':8
+        },
+        style_cell_conditional=[
+            {'if': {'column_id': df.columns[0]},
+             'width': '250px',
+             'fontWeight': 'bold',
+            }, 
+            {'if': {'column_id': 'highlight'},
+            'display': 'none'}
+        ],
+        style_table={
+            'back':  colors['blue']
+        },
+        style_header={
+            'height': '60px',
+            'backgroundColor': colors['yellow'],
+            'fontWeight': 'bold',
+            'font-family':'NotoSans-CondensedLight',
+            'fontSize':10,
+            'color': 'white'
+        },
+    )
+    
+       
+    return measure_tbl

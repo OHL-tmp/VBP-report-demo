@@ -241,10 +241,10 @@ def card_main_volumn_based_measures():
                         ),
                         html.Div(
                             [
-                                card_sub2_volumn_based_measures("Utilizer Count and Market Share",tbl_utilizer1,piechart_utilizer1,0.6,0.4),
+                                card_sub2_volumn_based_measures("Utilizer Count and Market Share",tbl_utilizer1,piechart_utilizer1,'dash','fig',0.2,0.4),
                                 card_sub1_volumn_based_measures("Avg Script (30-day adj) per Utilizer",bargraph_script_per_util),
-                                card_sub2_volumn_based_measures("Total Script Count (30-day adj) by Dosage (in thousand)",bargraph_tot_script,bargraph_tot_script_split,0.5,0.5),
-                                card_sub2_volumn_based_measures("Total Units by Dosage (Mn)",bargraph_tot_unit,bargraph_tot_unit_split,0.5,0.5),
+                                card_sub2_volumn_based_measures("Total Script Count (30-day adj) by Dosage (in thousand)",bargraph_tot_script,bargraph_tot_script_split,'fig','fig',0.5,0.5),
+                                card_sub2_volumn_based_measures("Total Units by Dosage (Mn)",bargraph_tot_unit,bargraph_tot_unit_split,'fig','fig',0.5,0.5),
                             ],
                             className="mb-3",
                         ),
@@ -283,9 +283,21 @@ def card_sub1_volumn_based_measures(volumn_measure, fig):
             )
 
 
-def card_sub2_volumn_based_measures(volumn_measure,fig1,fig2,size1,size2):
+def card_sub2_volumn_based_measures(volumn_measure,fig1,fig2,tab1,tab2,size1,size2): # tab: 'dash' or 'fig'
     size1 = int(size1*12)
     size2 = int(size2*12)
+    style1={"height" : "14rem"}
+    style2={"height" : "14rem"}
+    if tab1=='dash':
+        figure1=html.Div([fig1],style=style1)
+    else:
+        figure1=dcc.Graph(figure=fig1,style=style1)
+    
+    if tab2=='dash':
+        figure2=html.Div([fig2],style=style2)
+    else:
+        figure2=dcc.Graph(figure=fig2, style=style2)
+  
     return html.Div(
 			    [
 			        dbc.Card(
@@ -300,8 +312,8 @@ def card_sub2_volumn_based_measures(volumn_measure,fig1,fig2,size1,size2):
 		                        ),
 		                        dbc.Row(
 		                            [
-		                                dbc.Col(dcc.Graph(figure=fig1, style={"height" : "14rem"}), width=size1),
-		                                dbc.Col(dcc.Graph(figure=fig2, style={"height" : "14rem"}), width=size2),
+		                                dbc.Col(figure1, width=size1),
+		                                dbc.Col(figure2, width=size2),
 		                            ],
 		                        ),
 		                    ]
@@ -422,7 +434,7 @@ def card_sub_value_based_measures():
                         ),
                         html.Div(
                             [
-                                dcc.Graph(id = "graph-container-domain-selected-1", style={"height":"20rem"}),
+                                html.Div(id = "graph-container-domain-selected-1", style={"height":"20rem"}),
                                 dcc.Graph(id = "graph-container-domain-selected-2", style={"height":"20rem"}),
                             ],
                         ),
@@ -540,7 +552,7 @@ def bubble_graph_domain(cr1, cr2, cr3, cr4, cr5, cr6, n):
 
 # generate domain-related graph
 @app.callback(
-    [Output("graph-container-domain-selected-1", "figure"),
+    [Output("graph-container-domain-selected-1", "children"),
     Output("graph-container-domain-selected-2", "figure"),
     Output("card_domain_name", "children")],
     [Input("button-domain-1", "n_clicks"),
