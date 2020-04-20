@@ -120,7 +120,15 @@ def modal_dashboard_domain_selection(n):
                                                                     style={"margin-top":"-1rem"}
                                                                 ),
                                                                 html.Div(
-                                                                    html.P("placeholder placeholder placeholder placeholder")
+                                                                    [
+                                                                    dbc.Row(
+                                                                            [
+                                                                                dbc.Col(html.H2("Brand Name", style={"font-size":"1rem","padding":"0.6rem"})),
+                                                                                dbc.Col(dbc.Input(placeholder = "Entresto",className = "mb-3",disabled = True, style={"font-family":"NotoSans-SemiBold", "font-size":"1rem", "border":"none"}))
+                                                                            ]
+                                                                        ),
+                                                                    html.P("25 out of XX measures XXX", style={"font-size":"0.7rem"}),
+                                                                    ]
                                                                 )
                                                             ],
                                                             style={"background-color":"#none", "border":"none", "border-radius":"0.5rem"}
@@ -172,9 +180,10 @@ def card_domain_selection(n):
                         )
                     ),
                 ],
+                outline=True,
                 id=u"dashboard-card-domain-selection-{}".format(i+1),
                 className="mb-3",
-                style={"background-color":"none", "border":"none", "border-radius":"0.5rem"}
+                style={"background-color":"none", "border-radius":"0.5rem"}
             )], hidden = hidden_status)
         domain_card.append(card)
     return html.Div(domain_card)

@@ -384,7 +384,7 @@ def card_buttonGroup_domain_selected():
     return dbc.Card(
                 dbc.CardBody([
                     html.Div([dbc.Button("Cost & Utilization Reduction", 
-                                      id = "button-domain-1", active=True,outline=True, color="primary", className="mr-1", style = {"font-family":"NotoSans-Regular", "font-size":"0.8rem"})],
+                                      id = "button-domain-1", outline=True, color="primary", className="mr-1", style = {"font-family":"NotoSans-Regular", "font-size":"0.8rem"})],
                              id = "buttonGroup-domain-selected-1",
                              hidden = True),
                     html.Div([dbc.Button("Improving Disease Outcome", 
@@ -538,7 +538,7 @@ def bubble_graph_domain(cr1, cr2, cr3, cr4, cr5, cr6, n):
         bubble_show_traces.append(bubble_graph_domain[trace_selected_number[i]])'''
     
     if n and n%2 == 1:
-        return bubble_graph_measure, "Switch to Domains View" #需要替换成measure的图
+        return bubble_graph_measure, "Switch to Domains View" 
         
     return bubble_graph_domain, "Switch to Measures View"
     
@@ -550,7 +550,13 @@ def bubble_graph_domain(cr1, cr2, cr3, cr4, cr5, cr6, n):
 @app.callback(
     [Output("graph-container-domain-selected-1", "figure"),
     Output("graph-container-domain-selected-2", "figure"),
-    Output("card_domain_name", "children")],
+    Output("card_domain_name", "children"),
+    Output("button-domain-1", "active"),
+    Output("button-domain-2", "active"),
+    Output("button-domain-3", "active"),
+    Output("button-domain-4", "active"),
+    Output("button-domain-5", "active"),
+    Output("button-domain-6", "active")],
     [Input("button-domain-1", "n_clicks"),
     Input("button-domain-2", "n_clicks"),
     Input("button-domain-3", "n_clicks"),
@@ -564,6 +570,7 @@ def generate_domain_related_graph(b1, b2, b3, b4, b5, b6):
     fig1 = waterfall_domain1
     fig2 = domain1_perform
     name = domain_set[0]
+    ac = [True, False, False, False, False, False]
     
     
     if ctx.triggered[0]['value'] == None:
@@ -576,29 +583,35 @@ def generate_domain_related_graph(b1, b2, b3, b4, b5, b6):
         fig1 = waterfall_domain1
         fig2 = domain1_perform
         name = domain_set[0]
+        ac = [True, False, False, False, False, False]
     elif button_id == "button-domain-2":
         fig1 = waterfall_domain2
         fig2 = domain2_perform
         name = domain_set[1]
+        ac = [False, True, False, False, False, False]
     elif button_id == "button-domain-3":
         fig1 = waterfall_domain3
         fig2 = domain3_perform
         name = domain_set[2]
+        ac = [False, False, True, False, False, False]
     elif button_id == "button-domain-4":
         fig1 = waterfall_domain4
         fig2 = domain4_perform
         name = domain_set[3]
+        ac = [False, False, False, True, False, False]
     elif button_id == "button-domain-5":
         fig1 = waterfall_domain5
         fig2 = domain5_perform
         name = domain_set[4]
+        ac = [False, False, False, False, True, False]
     elif button_id == "button-domain-6":
         fig1 = waterfall_domain6
         fig2 = domain6_perform
         name = domain_set[5]
+        ac = [False, False, False, False, False, True]
 
     
-    return fig1, fig2, name
+    return fig1, fig2, name, ac[0], ac[1], ac[2], ac[3], ac[4], ac[5]
 
 ## modal
 @app.callback(
@@ -615,10 +628,10 @@ def toggle_modal_dashboard_domain_selection(n1, n2, is_open):
 
 def toggle_collapse_domain_selection_measures(n, is_open):
     if n and n%2 == 1:
-        return not is_open, "Collapse"
+        return not is_open, "Confirm"
     elif n and n%2 == 0:
         return not is_open, "Edit"
-    return is_open, "Select"
+    return is_open, "Edit"
 
 for i in range(domain_ct):
     app.callback(
@@ -670,7 +683,7 @@ for d in range(len(list(Domain_options.keys()))):
 )
 def toggle_collapse_domain_selection_measures_1(is_open, v1, v2, v3, v4):
     measure_count = len(v1) + len(v2) + len(v3) + len(v4)
-    if measure_count > 0 and is_open != True: 
+    if measure_count > 0: 
         return  "info", u"{} measures selected".format(measure_count)
     return "light", ""    
 
@@ -685,7 +698,7 @@ def toggle_collapse_domain_selection_measures_1(is_open, v1, v2, v3, v4):
 )
 def toggle_collapse_domain_selection_measures_2(is_open, v1, v2, v3):
     measure_count = len(v1) + len(v2) +len(v3)
-    if measure_count > 0 and is_open != True: 
+    if measure_count > 0: 
         return  "info", u"{} measures selected".format(measure_count)
     return "light", "" 
 
@@ -698,7 +711,7 @@ def toggle_collapse_domain_selection_measures_2(is_open, v1, v2, v3):
 )
 def toggle_collapse_domain_selection_measures_4(is_open, v1):
     measure_count = len(v1) 
-    if measure_count > 0 and is_open != True: 
+    if measure_count > 0: 
         return  "info", u"{} measures selected".format(measure_count)
     return "light", "" 
 
@@ -711,7 +724,7 @@ def toggle_collapse_domain_selection_measures_4(is_open, v1):
 )
 def toggle_collapse_domain_selection_measures_5(is_open, v1):
     measure_count = len(v1)
-    if measure_count > 0 and is_open != True: 
+    if measure_count > 0: 
         return  "info", u"{} measures selected".format(measure_count)
     return "light", "" 
 
@@ -724,7 +737,7 @@ def toggle_collapse_domain_selection_measures_5(is_open, v1):
 )
 def toggle_collapse_domain_selection_measures_6(is_open, v1):
     measure_count = len(v1)
-    if measure_count > 0 and is_open != True: 
+    if measure_count > 0: 
         return  "info", u"{} measures selected".format(measure_count)
     return "light", "" 
 
