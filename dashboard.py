@@ -28,7 +28,7 @@ BASE_PATH = pathlib.Path(__file__).parent.resolve()
 DATA_PATH = BASE_PATH.joinpath("Data").resolve()
 
 
-app = dash.Dash(__name__, url_base_pathname='/demo-report/')
+app = dash.Dash(__name__, url_base_pathname='/vbc-demo/dashboard/')
 
 server = app.server
 
@@ -95,7 +95,7 @@ def create_layout():
     load_data()
     return html.Div(
                 [ 
-                    html.Div([Header(app)], style={"height":"6rem"}),
+                    html.Div([Header_mgmt(app)], style={"height":"6rem"}),
                     
                     html.Div(
                         [
