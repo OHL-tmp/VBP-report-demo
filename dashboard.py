@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 Created on Mon Apr 13 14:10:52 2020
-@author: yanchen
+@author: yanen
 """
 
 import dash
@@ -160,7 +160,7 @@ def div_overall_performance():
                 [
                     dbc.Row(
                         [
-                            dbc.Col(html.H1("OVERALL PERFORMANCE"), width=9),
+                            dbc.Col(html.H1("OVERALL PERFORMANCE"), width="auto"),
                             dbc.Card(
                                 dbc.CardBody(
                                     [
@@ -321,7 +321,7 @@ def card_main_value_based_measures():
     return dbc.Card(
                 dbc.CardBody(
                     [
-                        html.H1("Volumn Based Measures", className="mb-3", style={"font-size":"1.5rem"}),
+                        html.H1("Value Based Measures", className="mb-3", style={"font-size":"1.5rem"}),
                         html.Div(
                             [
                                 card_modify_value_based_measures(),
@@ -363,7 +363,7 @@ def card_modify_value_based_measures():
                         dbc.Row(
                             [
                                 dbc.Col(html.Img(src=app.get_asset_url("bullet-round-blue.png"), width="20%"), width=1, align="start", style={"margin-right":"-20px", "margin-top":"-4px"}),
-                                dbc.Col(html.H4("Domain Detail"), style={"font-size":"0.4rem"}),
+                                dbc.Col(html.H4("Domain Detail", style={"font-size":"1rem"}), width=8),
                                 dbc.Col(modal_dashboard_domain_selection(domain_ct), width=3),
                             ],
                             no_gutters=True,
@@ -649,7 +649,7 @@ for d in range(len(list(Domain_options.keys()))):
     
 def sum_selected_measure(v):
     if len(v) > 0:
-        return "info", u"{} measures selected".format(len(v))
+        return "primary", u"{}".format(len(v))
     return "light", ""
 
 for d in range(len(list(Domain_options.keys()))):
@@ -664,6 +664,7 @@ for d in range(len(list(Domain_options.keys()))):
 ## Domain 1
 @app.callback(
     [Output("dashboard-card-domain-selection-1", "color"),
+    Output("dashboard-card-domain-selection-1", "outline"),
     Output("dashboard-card-selected-domain-1", "children")],
     [Input("collapse-1", "is_open"),
     Input("checklist-domain-measures-lv2-1-1", "value"),
@@ -673,13 +674,14 @@ for d in range(len(list(Domain_options.keys()))):
 )
 def toggle_collapse_domain_selection_measures_1(is_open, v1, v2, v3, v4):
     measure_count = len(v1) + len(v2) + len(v3) + len(v4)
-    if measure_count > 0 and is_open != True: 
-        return  "info", u"{} measures selected".format(measure_count)
-    return "light", ""    
+    if measure_count > 0: 
+        return  "primary", True, u"{} measures selected".format(measure_count)
+    return "light", False, ""    
 
 ## Domain 2
 @app.callback(
     [Output("dashboard-card-domain-selection-2", "color"),
+    Output("dashboard-card-domain-selection-2", "outline"),
     Output("dashboard-card-selected-domain-2", "children")],
     [Input("collapse-2", "is_open"),
     Input("checklist-domain-measures-lv2-2-1", "value"),
@@ -688,48 +690,51 @@ def toggle_collapse_domain_selection_measures_1(is_open, v1, v2, v3, v4):
 )
 def toggle_collapse_domain_selection_measures_2(is_open, v1, v2, v3):
     measure_count = len(v1) + len(v2) +len(v3)
-    if measure_count > 0 and is_open != True: 
-        return  "info", u"{} measures selected".format(measure_count)
-    return "light", "" 
+    if measure_count > 0: 
+        return  "primary", True, u"{} measures selected".format(measure_count)
+    return "light", False, "" 
 
 ## Domain 4
 @app.callback(
     [Output("dashboard-card-domain-selection-4", "color"),
+    Output("dashboard-card-domain-selection-4", "outline"),
     Output("dashboard-card-selected-domain-4", "children")],
     [Input("collapse-4", "is_open"),
     Input("checklist-domain-measures-lv2-4-1", "value")],
 )
 def toggle_collapse_domain_selection_measures_4(is_open, v1):
     measure_count = len(v1) 
-    if measure_count > 0 and is_open != True: 
-        return  "info", u"{} measures selected".format(measure_count)
-    return "light", "" 
+    if measure_count > 0: 
+        return  "primary", True, u"{} measures selected".format(measure_count)
+    return "light", False, "" 
 
 ## Domain 5
 @app.callback(
     [Output("dashboard-card-domain-selection-5", "color"),
+    Output("dashboard-card-domain-selection-5", "outline"),
     Output("dashboard-card-selected-domain-5", "children")],
     [Input("collapse-5", "is_open"),
     Input("checklist-domain-measures-lv2-5-1", "value")],
 )
 def toggle_collapse_domain_selection_measures_5(is_open, v1):
     measure_count = len(v1)
-    if measure_count > 0 and is_open != True: 
-        return  "info", u"{} measures selected".format(measure_count)
-    return "light", "" 
+    if measure_count > 0: 
+        return  "primary", True, u"{} measures selected".format(measure_count)
+    return "light", False, "" 
 
 ## Domain 6
 @app.callback(
     [Output("dashboard-card-domain-selection-6", "color"),
+    Output("dashboard-card-domain-selection-6", "outline"),
     Output("dashboard-card-selected-domain-6", "children")],
     [Input("collapse-6", "is_open"),
     Input("checklist-domain-measures-lv2-6-1", "value")],
 )
 def toggle_collapse_domain_selection_measures_6(is_open, v1):
     measure_count = len(v1)
-    if measure_count > 0 and is_open != True: 
-        return  "info", u"{} measures selected".format(measure_count)
-    return "light", "" 
+    if measure_count > 0: 
+        return  "primary", True, u"{} measures selected".format(measure_count)
+    return "light", False, "" 
 
 
 
