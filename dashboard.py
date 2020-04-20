@@ -278,7 +278,7 @@ def card_sub1_volumn_based_measures(volumn_measure, fig, tab,size):
 		                        ),
 		                        dbc.Row(
 		                            [
-		                                fig,
+		                                figure,
 		                            ],
 		                        ),
 		                    ]
