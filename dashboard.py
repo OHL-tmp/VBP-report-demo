@@ -113,8 +113,8 @@ def create_layout():
                         [
                             dbc.Row(
                                 [
-                                    dbc.Col(card_main_volumn_based_measures()),
-                                    dbc.Col(card_main_value_based_measures()),
+                                    dbc.Col(card_main_volumn_based_measures(), width=6),
+                                    dbc.Col(card_main_value_based_measures(), width=6),
                                 ]
                             ),
                         ],
@@ -276,10 +276,11 @@ def card_sub1_volumn_based_measures(volumn_measure, fig, tab,size):
 		                            ],
 		                            no_gutters=True,
 		                        ),
-		                        dbc.Row(
+		                        html.Div(
 		                            [
 		                                figure,
 		                            ],
+                                    style={"padding":"1rem"}
 		                        ),
 		                    ]
 		                ),
@@ -367,7 +368,7 @@ def card_overview_value_based_measures():
                             no_gutters=True,
                         ),
                         
-                        dcc.Graph(style={"height":"20rem"}, id = "bubble_graph_domain")
+                        dcc.Graph(style={"height":"22rem"}, id = "bubble_graph_domain")
                     ]
                 ),
                 className="mb-3",
@@ -444,7 +445,7 @@ def card_sub_value_based_measures():
                         ),
                         html.Div(
                             [
-                                html.Div(id = "graph-container-domain-selected-1", style={"height":"20rem"}),
+                                html.Div(id = "graph-container-domain-selected-1", style={"max-height":"20rem"}),
                                 dcc.Graph(id = "graph-container-domain-selected-2", style={"height":"20rem"}),
                             ],
                         ),
