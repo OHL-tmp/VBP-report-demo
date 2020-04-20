@@ -209,7 +209,7 @@ def card_main_volumn_based_measures():
                                                               {'label':"Avg Script (30-day adj) per Utilizer" , 'value':"Avg Script (30-day adj) per Utilizer" },
                                                               {'label':"Total Script Count (30-day adj) by Dosage (in thousand)" , 'value':"Total Script Count (30-day adj) by Dosage (in thousand)" },
                                                               {'label':"Total Units by Dosage (Mn)", 'value': "Total Units by Dosage (Mn)"},],
-                                                    value = ["Market Share","Utilizer Count","Avg Script (30-day adj) per Utilizer","Total Script Count (30-day adj) by Dosage (in thousand)","Total Units by Dosage (Mn)"],
+                                                    value = ["Market Share","Utilizer Count","Avg Script (30-day adj) per Utilizer"],
                                                     labelCheckedStyle={"color": "#057aff"},
                                                     id = "checklist-add-measure",
                                                     style={"font-family":"NotoSans-Condensed", "font-size":"0.8rem", "padding":"1rem"},
@@ -560,16 +560,18 @@ def bubble_graph_domain(cr1, cr2, cr3, cr4, cr5, cr6, n):
 )
 def generate_domain_related_graph(b1, b2, b3, b4, b5, b6):
     ctx = dash.callback_context
-    
-    if not ctx.triggered:
-        button_id = 'button-domain-1'
-    else:
-        button_id = ctx.triggered[0]['prop_id'].split('.')[0]
-    
+
     fig1 = waterfall_domain1
     fig2 = domain1_perform
     name = domain_set[0]
     
+    
+    if ctx.triggered[0]['value'] == None:
+        button_id = "button-domain-1"
+    else:
+        button_id = ctx.triggered[0]['prop_id'].split('.')[0]
+    
+
     if button_id == "button-domain-1":
         fig1 = waterfall_domain1
         fig2 = domain1_perform
@@ -594,11 +596,6 @@ def generate_domain_related_graph(b1, b2, b3, b4, b5, b6):
         fig1 = waterfall_domain6
         fig2 = domain6_perform
         name = domain_set[5]
-    else:
-        fig1 = waterfall_domain1
-        fig2 = domain1_perform
-        name = domain_set[0]
-
 
     
     return fig1, fig2, name
@@ -737,4 +734,4 @@ def toggle_collapse_domain_selection_measures_6(is_open, v1):
 
 
 if __name__ == "__main__":
-    app.run_server(host="127.0.0.1",debug=True)
+    app.run_server(host="127.0.0.1",debug=True, port=8051)
