@@ -54,25 +54,25 @@ def load_data():
     df_tot_script=pd.DataFrame(df_tot_script_split.sum(axis=0)[1:4,],columns=['tot_script']).iloc[[2,1,0],]
     df_tot_unit=pd.DataFrame(df_tot_unit_split.sum(axis=0)[1:4,],columns=['tot_unit']).iloc[[2,1,0],]
     
-    waterfall_domain1=waterfall_domain(df_domain_waterfall['label'] ,df_domain_waterfall['base'], df_domain_waterfall['adjusted'])
+    waterfall_domain1=tbl_measure(df_measure_perform,0)
     domain1_perform=bargraph_perform(df_measure_perform, 0)
     
-    waterfall_domain2=waterfall_domain(df_domain_waterfall['label'] ,df_domain_waterfall['base'], df_domain_waterfall['adjusted'])
+    waterfall_domain2=tbl_measure(df_measure_perform,1)
     domain2_perform=bargraph_perform(df_measure_perform, 1)
     
-    waterfall_domain3=waterfall_domain(df_domain_waterfall['label'] ,df_domain_waterfall['base'], df_domain_waterfall['adjusted'])
+    waterfall_domain3=tbl_measure(df_measure_perform,2)
     domain3_perform=bargraph_perform(df_measure_perform, 2)
     
-    waterfall_domain4=waterfall_domain(df_domain_waterfall['label'] ,df_domain_waterfall['base'], df_domain_waterfall['adjusted'])
+    waterfall_domain4=tbl_measure(df_measure_perform,3)
     domain4_perform=bargraph_perform(df_measure_perform, 3)
     
-    waterfall_domain5=waterfall_domain(df_domain_waterfall['label'] ,df_domain_waterfall['base'], df_domain_waterfall['adjusted'])
+    waterfall_domain5=tbl_measure(df_measure_perform,4)
     domain5_perform=bargraph_perform(df_measure_perform, 4)
     
-    waterfall_domain6=waterfall_domain(df_domain_waterfall['label'] ,df_domain_waterfall['base'], df_domain_waterfall['adjusted'])
+    waterfall_domain6=tbl_measure(df_measure_perform,5)
     domain6_perform=bargraph_perform(df_measure_perform, 5)
     
-    waterfall_domain7=waterfall_domain(df_domain_waterfall['label'] ,df_domain_waterfall['base'], df_domain_waterfall['adjusted'])
+    waterfall_domain7=tbl_measure(df_measure_perform,5)
     domain7_perform=bargraph_perform(df_measure_perform, 5)
     
     

@@ -150,6 +150,7 @@ def waterfall_overall(x,y1,y2): #df_waterfall['label']  df_waterfall['base'] df_
             y=y2_waterfall,
             text=y2_waterfall,
             textposition='outside',
+            textfont=dict(color=[colors['transparent'],colors['transparent'],'black',colors['transparent'],'black']),
             texttemplate='%{y:.2s}',
             marker=dict(
                     color=colors['yellow'],
@@ -411,14 +412,15 @@ def bubblegraph(df_domain_perform,traces,obj): # 数据，[0,1] ,'Domain' or 'Me
         paper_bgcolor=colors['transparent'],
         plot_bgcolor=colors['transparent'],
         annotations=annotations,
+        showlegend=True,
         xaxis = dict(
             tickmode='linear',
-            range=[0,1],
+            range=[0,0.9],
             tick0=0,
             dtick=0.1,
-            showticklabels=False,
-            #tickformat='%',
-            #position=0.37,
+            showticklabels=True,
+            tickformat='%',
+            position=0.47,
 
             showgrid=True,
             gridcolor =colors['grey'],
