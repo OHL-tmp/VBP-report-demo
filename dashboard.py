@@ -499,7 +499,7 @@ def add_close_measure_card( ad, v, h1, h2, h3, h4, h5):
 # generate selected domain button
 
 def generate_card_domain_button(color):
-    if color == "info":
+    if color == "primary":
         return False
     return True
 
@@ -526,7 +526,7 @@ def bubble_graph_domain(cr1, cr2, cr3, cr4, cr5, cr6, n):
 
     trace_selected_number = []
     for i in range(domain_ct):
-        if eval("cr"+str(i+1)) == "info":
+        if eval("cr"+str(i+1)) == "primary":
             trace_selected_number.append(i)    
     bubble_show_traces = []
     
