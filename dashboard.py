@@ -19,7 +19,7 @@ import plotly.graph_objects as go
 
 from plotly.subplots import make_subplots
 from dash.dependencies import Input, Output, State
-from utils import Header, make_dash_table
+from utils import *
 from figure import *
 from modal_dashboard_domain_selection import *
 
@@ -28,7 +28,7 @@ BASE_PATH = pathlib.Path(__file__).parent.resolve()
 DATA_PATH = BASE_PATH.joinpath("Data").resolve()
 
 
-app = dash.Dash(__name__, url_base_pathname='/demo-report/')
+app = dash.Dash(__name__, url_base_pathname='/vbc-demo/dashboard/')
 
 server = app.server
 
@@ -95,7 +95,7 @@ def create_layout():
     load_data()
     return html.Div(
                 [ 
-                    html.Div([Header(app)], style={"height":"6rem"}),
+                    html.Div([Header_mgmt(app)], style={"height":"6rem"}),
                     
                     html.Div(
                         [
@@ -209,7 +209,7 @@ def card_main_volumn_based_measures():
                                                               {'label':"Avg Script (30-day adj) per Utilizer" , 'value':"Avg Script (30-day adj) per Utilizer" },
                                                               {'label':"Total Script Count (30-day adj) by Dosage (in thousand)" , 'value':"Total Script Count (30-day adj) by Dosage (in thousand)" },
                                                               {'label':"Total Units by Dosage (Mn)", 'value': "Total Units by Dosage (Mn)"},],
-                                                    value = ["Market Share","Utilizer Count","Avg Script (30-day adj) per Utilizer","Total Script Count (30-day adj) by Dosage (in thousand)","Total Units by Dosage (Mn)"],
+                                                    value = ["Market Share","Utilizer Count","Avg Script (30-day adj) per Utilizer"],
                                                     labelCheckedStyle={"color": "#057aff"},
                                                     id = "checklist-add-measure",
                                                     style={"font-family":"NotoSans-Condensed", "font-size":"0.8rem", "padding":"1rem"},
@@ -384,7 +384,7 @@ def card_buttonGroup_domain_selected():
     return dbc.Card(
                 dbc.CardBody([
                     html.Div([dbc.Button("Cost & Utilization Reduction", 
-                                      id = "button-domain-1", active=True,outline=True, color="primary", className="mr-1", style = {"font-family":"NotoSans-Regular", "font-size":"0.8rem"})],
+                                      id = "button-domain-1", outline=True, color="primary", className="mr-1", style = {"font-family":"NotoSans-Regular", "font-size":"0.8rem"})],
                              id = "buttonGroup-domain-selected-1",
                              hidden = True),
                     html.Div([dbc.Button("Improving Disease Outcome", 
@@ -538,7 +538,7 @@ def bubble_graph_domain(cr1, cr2, cr3, cr4, cr5, cr6, n):
         bubble_show_traces.append(bubble_graph_domain[trace_selected_number[i]])'''
     
     if n and n%2 == 1:
-        return bubble_graph_measure, "Switch to Domains View" #需要替换成measure的图
+        return bubble_graph_measure, "Switch to Domains View" 
         
     return bubble_graph_domain, "Switch to Measures View"
     
@@ -550,7 +550,13 @@ def bubble_graph_domain(cr1, cr2, cr3, cr4, cr5, cr6, n):
 @app.callback(
     [Output("graph-container-domain-selected-1", "figure"),
     Output("graph-container-domain-selected-2", "figure"),
-    Output("card_domain_name", "children")],
+    Output("card_domain_name", "children"),
+    Output("button-domain-1", "active"),
+    Output("button-domain-2", "active"),
+    Output("button-domain-3", "active"),
+    Output("button-domain-4", "active"),
+    Output("button-domain-5", "active"),
+    Output("button-domain-6", "active")],
     [Input("button-domain-1", "n_clicks"),
     Input("button-domain-2", "n_clicks"),
     Input("button-domain-3", "n_clicks"),
@@ -560,48 +566,52 @@ def bubble_graph_domain(cr1, cr2, cr3, cr4, cr5, cr6, n):
 )
 def generate_domain_related_graph(b1, b2, b3, b4, b5, b6):
     ctx = dash.callback_context
-    
-    if not ctx.triggered:
-        button_id = 'button-domain-1'
-    else:
-        button_id = ctx.triggered[0]['prop_id'].split('.')[0]
-    
+
     fig1 = waterfall_domain1
     fig2 = domain1_perform
     name = domain_set[0]
+    ac = [True, False, False, False, False, False]
     
+    
+    if ctx.triggered[0]['value'] == None:
+        button_id = "button-domain-1"
+    else:
+        button_id = ctx.triggered[0]['prop_id'].split('.')[0]
+    
+
     if button_id == "button-domain-1":
         fig1 = waterfall_domain1
         fig2 = domain1_perform
         name = domain_set[0]
+        ac = [True, False, False, False, False, False]
     elif button_id == "button-domain-2":
         fig1 = waterfall_domain2
         fig2 = domain2_perform
         name = domain_set[1]
+        ac = [False, True, False, False, False, False]
     elif button_id == "button-domain-3":
         fig1 = waterfall_domain3
         fig2 = domain3_perform
         name = domain_set[2]
+        ac = [False, False, True, False, False, False]
     elif button_id == "button-domain-4":
         fig1 = waterfall_domain4
         fig2 = domain4_perform
         name = domain_set[3]
+        ac = [False, False, False, True, False, False]
     elif button_id == "button-domain-5":
         fig1 = waterfall_domain5
         fig2 = domain5_perform
         name = domain_set[4]
+        ac = [False, False, False, False, True, False]
     elif button_id == "button-domain-6":
         fig1 = waterfall_domain6
         fig2 = domain6_perform
         name = domain_set[5]
-    else:
-        fig1 = waterfall_domain1
-        fig2 = domain1_perform
-        name = domain_set[0]
-
+        ac = [False, False, False, False, False, True]
 
     
-    return fig1, fig2, name
+    return fig1, fig2, name, ac[0], ac[1], ac[2], ac[3], ac[4], ac[5]
 
 ## modal
 @app.callback(
@@ -618,10 +628,10 @@ def toggle_modal_dashboard_domain_selection(n1, n2, is_open):
 
 def toggle_collapse_domain_selection_measures(n, is_open):
     if n and n%2 == 1:
-        return not is_open, "Collapse"
+        return not is_open, "Confirm"
     elif n and n%2 == 0:
         return not is_open, "Edit"
-    return is_open, "Select"
+    return is_open, "Edit"
 
 for i in range(domain_ct):
     app.callback(
