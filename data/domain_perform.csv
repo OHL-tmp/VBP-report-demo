@@ -1,5 +1,4 @@
-﻿domain,weight,performance
-domain1,0.1,0.1
-domain2,0.2,0.4
-domain3,0.3,-0.2
-domain4,0.4,0.2
+﻿Domain,Performance Diff from Target,Weight
+Cost & Utilization  Reduction,-0.0431559, 0.7 
+Improving Disease Outcome,0.0642857, 0.3 
+Increasing Patient Safety,0.06, 0.2 
