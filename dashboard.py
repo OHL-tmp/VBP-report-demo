@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 Created on Mon Apr 13 14:10:52 2020
-@author: yanchen
+@author: yanen
 """
 
 import dash
@@ -19,7 +19,7 @@ import plotly.graph_objects as go
 
 from plotly.subplots import make_subplots
 from dash.dependencies import Input, Output, State
-from utils import Header, make_dash_table
+from utils import *
 from figure import *
 from modal_dashboard_domain_selection import *
 
@@ -28,7 +28,7 @@ BASE_PATH = pathlib.Path(__file__).parent.resolve()
 DATA_PATH = BASE_PATH.joinpath("Data").resolve()
 
 
-app = dash.Dash(__name__, url_base_pathname='/demo-report/')
+app = dash.Dash(__name__, url_base_pathname='/vbc-demo/dashboard/')
 
 server = app.server
 
@@ -95,7 +95,7 @@ def create_layout():
     load_data()
     return html.Div(
                 [ 
-                    html.Div([Header(app)], style={"height":"6rem"}),
+                    html.Div([Header_mgmt(app)], style={"height":"6rem"}),
                     
                     html.Div(
                         [
@@ -160,7 +160,7 @@ def div_overall_performance():
                 [
                     dbc.Row(
                         [
-                            dbc.Col(html.H1("OVERALL PERFORMANCE"), width=9),
+                            dbc.Col(html.H1("OVERALL PERFORMANCE"), width="auto"),
                             dbc.Card(
                                 dbc.CardBody(
                                     [
@@ -173,7 +173,7 @@ def div_overall_performance():
                             ),
                         ]
                     ),
-                    html.P("As for April 30th.", style={"color":"#000", "font-size":"0.8rem"}),
+                    html.P("As of June 30th.", style={"color":"#000", "font-size":"0.8rem"}),
                     dbc.Row(
                         [
                             dbc.Col(dcc.Graph(figure=bargraph_overall1), width=7),
@@ -204,14 +204,15 @@ def card_main_volumn_based_measures():
                                         html.Div(
                                             [
                                                 dbc.Checklist(
-                                                    options = [{'label':"Utilizer Count and Market Share" , 'value':"Utilizer Count and Market Share" },
+                                                    options = [{'label':"Market Share" , 'value':"Market Share" },
+                                                              {'label':"Utilizer Count" , 'value':"Utilizer Count" },
                                                               {'label':"Avg Script (30-day adj) per Utilizer" , 'value':"Avg Script (30-day adj) per Utilizer" },
                                                               {'label':"Total Script Count (30-day adj) by Dosage (in thousand)" , 'value':"Total Script Count (30-day adj) by Dosage (in thousand)" },
                                                               {'label':"Total Units by Dosage (Mn)", 'value': "Total Units by Dosage (Mn)"},],
-                                                    value = ["Utilizer Count and Market Share","Avg Script (30-day adj) per Utilizer","Total Script Count (30-day adj) by Dosage (in thousand)","Total Units by Dosage (Mn)"],
+                                                    value = ["Market Share","Utilizer Count","Avg Script (30-day adj) per Utilizer"],
                                                     labelCheckedStyle={"color": "#057aff"},
                                                     id = "checklist-add-measure",
-                                                    style={"font-family":"NotoSans-CondensedBlack", "font-size":"0.8rem", "padding":"1rem"},
+                                                    style={"font-family":"NotoSans-Condensed", "font-size":"0.8rem", "padding":"1rem"},
                                                 ),
                                             ],
                                             style={"padding-top":"0.5rem", "padding-bottom":"2rem"}
@@ -219,7 +220,7 @@ def card_main_volumn_based_measures():
                                          
                                         html.Div(
                                             [
-                                                dbc.Button("ADD", id = "add-button-add-measure",
+                                                dbc.Button("Comfirm", id = "add-button-add-measure",
                                                    className="mb-3",
                                                    style={"background-color":"#38160f", "border":"none", "border-radius":"10rem", "font-family":"NotoSans-Regular", "font-size":"0.6rem"},
                                                 )
@@ -241,10 +242,11 @@ def card_main_volumn_based_measures():
                         ),
                         html.Div(
                             [
-                                card_sub2_volumn_based_measures("Utilizer Count and Market Share",tbl_utilizer1,piechart_utilizer1,'dash','fig',0.2,0.4),
-                                card_sub1_volumn_based_measures("Avg Script (30-day adj) per Utilizer",bargraph_script_per_util),
-                                card_sub2_volumn_based_measures("Total Script Count (30-day adj) by Dosage (in thousand)",bargraph_tot_script,bargraph_tot_script_split,'fig','fig',0.5,0.5),
-                                card_sub2_volumn_based_measures("Total Units by Dosage (Mn)",bargraph_tot_unit,bargraph_tot_unit_split,'fig','fig',0.5,0.5),
+                                card_sub1_volumn_based_measures("Market Share",piechart_utilizer1,'fig',0.85),
+                                card_sub1_volumn_based_measures("Utilizer Count",tbl_utilizer1,'dash',0.6),
+                                card_sub1_volumn_based_measures("Avg Script (30-day adj) per Utilizer",bargraph_script_per_util,'fig',0.6),
+                                card_sub2_volumn_based_measures("Total Script Count (30-day adj) by Dosage (in thousand)",bargraph_tot_script,bargraph_tot_script_split,'fig','fig',1,1),
+                                card_sub2_volumn_based_measures("Total Units by Dosage (Mn)",bargraph_tot_unit,bargraph_tot_unit_split,'fig','fig',1,1),
                             ],
                             className="mb-3",
                         ),
@@ -254,7 +256,14 @@ def card_main_volumn_based_measures():
                 style={"box-shadow":"0 4px 8px 0 rgba(0, 0, 0, 0.05), 0 6px 20px 0 rgba(0, 0, 0, 0.05)", "border":"none", "border-radius":"0.5rem"}
             )
 
-def card_sub1_volumn_based_measures(volumn_measure, fig):
+def card_sub1_volumn_based_measures(volumn_measure, fig, tab,size):
+    size = str(int(size*22)) + "rem"
+    style={"height" : size}
+    if tab=='dash':
+        figure=html.Div([fig],style=style)
+    else:
+        figure=dcc.Graph(figure=fig,style=style)
+
     return html.Div(
 	    		[
 			        dbc.Card(
@@ -263,19 +272,19 @@ def card_sub1_volumn_based_measures(volumn_measure, fig):
 		                        dbc.Row(
 		                            [
 		                                dbc.Col(html.Img(src=app.get_asset_url("bullet-round-blue.png"), width="20%"), width=1, align="start", style={"margin-right":"-20px", "margin-top":"-4px"}),
-		                                dbc.Col(html.H6(volumn_measure)),
+		                                dbc.Col(html.H4(volumn_measure, style={"font-size":"1rem"})),
 		                            ],
 		                            no_gutters=True,
 		                        ),
 		                        dbc.Row(
 		                            [
-		                                dbc.Col(dcc.Graph(figure=fig, style={"height" : "12rem"}), width=12),
+		                                fig,
 		                            ],
 		                        ),
 		                    ]
 		                ),
 		                className="mb-3",
-		                style={"background-color":"#f7f7f7", "border":"none", "border-radius":"0.5rem", "max-height":"20rem"}
+		                style={"background-color":"#f7f7f7", "border":"none", "border-radius":"0.5rem", "max-height":"22rem"}
 			        )
 	            ],
                 id = u"card-container-{}".format(volumn_measure),
@@ -283,11 +292,11 @@ def card_sub1_volumn_based_measures(volumn_measure, fig):
             )
 
 
-def card_sub2_volumn_based_measures(volumn_measure,fig1,fig2,tab1,tab2,size1,size2): # tab: 'dash' or 'fig'
-    size1 = int(size1*12)
-    size2 = int(size2*12)
-    style1={"height" : "14rem"}
-    style2={"height" : "14rem"}
+def card_sub2_volumn_based_measures(volumn_measure,fig1,fig2,tab1,tab2,height1,height2):
+    size1 = str(int(height1*14))+"rem"
+    size2 = str(int(height2*14))+"rem"
+    style1={"height" : size1}
+    style2={"height" : size2}
     if tab1=='dash':
         figure1=html.Div([fig1],style=style1)
     else:
@@ -297,7 +306,7 @@ def card_sub2_volumn_based_measures(volumn_measure,fig1,fig2,tab1,tab2,size1,siz
         figure2=html.Div([fig2],style=style2)
     else:
         figure2=dcc.Graph(figure=fig2, style=style2)
-  
+
     return html.Div(
 			    [
 			        dbc.Card(
@@ -306,20 +315,21 @@ def card_sub2_volumn_based_measures(volumn_measure,fig1,fig2,tab1,tab2,size1,siz
 		                        dbc.Row(
 		                            [
 		                                dbc.Col(html.Img(src=app.get_asset_url("bullet-round-blue.png"), width="20%"), width=1, align="start", style={"margin-right":"-20px", "margin-top":"-4px"}),
-		                                dbc.Col(html.H6(volumn_measure)),
+		                                dbc.Col(html.H4(volumn_measure, style={"font-size":"1rem"})),
 		                            ],
 		                            no_gutters=True,
 		                        ),
-		                        dbc.Row(
+		                        html.Div(
 		                            [
-		                                dbc.Col(figure1, width=size1),
-		                                dbc.Col(figure2, width=size2),
+		                                figure1,
+		                                figure2,
 		                            ],
+                                    style={"padding":"1rem"}
 		                        ),
 		                    ]
 		                ),
 		                className="mb-3",
-		                style={"background-color":"#f7f7f7", "border":"none", "border-radius":"0.5rem", "max-height":"20rem"}
+		                style={"background-color":"#f7f7f7", "border":"none", "border-radius":"0.5rem", "max-height":"40rem"}
 		            )
 		        ], id = u"card-container-{}".format(volumn_measure)
             )
@@ -329,14 +339,11 @@ def card_main_value_based_measures():
     return dbc.Card(
                 dbc.CardBody(
                     [
-                        dbc.Row([
-                            html.H1("Volumn Based Measures", className="mb-3", style={"font-size":"1.5rem"}),
-                            dbc.Button(id = "switch-domain-measure-view"),
-                        ]),
+                        html.H1("Value Based Measures", className="mb-3", style={"font-size":"1.5rem"}),
                         html.Div(
                             [
-                                card_overview_value_based_measures(),
                                 card_modify_value_based_measures(),
+                                card_overview_value_based_measures(),
                                 card_sub_value_based_measures(),
                             ],
                             className="mb-3",
@@ -351,11 +358,20 @@ def card_overview_value_based_measures():
     return dbc.Card(
                 dbc.CardBody(
                     [
-                       dcc.Graph(style={"height":"20rem"}, id = "bubble_graph_domain")
+                        dbc.Row(
+                            [
+                                dbc.Col(html.Img(src=app.get_asset_url("bullet-round-blue.png"), width="20%"), width=1, align="start", style={"margin-right":"-20px", "margin-top":"-4px"}),
+                                dbc.Col(html.H4("Performance Result of Each Domain", style={"font-size":"1rem"}), width=8),
+                                dbc.Button(id = "switch-domain-measure-view", className="mb-3", style={"background-color":"#38160f", "border":"none", "border-radius":"10rem", "font-family":"NotoSans-Regular", "font-size":"0.6rem"}),
+                            ],
+                            no_gutters=True,
+                        ),
+                        
+                        dcc.Graph(style={"height":"20rem"}, id = "bubble_graph_domain")
                     ]
                 ),
                 className="mb-3",
-                style={"background-color":"#f7f7f7", "border":"none", "border-radius":"0.5rem", "max-height":"20rem"}
+                style={"background-color":"#f7f7f7", "border":"none", "border-radius":"0.5rem", "max-height":"23rem"}
             )
 
 def card_modify_value_based_measures():
@@ -365,59 +381,53 @@ def card_modify_value_based_measures():
                         dbc.Row(
                             [
                                 dbc.Col(html.Img(src=app.get_asset_url("bullet-round-blue.png"), width="20%"), width=1, align="start", style={"margin-right":"-20px", "margin-top":"-4px"}),
-                                dbc.Col(html.H6("Domain Detail")),
+                                dbc.Col(html.H4("Domain Detail", style={"font-size":"1rem"}), width=8),
                                 dbc.Col(modal_dashboard_domain_selection(domain_ct), width=3),
                             ],
                             no_gutters=True,
                         ),
                         html.Div(
                             [
-                                dbc.Col(
-                                    [
-                                     card_buttonGroup_domain_selected(),
-                                    ], 
-                                    width="100%"
-                                ),
+                                card_buttonGroup_domain_selected(),
                             ],
                             style = {"border":"none", "border-radius":"0.5rem"},
                         ),
                     ]
                 ),
                 className="mb-3",
-                style = {"border-radius":"0.5rem"},
+                style = {"border":"none", "border-radius":"0.5rem"},
             )
 
 def card_buttonGroup_domain_selected():
     return dbc.Card(
                 dbc.CardBody([
                     html.Div([dbc.Button("Cost & Utilization Reduction", 
-                                      id = "button-domain-1")],
+                                      id = "button-domain-1", outline=True, color="primary", className="mr-1", style = {"font-family":"NotoSans-Regular", "font-size":"0.8rem"})],
                              id = "buttonGroup-domain-selected-1",
                              hidden = True),
                     html.Div([dbc.Button("Improving Disease Outcome", 
-                                      id = "button-domain-2")],
+                                      id = "button-domain-2", outline=True, color="primary", className="mr-1", style = {"font-family":"NotoSans-Regular", "font-size":"0.8rem"})],
                              id = "buttonGroup-domain-selected-2",
                              hidden = True),
                     html.Div([dbc.Button("Decreasing Health Disparities", 
-                                      id = "button-domain-3")],
+                                      id = "button-domain-3", outline=True, color="primary", className="mr-1", style = {"font-family":"NotoSans-Regular", "font-size":"0.8rem"})],
                              id = "buttonGroup-domain-selected-3",
                              hidden = True),
                     html.Div([dbc.Button("Increasing Patient Safety", 
-                                      id = "button-domain-4")],
+                                      id = "button-domain-4", outline=True, color="primary", className="mr-1", style = {"font-family":"NotoSans-Regular", "font-size":"0.8rem"})],
                              id = "buttonGroup-domain-selected-4",
                              hidden = True),
                     html.Div([dbc.Button("Enhancing Care Quality", 
-                                      id = "button-domain-5")],
+                                      id = "button-domain-5", outline=True, color="primary", className="mr-1", style = {"font-family":"NotoSans-Regular", "font-size":"0.8rem"})],
                              id = "buttonGroup-domain-selected-5",
                              hidden = True),
                     html.Div([dbc.Button("Better Patient Experience", 
-                                      id = "button-domain-6")],
+                                      id = "button-domain-6", outline=True, color="primary", className="mr-1", style = {"font-family":"NotoSans-Regular", "font-size":"0.8rem"})],
                              id = "buttonGroup-domain-selected-6",
-
                              hidden = True),
                 ],
-                style = {"display": "flex", "border":"none", "border-radius":"0.5rem"}),
-                className="mb-3"
+                style = {"display": "flex", "border":"none", "border-radius":"1rem","padding":"0.2rem"}),
+                
             )
 
 
@@ -466,44 +476,48 @@ def toggle_popover_add_measure(n1, n2, is_open):
 
 # add/close measure card
 
-states = {"Utilizer Count and Market Share": True, 
-      "Avg Script (30-day adj) per Utilizer": True,
-     "Total Script Count (30-day adj) by Dosage (in thousand)": True,
-     "Total Units by Dosage (Mn)": True}
+states = {"Market Share": True, 
+    "Utilizer Count": True, 
+    "Avg Script (30-day adj) per Utilizer": True,
+    "Total Script Count (30-day adj) by Dosage (in thousand)": True,
+    "Total Units by Dosage (Mn)": True}
 
 @app.callback(
-    [Output("card-container-Utilizer Count and Market Share","hidden"),
+    [Output("card-container-Market Share","hidden"),
+    Output("card-container-Utilizer Count","hidden"),
     Output("card-container-Avg Script (30-day adj) per Utilizer","hidden"),
     Output("card-container-Total Script Count (30-day adj) by Dosage (in thousand)","hidden"),
     Output("card-container-Total Units by Dosage (Mn)","hidden"),],
     [Input("add-button-add-measure","n_clicks"),
     Input("checklist-add-measure","value")],
-    [State("card-container-Utilizer Count and Market Share","hidden"),
+    [State("card-container-Market Share","hidden"),
+    State("card-container-Utilizer Count","hidden"),
     State("card-container-Avg Script (30-day adj) per Utilizer","hidden"),
     State("card-container-Total Script Count (30-day adj) by Dosage (in thousand)","hidden"),
     State("card-container-Total Units by Dosage (Mn)","hidden"),],
 )
-def add_close_measure_card( ad, v, h1, h2, h3, h4):
+def add_close_measure_card( ad, v, h1, h2, h3, h4, h5):
     triggered = [t["prop_id"] for t in dash.callback_context.triggered]
     edit = len([1 for i in triggered if i == "add-button-add-measure.n_clicks"])
     checked = v
     if edit:
-        for p in ["Utilizer Count and Market Share", 
-              "Avg Script (30-day adj) per Utilizer",
-             "Total Script Count (30-day adj) by Dosage (in thousand)",
-             "Total Units by Dosage (Mn)"]:
+        for p in ["Market Share", 
+            "Utilizer Count",
+            "Avg Script (30-day adj) per Utilizer",
+            "Total Script Count (30-day adj) by Dosage (in thousand)",
+            "Total Units by Dosage (Mn)"]:
             if p in checked:
                 states[p] = False
             else:
                 states[p] = True
-        return states["Utilizer Count and Market Share"], states["Avg Script (30-day adj) per Utilizer"],states["Total Script Count (30-day adj) by Dosage (in thousand)"],states["Total Units by Dosage (Mn)"]
-    return h1, h2, h3, h4
+        return states["Market Share"], states["Utilizer Count"], states["Avg Script (30-day adj) per Utilizer"],states["Total Script Count (30-day adj) by Dosage (in thousand)"],states["Total Units by Dosage (Mn)"]
+    return h1, h2, h3, h4, h5
 
 
 # generate selected domain button
 
 def generate_card_domain_button(color):
-    if color == "info":
+    if color == "primary":
         return False
     return True
 
@@ -530,7 +544,7 @@ def bubble_graph_domain(cr1, cr2, cr3, cr4, cr5, cr6, n):
 
     trace_selected_number = []
     for i in range(domain_ct):
-        if eval("cr"+str(i+1)) == "info":
+        if eval("cr"+str(i+1)) == "primary":
             trace_selected_number.append(i)    
     bubble_show_traces = []
     
@@ -542,7 +556,7 @@ def bubble_graph_domain(cr1, cr2, cr3, cr4, cr5, cr6, n):
         bubble_show_traces.append(bubble_graph_domain[trace_selected_number[i]])'''
     
     if n and n%2 == 1:
-        return bubble_graph_measure, "Switch to Domains View" #需要替换成measure的图
+        return bubble_graph_measure, "Switch to Domains View" 
         
     return bubble_graph_domain, "Switch to Measures View"
     
@@ -554,7 +568,13 @@ def bubble_graph_domain(cr1, cr2, cr3, cr4, cr5, cr6, n):
 @app.callback(
     [Output("graph-container-domain-selected-1", "children"),
     Output("graph-container-domain-selected-2", "figure"),
-    Output("card_domain_name", "children")],
+    Output("card_domain_name", "children"),
+    Output("button-domain-1", "active"),
+    Output("button-domain-2", "active"),
+    Output("button-domain-3", "active"),
+    Output("button-domain-4", "active"),
+    Output("button-domain-5", "active"),
+    Output("button-domain-6", "active")],
     [Input("button-domain-1", "n_clicks"),
     Input("button-domain-2", "n_clicks"),
     Input("button-domain-3", "n_clicks"),
@@ -564,48 +584,52 @@ def bubble_graph_domain(cr1, cr2, cr3, cr4, cr5, cr6, n):
 )
 def generate_domain_related_graph(b1, b2, b3, b4, b5, b6):
     ctx = dash.callback_context
-    
-    if not ctx.triggered:
-        button_id = 'button-domain-1'
-    else:
-        button_id = ctx.triggered[0]['prop_id'].split('.')[0]
-    
+
     fig1 = waterfall_domain1
     fig2 = domain1_perform
     name = domain_set[0]
+    ac = [True, False, False, False, False, False]
     
+    
+    if ctx.triggered[0]['value'] == None:
+        button_id = "button-domain-1"
+    else:
+        button_id = ctx.triggered[0]['prop_id'].split('.')[0]
+    
+
     if button_id == "button-domain-1":
         fig1 = waterfall_domain1
         fig2 = domain1_perform
         name = domain_set[0]
+        ac = [True, False, False, False, False, False]
     elif button_id == "button-domain-2":
         fig1 = waterfall_domain2
         fig2 = domain2_perform
         name = domain_set[1]
+        ac = [False, True, False, False, False, False]
     elif button_id == "button-domain-3":
         fig1 = waterfall_domain3
         fig2 = domain3_perform
         name = domain_set[2]
+        ac = [False, False, True, False, False, False]
     elif button_id == "button-domain-4":
         fig1 = waterfall_domain4
         fig2 = domain4_perform
         name = domain_set[3]
+        ac = [False, False, False, True, False, False]
     elif button_id == "button-domain-5":
         fig1 = waterfall_domain5
         fig2 = domain5_perform
         name = domain_set[4]
+        ac = [False, False, False, False, True, False]
     elif button_id == "button-domain-6":
         fig1 = waterfall_domain6
         fig2 = domain6_perform
         name = domain_set[5]
-    else:
-        fig1 = waterfall_domain1
-        fig2 = domain1_perform
-        name = domain_set[0]
-
+        ac = [False, False, False, False, False, True]
 
     
-    return fig1, fig2, name
+    return fig1, fig2, name, ac[0], ac[1], ac[2], ac[3], ac[4], ac[5]
 
 ## modal
 @app.callback(
@@ -622,10 +646,10 @@ def toggle_modal_dashboard_domain_selection(n1, n2, is_open):
 
 def toggle_collapse_domain_selection_measures(n, is_open):
     if n and n%2 == 1:
-        return not is_open, "Collapse"
+        return not is_open, "Confirm"
     elif n and n%2 == 0:
         return not is_open, "Edit"
-    return is_open, "Select"
+    return is_open, "Edit"
 
 for i in range(domain_ct):
     app.callback(
@@ -653,7 +677,7 @@ for d in range(len(list(Domain_options.keys()))):
     
 def sum_selected_measure(v):
     if len(v) > 0:
-        return "info", u"{} measures selected".format(len(v))
+        return "primary", u"{}".format(len(v))
     return "light", ""
 
 for d in range(len(list(Domain_options.keys()))):
@@ -668,6 +692,7 @@ for d in range(len(list(Domain_options.keys()))):
 ## Domain 1
 @app.callback(
     [Output("dashboard-card-domain-selection-1", "color"),
+    Output("dashboard-card-domain-selection-1", "outline"),
     Output("dashboard-card-selected-domain-1", "children")],
     [Input("collapse-1", "is_open"),
     Input("checklist-domain-measures-lv2-1-1", "value"),
@@ -677,13 +702,14 @@ for d in range(len(list(Domain_options.keys()))):
 )
 def toggle_collapse_domain_selection_measures_1(is_open, v1, v2, v3, v4):
     measure_count = len(v1) + len(v2) + len(v3) + len(v4)
-    if measure_count > 0 and is_open != True: 
-        return  "info", u"{} measures selected".format(measure_count)
-    return "light", ""    
+    if measure_count > 0: 
+        return  "primary", True, u"{} measures selected".format(measure_count)
+    return "light", False, ""    
 
 ## Domain 2
 @app.callback(
     [Output("dashboard-card-domain-selection-2", "color"),
+    Output("dashboard-card-domain-selection-2", "outline"),
     Output("dashboard-card-selected-domain-2", "children")],
     [Input("collapse-2", "is_open"),
     Input("checklist-domain-measures-lv2-2-1", "value"),
@@ -692,48 +718,51 @@ def toggle_collapse_domain_selection_measures_1(is_open, v1, v2, v3, v4):
 )
 def toggle_collapse_domain_selection_measures_2(is_open, v1, v2, v3):
     measure_count = len(v1) + len(v2) +len(v3)
-    if measure_count > 0 and is_open != True: 
-        return  "info", u"{} measures selected".format(measure_count)
-    return "light", "" 
+    if measure_count > 0: 
+        return  "primary", True, u"{} measures selected".format(measure_count)
+    return "light", False, "" 
 
 ## Domain 4
 @app.callback(
     [Output("dashboard-card-domain-selection-4", "color"),
+    Output("dashboard-card-domain-selection-4", "outline"),
     Output("dashboard-card-selected-domain-4", "children")],
     [Input("collapse-4", "is_open"),
     Input("checklist-domain-measures-lv2-4-1", "value")],
 )
 def toggle_collapse_domain_selection_measures_4(is_open, v1):
     measure_count = len(v1) 
-    if measure_count > 0 and is_open != True: 
-        return  "info", u"{} measures selected".format(measure_count)
-    return "light", "" 
+    if measure_count > 0: 
+        return  "primary", True, u"{} measures selected".format(measure_count)
+    return "light", False, "" 
 
 ## Domain 5
 @app.callback(
     [Output("dashboard-card-domain-selection-5", "color"),
+    Output("dashboard-card-domain-selection-5", "outline"),
     Output("dashboard-card-selected-domain-5", "children")],
     [Input("collapse-5", "is_open"),
     Input("checklist-domain-measures-lv2-5-1", "value")],
 )
 def toggle_collapse_domain_selection_measures_5(is_open, v1):
     measure_count = len(v1)
-    if measure_count > 0 and is_open != True: 
-        return  "info", u"{} measures selected".format(measure_count)
-    return "light", "" 
+    if measure_count > 0: 
+        return  "primary", True, u"{} measures selected".format(measure_count)
+    return "light", False, "" 
 
 ## Domain 6
 @app.callback(
     [Output("dashboard-card-domain-selection-6", "color"),
+    Output("dashboard-card-domain-selection-6", "outline"),
     Output("dashboard-card-selected-domain-6", "children")],
     [Input("collapse-6", "is_open"),
     Input("checklist-domain-measures-lv2-6-1", "value")],
 )
 def toggle_collapse_domain_selection_measures_6(is_open, v1):
     measure_count = len(v1)
-    if measure_count > 0 and is_open != True: 
-        return  "info", u"{} measures selected".format(measure_count)
-    return "light", "" 
+    if measure_count > 0: 
+        return  "primary", True, u"{} measures selected".format(measure_count)
+    return "light", False, "" 
 
 
 

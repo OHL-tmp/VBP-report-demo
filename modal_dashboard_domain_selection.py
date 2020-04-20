@@ -86,7 +86,9 @@ domain_set = ["Cost & Utilization  Reduction", "Improving Disease Outcome",
 
 Triple_Aim_set =["Reducing Cost","Improving Health", "Improving Health","Improving Patient Care",
                 "Improving Patient Care","Improving Patient Care"]
-Triple_Aim_color = ["#1357DD", "#F5B111","#F5B111", "#df8885", "#df8885", "#df8885"]
+Triple_Aim_color = ["#1db954", "#ffa319","#ffa319", "#6147d6", "#6147d6", "#6147d6"]
+#Triple_Aim_color = ["success","primary","info","info","info","info"]
+
 
 domain_ct = len(domain_set)
 
@@ -97,22 +99,58 @@ def modal_dashboard_domain_selection(n):
                     dbc.Modal(
                         [
                             dbc.ModalHeader([
-                                dbc.Row([
-                                     dbc.Col(html.Div("Select Domain")),
-                                     html.Div([
-                                         html.Div("Disease"),
-                                         dbc.Input(placeholder = "CHF",
-                                                  className = "mb-3",
-                                                  disabled = True)
-                                     ], style = {"display" : "flex"})
-                                ]),
-                            ]),
+                                html.Div(
+                                    [
+                                        dbc.Row([
+                                             dbc.Col(html.H2("Select Domain", style={"font-size":"2rem"}), width=7),
+                                             dbc.Col(
+                                                [
+                                                    dbc.Card(
+                                                        dbc.CardBody(
+                                                            [
+                                                                html.Div(
+                                                                    [
+                                                                        dbc.Row(
+                                                                            [
+                                                                                dbc.Col(html.H2("Disease", style={"font-size":"1rem","padding":"0.6rem"})),
+                                                                                dbc.Col(dbc.Input(placeholder = "CHF",className = "mb-3",disabled = True, style={"font-family":"NotoSans-SemiBold", "font-size":"1rem", "border":"none"}))
+                                                                            ]
+                                                                        )
+                                                                    ],
+                                                                    style={"margin-top":"-1rem"}
+                                                                ),
+                                                                html.Div(
+                                                                    [
+                                                                    dbc.Row(
+                                                                            [
+                                                                                dbc.Col(html.H2("Brand Name", style={"font-size":"1rem","padding":"0.6rem"})),
+                                                                                dbc.Col(dbc.Input(placeholder = "Entresto",className = "mb-3",disabled = True, style={"font-family":"NotoSans-SemiBold", "font-size":"1rem", "border":"none"}))
+                                                                            ]
+                                                                        ),
+                                                                    html.P("25 out of XX measures XXX", style={"font-size":"0.7rem"}),
+                                                                    ]
+                                                                )
+                                                            ],
+                                                            style={"background-color":"#none", "border":"none", "border-radius":"0.5rem"}
+                                                        )
+                                                    )
+                                                ],
+                                                width=5
+                                            )
+                                             
+                                        ]),
+                                    ]
+                                )
+                            ],
+                            style={"background-image":"url('./assets/domain_selection_bg_s.png')","backgroud-size":"auto"}
+                            ),
                             dbc.ModalBody(
                                 card_domain_selection(n)
                             ),
                             dbc.ModalFooter(
                                 dbc.Button(
-                                    "Close", id="close-centered", className="ml-auto"
+                                    "SUBMIT", id="close-centered", className="ml-auto",
+                                    style={"margin-right":"20px", "background-color":"#38160f", "border":"none", "border-radius":"10rem", "font-family":"NotoSans-Black", "font-size":"1rem"}
                                 )
                             ),
                         ],
@@ -138,14 +176,15 @@ def card_domain_selection(n):
                     dbc.CardBody(
                         dbc.Row(
                             [
-
                                 dbc.Col(collapse_domain_selection_measures(i)),
                             ]
                         )
                     ),
                 ],
+                outline=True,
                 id=u"dashboard-card-domain-selection-{}".format(i+1),
-                className="mb-3"
+                className="mb-3",
+                style={"border-radius":"0.5rem"}
             )], hidden = hidden_status)
         domain_card.append(card)
     return html.Div(domain_card)
@@ -156,16 +195,19 @@ def collapse_domain_selection_measures(n):
                 [
                     dbc.Row(
                         [
-                            dbc.Badge(Triple_Aim_set[n],style = {"color" : Triple_Aim_color[n]},className="mr-1"),
-                            dbc.Col(html.Div(domain_set[n])),
-                            dbc.Card(id = u"dashboard-card-selected-domain-{}".format(n+1),
+                            dbc.Col(html.Div([Triple_Aim_set[n]], className="mr-1", style={"font-family":"NotoSans-Condensed", "font-size":"0.8rem","color":"#fff","padding-right":"0.4rem","padding-left":"0.4rem","margin-top":"0.2rem","border":"none","border-radius":"5rem","background-color":Triple_Aim_color[n]}), width="auto"),
+                            dbc.Col(html.Div(domain_set[n]),
+                                    style={"font-family":"NotoSans-SemiBold", "font-size":"1rem"}
+                                ),
+                            html.Div(id = u"dashboard-card-selected-domain-{}".format(n+1),
                                     className="mb-3",
-                                    color="info"),
+                                    style={"font-family":"NotoSans-Condensed","font-size":"1rem","padding-right":"1rem"}),
                             dbc.Button(
                                 children = "Select",
                                 id=u"collapse-button-{}".format(n+1),
-                                className="mb-3",
                                 color="primary",
+                                className="mr-1",
+                                style={"margin-right":"20px", "border":"none", "border-radius":"10rem", "font-family":"NotoSans-Regular", "font-size":"0.6rem", "height":"1.6rem"}
                             ),
                         ]
                     ),
@@ -174,9 +216,8 @@ def collapse_domain_selection_measures(n):
                         dbc.Card(
                             dbc.CardBody(
                                 [
-                                    html.H5("Choose Measures", className="card-title"),
-                                    checklist_domain_measures_lv1(n),
-                                    html.Hr(className="my-2")
+                                    html.H2("Choose Measures", className="card-title", style={"font-family":"NotoSans-Condensed","font-size":"01rem","color":"#a1a1a1"}),
+                                    checklist_domain_measures_lv1(n)
                                 ]
                             )
                         ),
@@ -208,14 +249,21 @@ def checklist_domain_measures_lv1(d):
                         dbc.Button(
                             u"{}".format(key[i]),
                             id=u"measures-lv1-{}-{}".format(d+1,i+1),
-                            color = "link",
-                            
+                            color = "light",
+                            style={"background-color":"#ebebeb","border":"none", "border-radius":"10rem", "font-family":"NotoSans-Regular", "font-size":"0.8rem", "height":"2rem"}
                         ),
-                     dbc.Card(id = u"dashboard-card-selected-{}-{}".format(d+1,i+1),
-                                    className="mb-3",
- #                                   color="info"
-                             ),   
-                    ]),
+                        html.Div(
+                            [
+                                dbc.Badge(id = u"dashboard-card-selected-{}-{}".format(d+1,i+1),
+                                    color="primary",
+                                    className="ml-1",
+                                    #style={"padding":"0.8rem"}
+                                 ),   
+                            ],
+                            #style={"margin-top":"0.8rem","margin-bottom":"0.8rem"}
+                        )
+                        
+                        ]),
                     dbc.Collapse(
                            dbc.FormGroup([
                                dbc.Checklist(
@@ -226,11 +274,15 @@ def checklist_domain_measures_lv1(d):
                                    persistence = True,
                                    persistence_type = 'session',
                                ),
+                               html.Hr(className="my-2")
                            ]),
                         id=u"checklist-domain-measures-lv2-container-{}-{}".format(d+1,i+1),
+                        style={"margin-top":"1rem", "font-family":"NotoSans-Regular", "font-size":"0.8rem"}
                     )
                 ]
-            )],hidden = hidden_status)
+            )],
+            hidden = hidden_status,
+            style={"padding-left":"2rem", "padding-right":"2rem"})
         button_group.append(button_measure_lv1)
     return html.Div(button_group)
 

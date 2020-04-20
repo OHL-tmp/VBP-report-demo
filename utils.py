@@ -3,11 +3,14 @@ import dash_core_components as dcc
 import dash_bootstrap_components as dbc
 
 
-def Header(app):
-    return html.Div([get_header(app)])
+def Header_mgmt(app):
+    return html.Div([get_header_mgmt(app)])
+
+def Header_contract(app):
+    return html.Div([get_header_contract(app)])
 
 
-def get_header(app):
+def get_header_mgmt(app):
     header = html.Div(
             [
                 dbc.Row(
@@ -24,21 +27,70 @@ def get_header(app):
                                 [
                                     dcc.Link(
                                         "Dashboard",
-                                        href="/demo-report/dashboard",
+                                        href="/vbc-demo/dashboard/",
                                         className="tab first",
                                     ),
                                     dcc.Link(
-                                        "Price Performance",
-                                        href="/dash-financial-report/price-performance",
+                                        "Drilldown",
+                                        href="/vbc-demo/drilldown/",
                                         className="tab",
                                     ),
                                     dcc.Link(
-                                        "Portfolio & Management",
-                                        href="/dash-financial-report/portfolio-management",
+                                        "Report Generator",
+                                        href="/vbc-demo/report-generator/",
                                         className="tab",
                                     ),
                                     dcc.Link(
-                                        "Fees & Minimums", href="/dash-financial-report/fees", className="tab"
+                                        "Back to Homepage", 
+                                        href="/vbc-demo/launch/", 
+                                        className="tab"
+                                    ),
+                                ],
+                                style={"margin-top":"8px"}
+                            )
+                        ),
+                    ]    
+                )
+            ],
+            style={"padding-top":"1rem"},
+        )
+            
+    return header
+
+def get_header_contract(app):
+    header = html.Div(
+            [
+                dbc.Row(
+                    [
+                        dbc.Col(
+                            html.Div(
+                                [
+                                    html.Img(src=app.get_asset_url("logo-demo.png"), style={"height":"4rem", "padding-top":"1px"})
+                                ]
+                            )
+                        ),
+                        dbc.Col(
+                            html.Div(
+                                [
+                                    dcc.Link(
+                                        "Contract Simulation",
+                                        href="/vbc-demo/contract-simulation/",
+                                        className="tab first",
+                                    ),
+                                    dcc.Link(
+                                        "Metrics Library",
+                                        href="/vbc-demo/metrics-library/",
+                                        className="tab",
+                                    ),
+                                    dcc.Link(
+                                        "Contract Generator",
+                                        href="/vbc-demo/contract-generator/",
+                                        className="tab",
+                                    ),
+                                    dcc.Link(
+                                        "Back to Homepage", 
+                                        href="/vbc-demo/launch/", 
+                                        className="tab"
                                     ),
                                 ],
                                 style={"margin-top":"8px"}

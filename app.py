@@ -22,7 +22,7 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 from dash.dependencies import Input, Output, State
 from pages import (
-    dashboard,
+    dashboard, launch_page
 )
 
 
@@ -31,7 +31,7 @@ BASE_PATH = pathlib.Path(__file__).parent.resolve()
 DATA_PATH = BASE_PATH.joinpath("Data").resolve()
 
 
-app = dash.Dash(__name__, url_base_pathname='/demo-report', external_stylesheets=[dbc.themes.BOOTSTRAP])
+app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
 server = app.server
 
@@ -42,16 +42,18 @@ app.layout = html.Div(
 # Update page
 @app.callback(Output("page-content", "children"), [Input("url", "pathname")])
 def display_page(pathname):
-    if pathname == "/dashboard":
-        return dashboard.create_layout(app)
-    '''elif pathname == "/dash-financial-report/full-view":
-        return (
-            overview.create_layout(app),
-            pricePerformance.create_layout(app),
-            portfolioManagement.create_layout(app),
-            feesMins.create_layout(app),
-            distributions.create_layout(app),
-            newsReviews.create_layout(app),
-        )'''
+    if pathname == "/vbc-demo/launch/":
+        return launch_page.launch_layout()   
+    elif pathname == "/vbc-demo/dashboard/":
+        return dashboard.create_layout()
+    elif pathname == "/vbc-demo/drilldown/":
+        return drilldown.create_layout()
+    elif pathname == "/vbc-demo/contract-simulation/":
+        return simulation.create_layout()
+    elif pathname == "/vbc-demo/metrics-library/":
+        return metrics_library.create_layout()
     else:
-        return dashboard.create_layout(app)
+        return launch_page.launch_layout()
+
+if __name__ == "__main__":
+    app.run_server(host="127.0.0.1",debug=False, port = 8051)

@@ -18,13 +18,15 @@
   --white: #fff;
   --gray: #6c757d;
   --gray-dark: #343a40;
-  --primary: #007bff;
+  --primary: #1357DD;
   --secondary: #6c757d;
   --success: #28a745;
   --info: #17a2b8;
   --warning: #ffc107;
   --danger: #dc3545;
-  --light: #f8f9fa;
+ /* --light: #f8f9fa;
+ */
+  --light:#28a745;
   --dark: #343a40;
   --breakpoint-xs: 0;
   --breakpoint-sm: 576px;
@@ -60,7 +62,7 @@ body {
   line-height: 1.5;
   color: #212529;
   text-align: left;
-  background-color: #f6f6f6;
+  background-color: #f5f5f5;
 }
 
 [tabindex="-1"]:focus:not(:focus-visible) {
@@ -380,7 +382,7 @@ h3, .h3 {
 }
 
 h4, .h4 {
-  font-family: 'NotoSans-Regular';
+  font-family: 'NotoSans-SemiBold';
   font-size: 1.5rem;
 }
 
