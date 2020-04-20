@@ -92,7 +92,7 @@ def bargraph_overall(df):  #df_overall['month'] df_overall['base'] df_overall['a
         paper_bgcolor=colors['transparent'],
         legend=dict(
             orientation='h',
-            x=0.3,y=-0.05
+            x=0.0,y=-0.1
         ),
         yaxis = dict(
             showgrid = True, 
@@ -118,7 +118,7 @@ def bargraph_overall(df):  #df_overall['month'] df_overall['base'] df_overall['a
         margin=dict(l=10,r=10,b=100,t=40,pad=0),
         font=dict(
             family="NotoSans-Condensed",
-            size=14,
+            size=12,
             color="#38160f"
         ),
     )
@@ -179,7 +179,7 @@ def waterfall_overall(x,y1,y2): #df_waterfall['label']  df_waterfall['base'] df_
         margin=dict(l=10,r=10,b=100,t=40,pad=0),
         font=dict(
             family="NotoSans-Condensed",
-            size=14,
+            size=12,
             color="#38160f"
         ),
     )
@@ -430,7 +430,7 @@ def bubblegraph(df_domain_perform,traces,obj): # 数据，[0,1] ,'Domain' or 'Me
         margin=dict(l=0,r=0,b=50,t=10,pad=0),
        font=dict(
             family="NotoSans-CondensedLight",
-            size=8,
+            size=12,
             color="#38160f"
         ),
         yaxis = dict(

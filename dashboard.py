@@ -321,15 +321,12 @@ def card_main_value_based_measures():
     return dbc.Card(
                 dbc.CardBody(
                     [
-                        dbc.Row([
-                            html.H1("Volumn Based Measures", className="mb-3", style={"font-size":"1.5rem"}),
-                            dbc.Button(id = "switch-domain-measure-view"),
-                        ]),
+                        html.H1("Volumn Based Measures", className="mb-3", style={"font-size":"1.5rem"}),
                         html.Div(
                             [
                                 card_modify_value_based_measures(),
                                 card_overview_value_based_measures(),
-                                card_sub_value_based_measures("Domain 1"),
+                                card_sub_value_based_measures(),
                             ],
                             className="mb-3",
                         ),
@@ -346,11 +343,13 @@ def card_overview_value_based_measures():
                         dbc.Row(
                             [
                                 dbc.Col(html.Img(src=app.get_asset_url("bullet-round-blue.png"), width="20%"), width=1, align="start", style={"margin-right":"-20px", "margin-top":"-4px"}),
-                                dbc.Col(html.H4("Performance Result of Each Domain", style={"font-size":"1rem"})),
+                                dbc.Col(html.H4("Performance Result of Each Domain", style={"font-size":"1rem"}), width=8),
+                                dbc.Button(id = "switch-domain-measure-view", className="mb-3", style={"background-color":"#38160f", "border":"none", "border-radius":"10rem", "font-family":"NotoSans-Regular", "font-size":"0.6rem"}),
                             ],
                             no_gutters=True,
                         ),
-                       dcc.Graph(figure=bubble_graph_domain, style={"height":"20rem"})
+                        
+                        dcc.Graph(style={"height":"20rem"}, id = "bubble_graph_domain")
                     ]
                 ),
                 className="mb-3",
@@ -364,59 +363,53 @@ def card_modify_value_based_measures():
                         dbc.Row(
                             [
                                 dbc.Col(html.Img(src=app.get_asset_url("bullet-round-blue.png"), width="20%"), width=1, align="start", style={"margin-right":"-20px", "margin-top":"-4px"}),
-                                dbc.Col(html.H6("Domain Detail")),
+                                dbc.Col(html.H4("Domain Detail"), style={"font-size":"0.4rem"}),
                                 dbc.Col(modal_dashboard_domain_selection(domain_ct), width=3),
                             ],
                             no_gutters=True,
                         ),
                         html.Div(
                             [
-                                dbc.Col(
-                                    [
-                                     card_buttonGroup_domain_selected(),
-                                    ], 
-                                    width="100%"
-                                ),
+                                card_buttonGroup_domain_selected(),
                             ],
                             style = {"border":"none", "border-radius":"0.5rem"},
                         ),
                     ]
                 ),
                 className="mb-3",
-                style = {"border-radius":"0.5rem"},
+                style = {"border":"none", "border-radius":"0.5rem"},
             )
 
 def card_buttonGroup_domain_selected():
     return dbc.Card(
                 dbc.CardBody([
                     html.Div([dbc.Button("Cost & Utilization Reduction", 
-                                      id = "button-domain-1")],
+                                      id = "button-domain-1", active=True,outline=True, color="primary", className="mr-1", style = {"font-family":"NotoSans-Regular", "font-size":"0.8rem"})],
                              id = "buttonGroup-domain-selected-1",
                              hidden = True),
                     html.Div([dbc.Button("Improving Disease Outcome", 
-                                      id = "button-domain-2")],
+                                      id = "button-domain-2", outline=True, color="primary", className="mr-1", style = {"font-family":"NotoSans-Regular", "font-size":"0.8rem"})],
                              id = "buttonGroup-domain-selected-2",
                              hidden = True),
                     html.Div([dbc.Button("Decreasing Health Disparities", 
-                                      id = "button-domain-3")],
+                                      id = "button-domain-3", outline=True, color="primary", className="mr-1", style = {"font-family":"NotoSans-Regular", "font-size":"0.8rem"})],
                              id = "buttonGroup-domain-selected-3",
                              hidden = True),
                     html.Div([dbc.Button("Increasing Patient Safety", 
-                                      id = "button-domain-4")],
+                                      id = "button-domain-4", outline=True, color="primary", className="mr-1", style = {"font-family":"NotoSans-Regular", "font-size":"0.8rem"})],
                              id = "buttonGroup-domain-selected-4",
                              hidden = True),
                     html.Div([dbc.Button("Enhancing Care Quality", 
-                                      id = "button-domain-5")],
+                                      id = "button-domain-5", outline=True, color="primary", className="mr-1", style = {"font-family":"NotoSans-Regular", "font-size":"0.8rem"})],
                              id = "buttonGroup-domain-selected-5",
                              hidden = True),
                     html.Div([dbc.Button("Better Patient Experience", 
-                                      id = "button-domain-6")],
+                                      id = "button-domain-6", outline=True, color="primary", className="mr-1", style = {"font-family":"NotoSans-Regular", "font-size":"0.8rem"})],
                              id = "buttonGroup-domain-selected-6",
-
                              hidden = True),
                 ],
-                style = {"display": "flex", "border":"none", "border-radius":"0.5rem"}),
-                className="mb-3"
+                style = {"display": "flex", "border":"none", "border-radius":"1rem","padding":"0.2rem"}),
+                
             )
 
 

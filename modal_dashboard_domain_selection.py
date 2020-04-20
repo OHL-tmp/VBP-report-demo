@@ -86,7 +86,9 @@ domain_set = ["Cost & Utilization  Reduction", "Improving Disease Outcome",
 
 Triple_Aim_set =["Reducing Cost","Improving Health", "Improving Health","Improving Patient Care",
                 "Improving Patient Care","Improving Patient Care"]
-Triple_Aim_color = ["#1357DD", "#F5B111","#F5B111", "#df8885", "#df8885", "#df8885"]
+#Triple_Aim_color = ["#1357DD", "#F5B111","#F5B111", "#df8885", "#df8885", "#df8885"]
+Triple_Aim_color = ["success","primary","danger","danger","danger","danger"]
+
 
 domain_ct = len(domain_set)
 
@@ -171,7 +173,7 @@ def card_domain_selection(n):
                     ),
                 ],
                 id=u"dashboard-card-domain-selection-{}".format(i+1),
-                className="mb-3"，
+                className="mb-3",
                 style={"background-color":"none", "border":"none", "border-radius":"0.5rem"}
             )], hidden = hidden_status)
         domain_card.append(card)
@@ -183,8 +185,8 @@ def collapse_domain_selection_measures(n):
                 [
                     dbc.Row(
                         [
-                            dbc.Badge(Triple_Aim_set[n],style = {"color" : Triple_Aim_color[n]},className="mr-1"),
-                            dbc.Col(html.Div(domain_set[n])
+                            dbc.Badge(Triple_Aim_set[n], pill=True, color=Triple_Aim_color[n], className="mr-1"),
+                            dbc.Col(html.Div(domain_set[n]),
                                     style={"font-family":"NotoSans-SemiBold", "font-size":"1rem"}
                                 ),
                             dbc.Card(id = u"dashboard-card-selected-domain-{}".format(n+1),
