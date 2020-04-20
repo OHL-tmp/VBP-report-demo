@@ -19,7 +19,7 @@ import plotly.graph_objects as go
 
 from plotly.subplots import make_subplots
 from dash.dependencies import Input, Output, State
-from utils import Header, make_dash_table
+from utils import *
 from figure import *
 from modal_dashboard_domain_selection import *
 
