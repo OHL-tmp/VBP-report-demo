@@ -200,25 +200,26 @@ def tbl_utilizer(df_utilizer):
         },
         style_cell={
             'textAlign': 'center',
-            'font-family':'NotoSans-CondensedLight',
-            'fontSize':8
+            'font-family':'NotoSans-CondensedBlack',
+            'fontSize':16,
+            'backgroundColor':"#f7f7f7"
         },
         style_cell_conditional=[
             {'if': {'column_id': df_utilizer.columns[0]},
-             'width': '250px',
-             'fontWeight': 'bold',
+             'width': '6rem',
+             'font-family':'NotoSans-Condensed',
             },     
         ],
         style_table={
             'back':  colors['blue']
         },
         style_header={
-            'height': '60px',
-            'backgroundColor': colors['yellow'],
+            'height': '4rem',
+            'backgroundColor': "#f5b111",
             'fontWeight': 'bold',
             'font-family':'NotoSans-CondensedLight',
-            'fontSize':10,
-            'color': 'white'
+            'fontSize':14,
+            'color': '#381610'
         },
     )
     
@@ -695,13 +696,13 @@ def tbl_measure(df_measure_perform,d):
         ],
         style_cell={
             'textAlign': 'center',
-            'font-family':'NotoSans-CondensedLight',
-            'fontSize':8
+            'font-family':'NotoSans-CondensedBlack',
+            'fontSize':14
         },
         style_cell_conditional=[
             {'if': {'column_id': df.columns[0]},
-             'width': '250px',
-             'fontWeight': 'bold',
+             'width': '2.5rem',
+             'font-family':'NotoSans-CondensedLight',
             }, 
             {'if': {'column_id': 'highlight'},
             'display': 'none'}
@@ -710,17 +711,17 @@ def tbl_measure(df_measure_perform,d):
             'back':  colors['blue']
         },
         style_header={
-            'height': '60px',
-            'backgroundColor': colors['yellow'],
+            'height': '2rem',
+            'backgroundColor': '#F5B111',
             'fontWeight': 'bold',
-            'font-family':'NotoSans-CondensedLight',
-            'fontSize':10,
-            'color': 'white'
+            'font-family':'NotoSans-Condensed',
+            'fontSize':12,
+            'color': '#381610'
         },
     )
     
        
-    return measure_tbl
+    return html.Div(measure_tbl, style={"padding":"1rem"})
 
 ############################################################
 ################Drilldown###################################  

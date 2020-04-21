@@ -46,7 +46,7 @@ def get_header_mgmt(app):
                                         className="tab"
                                     ),
                                 ],
-                                style={"margin-top":"8px"}
+                                style={"margin-top":"8px", "text-align":"end"}
                             )
                         ),
                     ]    
