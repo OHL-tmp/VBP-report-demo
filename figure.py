@@ -721,3 +721,172 @@ def tbl_measure(df_measure_perform,d):
     
        
     return measure_tbl
+
+############################################################
+################Drilldown###################################  
+############################################################ 
+def drill_bubble(df):
+    n=len(df)
+    
+    colorbar=dict(
+        len=1,
+       tickmode='array',
+       tickvals=[-0.5,0.5],
+       ticktext=['Low risk','High risk'],
+       #x=1,y=0.7
+    )
+    colorscale=[[0, 'rgba(0,255,0,1)'],[0.5, 'rgba(0,255,0,0.2)'],[0.5, 'rgba(255,0,0,0.2)'], [1, 'rgba(255,0,0,1)']]
+    color_axis=dict(cmin=-0.5,cmax=0.5,colorscale=colorscale,colorbar=colorbar,)
+
+    fig = make_subplots(
+        rows=2, cols=1,
+        shared_xaxes=True,
+        vertical_spacing=0.05,
+        row_heights = [0.5,0.5],
+        specs=[[{"type": "scatter"}],
+               [{"type": "scatter"}]]
+    )
+
+    fig.add_trace(
+        go.Scatter(
+            x=[0.5+i for i in range(n)],
+            y=df['performance'],
+            text=df['performance'],
+            textposition='middle left',
+            texttemplate='%{y:.1%}',
+            mode="markers+text",
+            marker=dict(
+                size=df['Weight']*600,
+                sizemode='area',
+                color=df['performance'],#df['performance'].apply(lambda x: 'red' if x>0 else 'green'),
+                cmin=-0.5,
+                cmax=0.5,
+                #opacity=0.8,
+                colorbar=colorbar,
+                colorscale=colorscale,
+                #coloraxis=coloraxis1
+            )
+
+        ),
+        row=1, col=1
+    )
+
+
+    fig.add_trace(
+        go.Scatter(
+            x=[0.5+i for i in range(n)],
+            y=df['Contribution'],
+            text=df['Contribution'],
+            textposition='middle left',
+            texttemplate='%{y:.1%}',
+            mode="markers+text",
+            marker=dict(
+                size=df['Weight']*600,
+                sizemode='area',
+                color=df['Contribution'],#df['Contribution'].apply(lambda x: 'red' if x>0 else 'green'),
+                cmin=-0.5,
+                cmax=0.5,
+                #opacity=0.8,
+                colorbar=colorbar,
+                colorscale=colorscale,
+                #coloraxis=coloraxis2
+            )
+
+        ),
+        row=2, col=1
+    )
+    fig.update_layout(
+        paper_bgcolor=colors['transparent'],
+        plot_bgcolor=colors['transparent'],
+        showlegend=False,#tickmode='array',tickvals=[0,1,2,3,4,5,6],
+        modebar=dict( bgcolor=colors['transparent']),
+        xaxis=dict(showline=True,mirror=True,linecolor=colors['grey'],showticklabels=False,range=[0,5],autorange=False,gridcolor=colors['grey'],zeroline=True ,zerolinecolor=colors['grey']),
+        xaxis2=dict(showline=True,mirror=True,linecolor=colors['grey'],showticklabels=False,range=[0,5],autorange=False,gridcolor=colors['grey'],zeroline=True ,zerolinecolor=colors['grey']),
+        yaxis=dict(showline=True,mirror=True,linecolor=colors['grey'],showticklabels=False,range=[-0.5,0.5],autorange=False,zeroline=True ,zerolinecolor=colors['grey']),
+        yaxis2=dict(showline=True,mirror=True,linecolor=colors['grey'],showticklabels=False,range=[-0.5,0.5],autorange=False
+                    ,zeroline=True ,zerolinecolor=colors['grey'] ),
+        #coloraxis=dict(cmin=-0.5,cmax=0.5,colorscale=colorscale,colorbar=colorbar,),
+        #coloraxis2=dict(cmin=-0.5,cmax=0.5,colorscale=colorscale,colorbar=colorbar,),
+        #margin=dict(l=115)
+        hovermode=False
+    )
+    return fig
+
+def drillgraph_table(df_table):
+    tbl=dash_table.DataTable(
+        data=df_table.to_dict('records'),
+        columns=[ {'id': c, 'name': c,"selectable": True} for c in df_table.columns ],
+        column_selectable="single",
+        selected_columns=[],
+        style_data={
+            'whiteSpace': 'normal',
+            'height': 'auto'
+        },
+       
+        style_cell={
+            'textAlign': 'center',
+            'font-family':'NotoSans-CondensedLight',
+            'fontSize':8
+        },
+        style_cell_conditional=[
+            {'if': {'column_id': df_table.columns[0]},
+             'width': '250px',
+             'fontWeight': 'bold',
+            }, 
+            {'if': {'column_id': 'highlight'},
+            'display': 'none'}
+        ],
+        style_table={
+            'back':  colors['blue']
+        },
+        style_header={
+            'height': '60px',
+            'backgroundColor': colors['yellow'],
+            'fontWeight': 'bold',
+            'font-family':'NotoSans-CondensedLight',
+            'fontSize':10,
+            'color': 'white'
+        },
+    )
+    return tbl
+
+def drillgraph_lv1(df_drilldown,dimension):
+    df=df_drilldown.groupby([dimension])[['YTD Total Cost','Annualized Total Cost','Target Total Cost','Pt Count']].agg(np.sum).reset_index()
+    df['Pt Count']=df['Pt Count']/39
+    allvalue=df.sum().values  
+    allvalue[0]='All'
+    df.loc[-1] = allvalue
+    df.index = df.index + 1 
+    df = df.sort_index()
+    df['Avg YTD']=df['YTD Total Cost']/df['Pt Count']
+    df['Avg Target']=df['Target Total Cost']/df['Pt Count']
+    df['Avg Annualized']=df['Annualized Total Cost']/df['Pt Count']
+    df['Weight']=df['Annualized Total Cost']/allvalue[2]
+    df['Contribution']=(df['Annualized Total Cost']-df['Target Total Cost'])/allvalue[3]
+    df['performance']=(df['Avg Annualized']-df['Avg Target'])/df['Avg Target']
+    df_table=pd.DataFrame(df.apply(lambda x: "{:,.1f}".format(x['Avg YTD']), axis=1)).T
+    df_table.columns=df[dimension]
+    
+    drillgraph=html.Div(
+        [
+        dbc.Row(
+            [
+                dbc.Col([ html.Div("YTD"), 
+                        html.Div("YTD"),
+                        html.Div("YTD"),]
+                       
+                       ),
+
+                dbc.Col(
+                      [ html.Div(drillgraph_table(df_table),style={"padding":"2rem"}),
+                        html.Div(dcc.Graph(figure=drill_bubble(df),config={'displayModeBar': False})),]
+                ),
+            ])
+        ]
+    )
+    
+    return drillgraph
+
+    
+
+
