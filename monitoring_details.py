@@ -224,10 +224,11 @@ def card_graph1_performance_drilldown():
                             no_gutters=True,
                         ),
                         
-                        dbc.Row(
+                         html.Div(
                             [
-                                dbc.Col(drillgraph_lv1(df_drilldown,'Comorbidity Type'), style={"max-height":"80rem"}),
-                            ],
+                                drillgraph_lv1(df_drilldown,'Age Band')
+                            ], 
+                            style={"max-height":"80rem"}
                         ),
                     ]
                 ),

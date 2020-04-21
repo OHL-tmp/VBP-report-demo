@@ -736,6 +736,7 @@ def drill_bubble(df):
        tickmode='array',
        tickvals=[-0.5,0.5],
        ticktext=['Low risk','High risk'],
+       thickness=5,
        #x=1,y=0.7
     )
     colorscale=[[0, 'rgba(0,255,0,1)'],[0.5, 'rgba(0,255,0,0.2)'],[0.5, 'rgba(255,0,0,0.2)'], [1, 'rgba(255,0,0,1)']]
@@ -755,7 +756,7 @@ def drill_bubble(df):
             x=[0.5+i for i in range(n)],
             y=df['performance'],
             text=df['performance'],
-            textposition='middle left',
+            textposition='top center',
             texttemplate='%{y:.1%}',
             mode="markers+text",
             marker=dict(
@@ -767,6 +768,7 @@ def drill_bubble(df):
                 #opacity=0.8,
                 colorbar=colorbar,
                 colorscale=colorscale,
+
                 #coloraxis=coloraxis1
             )
 
@@ -780,7 +782,7 @@ def drill_bubble(df):
             x=[0.5+i for i in range(n)],
             y=df['Contribution'],
             text=df['Contribution'],
-            textposition='middle left',
+            textposition='top center',
             texttemplate='%{y:.1%}',
             mode="markers+text",
             marker=dict(
@@ -811,7 +813,10 @@ def drill_bubble(df):
         #coloraxis=dict(cmin=-0.5,cmax=0.5,colorscale=colorscale,colorbar=colorbar,),
         #coloraxis2=dict(cmin=-0.5,cmax=0.5,colorscale=colorscale,colorbar=colorbar,),
         #margin=dict(l=115)
-        hovermode=False
+        hovermode=False,
+        margin=dict(l=2,r=2,b=2,t=2,pad=0),
+        height=300,
+
     )
     return fig
 
@@ -829,26 +834,30 @@ def drillgraph_table(df_table):
         style_cell={
             'textAlign': 'center',
             'font-family':'NotoSans-CondensedLight',
-            'fontSize':8
+            'fontSize':12
         },
         style_cell_conditional=[
             {'if': {'column_id': df_table.columns[0]},
-             'width': '250px',
+             
              'fontWeight': 'bold',
             }, 
             {'if': {'column_id': 'highlight'},
             'display': 'none'}
         ],
         style_table={
-            'back':  colors['blue']
+            'back':  colors['blue'],
         },
         style_header={
-            'height': '60px',
+            'height': '4rem',
+            'minWidth': '3rem',
+            'maxWidth':'3rem',
+            'whiteSpace': 'normal',
             'backgroundColor': colors['yellow'],
             'fontWeight': 'bold',
             'font-family':'NotoSans-CondensedLight',
-            'fontSize':10,
-            'color': 'white'
+            'fontSize':14,
+            'color': 'white',
+            'text-align':'center',
         },
     )
     return tbl
@@ -872,20 +881,39 @@ def drillgraph_lv1(df_drilldown,dimension):
     
     drillgraph=html.Div(
         [
-        dbc.Row(
-            [
-                dbc.Col([ html.Div("YTD Cost per Episode"), 
-                        html.Div("% Diff from Target"),
-                        html.Div("Contribution to Overall Difference"),]
-                       
-                       ),
+            dbc.Row(
+                [
+                    dbc.Col(
+                        [
+                            html.Div(html.H2("YTD Cost per Episode",style={"font-size":"1rem","display":"table-cell", "vertical-align":"middle"}), style={"height":"6rem","display":"table"}),
+                            html.Div(html.H2("% Diff from Target", style={"font-size":"1rem","display":"table-cell", "vertical-align":"middle"}), style={"height":"10rem","display":"table"}),
+                            html.Div(html.H2("Contribution to Overall Difference", style={"font-size":"1rem","display":"table-cell", "vertical-align":"middle"}), style={"height":"10rem","display":"table"}),
+                        ],
+                        width=3,
+                        style={"padding-left":"2rem"}
+                    ),
 
-                dbc.Col(
-                      [ html.Div(drillgraph_table(df_table),style={"padding":"2rem"}),
-                        html.Div(dcc.Graph(figure=drill_bubble(df),config={'displayModeBar': False})),]
-                ),
-            ])
-        ]
+                    dbc.Col(
+                        [
+                            html.Div(
+                                [
+                                    drillgraph_table(df_table)
+                                ],
+                                style={"padding-left":"1rem","padding-right":"6.5rem"}
+                            ),
+                            html.Div(
+                                [
+                                    dcc.Graph(figure=drill_bubble(df),config={'displayModeBar': False})
+                                ],
+                                style={"padding-top":"1rem","padding-bottom":"2rem"}
+                            ),
+                        ],
+                        width=9,
+                    ),
+                ]
+            )
+        ],
+        style={"padding-top":"2rem","padding-bottom":"2rem"}
     )
     
     return drillgraph
