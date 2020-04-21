@@ -122,7 +122,7 @@ def create_layout():
                         style={"padding-top":"5rem"},
                     )
                 ],
-                style={"padding-left":"3rem", "padding-right":"3rem"},
+                style={"padding-left":"3rem", "padding-right":"3rem", "background-color":"#f5f5f5"},
             )
 
 def div_year_to_date_metrics():
@@ -189,7 +189,7 @@ def card_main_volumn_based_measures():
     return dbc.Card(
                 dbc.CardBody(
                     [
-                        html.H1("Volumn Based Measures", className="mb-3", style={"font-size":"1.5rem"}),
+                        html.H1("Volume Based Measures", className="mb-3", style={"font-size":"1.5rem"}),
                         html.Div(
                             [
                                 dbc.Button(
@@ -343,6 +343,13 @@ def card_main_value_based_measures():
                         html.H1("Value Based Measures", className="mb-3", style={"font-size":"1.5rem"}),
                         html.Div(
                             [
+                                dbc.Button(id = "switch-domain-measure-view", className="ml-1", style={"background-color":"#38160f", "border":"none", "border-radius":"10rem", "font-family":"NotoSans-Regular", "font-size":"0.6rem"}),
+                            ],
+                            style={"text-align":"end"}
+                        ),
+                        html.Hr(className="my-2"),
+                        html.Div(
+                            [
                                 card_modify_value_based_measures(),
                                 card_overview_value_based_measures(),
                                 card_sub_value_based_measures(),
@@ -363,7 +370,6 @@ def card_overview_value_based_measures():
                             [
                                 dbc.Col(html.Img(src=app.get_asset_url("bullet-round-blue.png"), width="20%"), width=1, align="start", style={"margin-right":"-20px", "margin-top":"-4px"}),
                                 dbc.Col(html.H4("Performance Result of Each Domain", style={"font-size":"1rem"}), width=8),
-                                dbc.Button(id = "switch-domain-measure-view", className="mb-3", style={"background-color":"#38160f", "border":"none", "border-radius":"10rem", "font-family":"NotoSans-Regular", "font-size":"0.6rem"}),
                             ],
                             no_gutters=True,
                         ),
@@ -372,7 +378,7 @@ def card_overview_value_based_measures():
                     ]
                 ),
                 className="mb-3",
-                style={"background-color":"#f7f7f7", "border":"none", "border-radius":"0.5rem", "max-height":"23rem"}
+                style={"background-color":"#f7f7f7", "border":"none", "border-radius":"0.5rem", "max-height":"28rem"}
             )
 
 def card_modify_value_based_measures():
@@ -383,7 +389,7 @@ def card_modify_value_based_measures():
                             [
                                 dbc.Col(html.Img(src=app.get_asset_url("bullet-round-blue.png"), width="20%"), width=1, align="start", style={"margin-right":"-20px", "margin-top":"-4px"}),
                                 dbc.Col(html.H4("Domain Detail", style={"font-size":"1rem"}), width=8),
-                                dbc.Col(modal_dashboard_domain_selection(domain_ct), width=3),
+                                dbc.Col(modal_dashboard_domain_selection(domain_ct), style={"text-align":"end"}, width=3),
                             ],
                             no_gutters=True,
                         ),
@@ -439,8 +445,8 @@ def card_sub_value_based_measures():
                     [
                         dbc.Row(
                             [
-                                dbc.Col(html.H6(id = "card_domain_name")),
-                                dbc.Col(dbc.Col(dbc.Button("Change Measure", className="mb-3", color="primary", style={"background-color":"#38160f", "border":"none", "border-radius":"10rem", "font-family":"NotoSans-Regular", "font-size":"0.6rem"})), width=4),
+                                dbc.Col(html.H6(id = "card_domain_name"), width=8),
+                                dbc.Col(dbc.Col(dbc.Button("Change Measure", className="mb-3", color="primary", style={"background-color":"#38160f", "border":"none", "border-radius":"10rem", "font-family":"NotoSans-Regular", "font-size":"0.6rem", "text-align":"end"})), width=4),
                             ],
                         ),
                         html.Div(
