@@ -6,6 +6,7 @@ Created on Wed Apr 15 11:01:53 2020
 """
 
 import pandas as pd
+import numpy as np
 from numpy import arange
 import plotly
 import plotly.graph_objects as go
@@ -14,6 +15,7 @@ import dash
 import dash_table
 import dash_html_components as html
 import dash_core_components as dcc 
+import dash_bootstrap_components as dbc
 
 colors={'blue':'rgba(18,85,222,100)','yellow':'rgba(246,177,17,100)','transparent':'rgba(255,255,255,0)','grey':'rgba(191,191,191,100)',
        'lightblue':'rgba(143,170,220,100)'}
@@ -801,8 +803,8 @@ def drill_bubble(df):
         plot_bgcolor=colors['transparent'],
         showlegend=False,#tickmode='array',tickvals=[0,1,2,3,4,5,6],
         modebar=dict( bgcolor=colors['transparent']),
-        xaxis=dict(showline=True,mirror=True,linecolor=colors['grey'],showticklabels=False,range=[0,5],autorange=False,gridcolor=colors['grey'],zeroline=True ,zerolinecolor=colors['grey']),
-        xaxis2=dict(showline=True,mirror=True,linecolor=colors['grey'],showticklabels=False,range=[0,5],autorange=False,gridcolor=colors['grey'],zeroline=True ,zerolinecolor=colors['grey']),
+        xaxis=dict(showline=True,mirror=True,linecolor=colors['grey'],showticklabels=False,range=[0,n],dtick=1,autorange=False,gridcolor=colors['grey'],zeroline=True ,zerolinecolor=colors['grey']),
+        xaxis2=dict(showline=True,mirror=True,linecolor=colors['grey'],showticklabels=False,range=[0,n],dtick=1,autorange=False,gridcolor=colors['grey'],zeroline=True ,zerolinecolor=colors['grey']),
         yaxis=dict(showline=True,mirror=True,linecolor=colors['grey'],showticklabels=False,range=[-0.5,0.5],autorange=False,zeroline=True ,zerolinecolor=colors['grey']),
         yaxis2=dict(showline=True,mirror=True,linecolor=colors['grey'],showticklabels=False,range=[-0.5,0.5],autorange=False
                     ,zeroline=True ,zerolinecolor=colors['grey'] ),
@@ -872,9 +874,9 @@ def drillgraph_lv1(df_drilldown,dimension):
         [
         dbc.Row(
             [
-                dbc.Col([ html.Div("YTD"), 
-                        html.Div("YTD"),
-                        html.Div("YTD"),]
+                dbc.Col([ html.Div("YTD Cost per Episode"), 
+                        html.Div("% Diff from Target"),
+                        html.Div("Contribution to Overall Difference"),]
                        
                        ),
 

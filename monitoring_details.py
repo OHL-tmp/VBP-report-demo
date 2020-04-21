@@ -17,6 +17,7 @@ from dash.dependencies import Input, Output, State
 from utils import *
 from figure import *
 
+df_drilldown=pd.read_csv("data/Drilldown sample V2.csv")
 
 # Path
 BASE_PATH = pathlib.Path(__file__).parent.resolve()
@@ -225,7 +226,7 @@ def card_graph1_performance_drilldown():
                         
                         dbc.Row(
                             [
-                                dbc.Col(html.Img(src=app.get_asset_url("logo-demo.png"), style={"max-height":"80rem"})),
+                                dbc.Col(drillgraph_lv1(df_drilldown,'Comorbidity Type'), style={"max-height":"80rem"}),
                             ],
                         ),
                     ]
