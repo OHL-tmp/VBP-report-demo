@@ -16,6 +16,8 @@ import dash_table
 import dash_html_components as html
 import dash_core_components as dcc 
 import dash_bootstrap_components as dbc
+from dash_table.Format import Format, Scheme
+import dash_table.FormatTemplate as FormatTemplate
 
 colors={'blue':'rgba(18,85,222,100)','yellow':'rgba(246,177,17,100)','transparent':'rgba(255,255,255,0)','grey':'rgba(191,191,191,100)',
        'lightblue':'rgba(143,170,220,100)'}
@@ -692,7 +694,7 @@ def tbl_measure(df_measure_perform,d):
         {
             'if': {'column_id':c,
                 'filter_query': '{highlight} eq 1' },
-            'backgroundColor': '#3D9970',
+            'backgroundColor': 'rgba(255,0,0,0.6)',
             'color': 'white',
         }  for c in df.columns
         ],
@@ -725,10 +727,50 @@ def tbl_measure(df_measure_perform,d):
        
     return html.Div(measure_tbl, style={"padding":"1rem"})
 
+def tbl_non_contract(df,measures):
+    df=df[df['Measure'].isin(measures)]
+    
+    measure_tbl=dash_table.DataTable(
+        data=df.to_dict('records'),
+        columns=[ {'id': c, 'name': c} for c in df.columns ],
+        sort_action="native",
+        sort_mode='multi',
+        style_data={
+            'whiteSpace': 'normal',
+            'height': 'auto'
+        },
+        style_cell={
+            'textAlign': 'center',
+            'font-family':'NotoSans-CondensedBlack',
+            'fontSize':14
+        },
+        style_cell_conditional=[
+            {'if': {'column_id': df.columns[0]},
+             'width': '2.5rem',
+             'font-family':'NotoSans-CondensedLight',
+            },            
+        ],
+        style_table={
+            'back':  colors['blue']
+        },
+        style_header={
+            'height': '2rem',
+            'backgroundColor': '#F5B111',
+            'fontWeight': 'bold',
+            'font-family':'NotoSans-Condensed',
+            'fontSize':12,
+            'color': '#381610'
+        },
+    )
+    
+       
+    return measure_tbl
+
 ############################################################
 ################Drilldown###################################  
 ############################################################ 
 def drill_bubble(df):
+    df['Weight']=df['Annualized_Total_cost']/(df['Annualized_Total_cost'].sum()/2)
     n=len(df)
     
     colorbar=dict(
@@ -754,15 +796,15 @@ def drill_bubble(df):
     fig.add_trace(
         go.Scatter(
             x=[0.5+i for i in range(n)],
-            y=df['performance'],
-            text=df['performance'],
+            y=df['% Cost Diff from Target'],
+            text=df['% Cost Diff from Target'],
             textposition='top center',
             texttemplate='%{y:.1%}',
             mode="markers+text",
             marker=dict(
                 size=df['Weight']*600,
                 sizemode='area',
-                color=df['performance'],#df['performance'].apply(lambda x: 'red' if x>0 else 'green'),
+                color=df['% Cost Diff from Target'],#df['performance'].apply(lambda x: 'red' if x>0 else 'green'),
                 cmin=-0.5,
                 cmax=0.5,
                 #opacity=0.8,
@@ -780,15 +822,15 @@ def drill_bubble(df):
     fig.add_trace(
         go.Scatter(
             x=[0.5+i for i in range(n)],
-            y=df['Contribution'],
-            text=df['Contribution'],
+            y=df['Contribution to Overall Performance Difference'],
+            text=df['Contribution to Overall Performance Difference'],
             textposition='top center',
             texttemplate='%{y:.1%}',
             mode="markers+text",
             marker=dict(
                 size=df['Weight']*600,
                 sizemode='area',
-                color=df['Contribution'],#df['Contribution'].apply(lambda x: 'red' if x>0 else 'green'),
+                color=df['Contribution to Overall Performance Difference'],#df['Contribution'].apply(lambda x: 'red' if x>0 else 'green'),
                 cmin=-0.5,
                 cmax=0.5,
                 #opacity=0.8,
@@ -820,8 +862,9 @@ def drill_bubble(df):
     )
     return fig
 
-def drillgraph_table(df_table):
+def drillgraph_table(df_table,tableid):
     tbl=dash_table.DataTable(
+        id=tableid,
         data=df_table.to_dict('records'),
         columns=[ {'id': c, 'name': c,"selectable": True} for c in df_table.columns ],
         column_selectable="single",
@@ -862,25 +905,14 @@ def drillgraph_table(df_table):
     )
     return tbl
 
-def drillgraph_lv1(df_drilldown,dimension):
-    df=df_drilldown.groupby([dimension])[['YTD Total Cost','Annualized Total Cost','Target Total Cost','Pt Count']].agg(np.sum).reset_index()
-    df['Pt Count']=df['Pt Count']/39
-    allvalue=df.sum().values  
-    allvalue[0]='All'
-    df.loc[-1] = allvalue
-    df.index = df.index + 1 
-    df = df.sort_index()
-    df['Avg YTD']=df['YTD Total Cost']/df['Pt Count']
-    df['Avg Target']=df['Target Total Cost']/df['Pt Count']
-    df['Avg Annualized']=df['Annualized Total Cost']/df['Pt Count']
-    df['Weight']=df['Annualized Total Cost']/allvalue[2]
-    df['Contribution']=(df['Annualized Total Cost']-df['Target Total Cost'])/allvalue[3]
-    df['performance']=(df['Avg Annualized']-df['Avg Target'])/df['Avg Target']
-    df_table=pd.DataFrame(df.apply(lambda x: "{:,.1f}".format(x['Avg YTD']), axis=1)).T
-    df_table.columns=df[dimension]
+def drillgraph_lv1(df,tableid):
+
+    df=df.reindex(range(len(df)-1,-1,-1))
+    df_table=df[['YTD Avg Episode Cost',df.columns[0]]]
+    df_table1=pd.DataFrame(df_table.apply(lambda x: "{:,.1f}".format(x['YTD Avg Episode Cost']), axis=1)).T
+    df_table1.columns=df_table[df_table.columns[1]]
     
-    drillgraph=html.Div(
-        [
+    drillgraph= [
             dbc.Row(
                 [
                     dbc.Col(
@@ -897,7 +929,7 @@ def drillgraph_lv1(df_drilldown,dimension):
                         [
                             html.Div(
                                 [
-                                    drillgraph_table(df_table)
+                                    drillgraph_table(df_table1,tableid)
                                 ],
                                 style={"padding-left":"1rem","padding-right":"7rem"}
                             ),
@@ -912,11 +944,117 @@ def drillgraph_lv1(df_drilldown,dimension):
                     ),
                 ]
             )
-        ],
-        style={"padding-top":"2rem","padding-bottom":"2rem"}
-    )
+        ]
+        #style={"padding-top":"2rem","padding-bottom":"2rem"}
+    
     
     return drillgraph
+       
+   
+def dashtable_lv3(df,dimension,tableid):
+     
+    table_lv3=dash_table.DataTable(
+        data=df.to_dict('records'),
+        id=tableid,
+        columns=[
+        {"name": ["", dimension], "id": dimension},
+        {"name": ["Total Episode Cost", "YTD Avg Episode Cost"], "id": "YTD Avg Episode Cost",'type': 'numeric',"format":FormatTemplate.money(0)},
+        {"name": ["Total Episode Cost", "% Cost Diff from Target"], "id": "% Cost Diff from Target",'type': 'numeric',"format":FormatTemplate.percentage(1)},
+        {"name": ["Total Episode Cost", "Contribution to Overall Performance Difference"], "id": "Contribution to Overall Performance Difference",'type': 'numeric',"format":FormatTemplate.percentage(1)},
+        {"name": ["Utilization Rate", "YTD Avg Utilization Rate"], "id": "YTD Avg Utilization Rate",'type': 'numeric',"format":Format( precision=2, scheme=Scheme.fixed,),},
+        {"name": ["Utilization Rate", "% Util Diff from Target"], "id": "% Util Diff from Target",'type': 'numeric',"format":FormatTemplate.percentage(1)},
+        {"name": ["Unit Cost", "YTD Avg Cost per Unit"], "id": "YTD Avg Cost per Unit",'type': 'numeric',"format":FormatTemplate.money(0)},
+        {"name": ["Unit Cost", "% Unit Cost Diff from Target"], "id": "% Unit Cost Diff from Target",'type': 'numeric',"format":FormatTemplate.percentage(1)},
+    ],
+        merge_duplicate_headers=True,
+        sort_action="native",
+        sort_mode='single',
+        #sort_by={"column_id":"Contribution to Overall Performance Difference","direction":"desc"},
+        row_selectable='single',
+        selected_rows=[],
+        style_data={
+            'whiteSpace': 'normal',
+            'height': 'auto'
+        },
+       
+        style_cell={
+            'textAlign': 'center',
+            'font-family':'NotoSans-CondensedLight',
+            'fontSize':12
+        },
+        style_cell_conditional=[
+            {'if': {'column_id': df.columns[0]},
+             
+             'fontWeight': 'bold',
+            }, 
+            
+        ],
+        style_table={
+            'back':  colors['blue'],
+        },
+        style_header={
+            'height': '4rem',
+            'minWidth': '3rem',
+            'maxWidth':'3rem',
+            'whiteSpace': 'normal',
+            'backgroundColor': colors['yellow'],
+            'fontWeight': 'bold',
+            'font-family':'NotoSans-CondensedLight',
+            'fontSize':14,
+            'color': 'white',
+            'text-align':'center',
+        },
+    )
+    return table_lv3
+
+def drilldata_process(df_drilldown,dimension,dim1='All',f1='All',dim2='All',f2='All',dim3='All',f3='All'):#dimension='Sub Category'    
+    if f1!='All':
+        df_pre=df_drilldown[df_drilldown[dim1]==f1]
+        if f2!='All':
+            df_pre=df_pre[df_pre[dim2]==f2]
+            if  f3!='All':
+                df_pre=df_pre[df_pre[dim3]==f3]
+    else :
+        df_pre=df_drilldown
+
+    df_pre2=df_pre.groupby(list(np.unique([dimension,'Service Category', 'Sub Category'])))[df_pre.columns[14:]].agg(np.sum).reset_index()
+    
+    df=df_pre2.groupby([dimension]).agg(YTD_Total_cost=pd.NamedAgg(column='YTD Total Cost',aggfunc=sum)
+                                             ,Annualized_Total_cost=pd.NamedAgg(column='Annualized Total Cost',aggfunc=sum)
+                                             ,Target_Total_cost=pd.NamedAgg(column='Target Total Cost',aggfunc=sum)
+                                             ,YTD_Utilization=pd.NamedAgg(column='YTD Utilization',aggfunc=sum)
+                                             ,Annualized_Utilization=pd.NamedAgg(column='Annualized Utilization',aggfunc=sum)
+                                             ,Target_Utilization=pd.NamedAgg(column='Target Utilization',aggfunc=sum)
+                                             ,Pt_Count=pd.NamedAgg(column='Pt Count',aggfunc=np.mean)
+                                             ).reset_index()
+    allvalue=df.sum().values 
+    allvalue[0]='All'
+    if dimension in ['Service Category', 'Sub Category']:
+        allvalue[-1]=df['Pt_Count'].mean()
+  
+    df.loc[len(df)] = allvalue
+    
+    df['YTD Avg Episode Cost']=df['YTD_Total_cost']/df['Pt_Count']
+    df['Target Avg Episode Cost']=df['Target_Total_cost']/df['Pt_Count']
+    df['Annualized Avg Episode Cost']=df['Annualized_Total_cost']/df['Pt_Count']
+
+    df['% Cost Diff from Target']=(df['Annualized Avg Episode Cost']-df['Target Avg Episode Cost'])/df['Target Avg Episode Cost']
+    df['Contribution to Overall Performance Difference']=(df['Annualized_Total_cost']-df['Target_Total_cost'])/allvalue[3]
+
+    df['YTD Avg Utilization Rate']=df['YTD_Utilization']/df['Pt_Count']
+    df['Target Avg Utilization Rate']=df['Target_Utilization']/df['Pt_Count']
+    df['Annualized Avg Utilization Rate']=df['Annualized_Utilization']/df['Pt_Count']
+
+    df['% Util Diff from Target']=(df['Annualized Avg Utilization Rate']-df['Target Avg Utilization Rate'])/df['Target Avg Utilization Rate']
+
+    df['YTD Avg Cost per Unit']=df['YTD_Total_cost']/df['YTD_Utilization']
+    df['Target Avg Cost per Unit']=df['Target_Total_cost']/df['Target_Utilization']
+    df['Annualized Avg Cost per Unit']=df['Annualized_Total_cost']/df['Annualized_Utilization']
+
+    df['% Unit Cost Diff from Target']=(df['Annualized Avg Cost per Unit']-df['Target Avg Cost per Unit'])/df['Target Avg Cost per Unit']
+    
+    return df
+
 
     
 
