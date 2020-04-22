@@ -47,7 +47,7 @@ def modal_drilldown_tableview():
                             ),
                             dbc.ModalFooter(
                                 dbc.Button(
-                                    "Finish", id="close-centered", className="ml-auto",
+                                    "CLOSE", id="close-centered", className="ml-auto",
                                     style={"margin-right":"20px", "background-color":"#38160f", "border":"none", "border-radius":"10rem", "font-family":"NotoSans-Black", "font-size":"1rem"}
                                 )
                             ),
