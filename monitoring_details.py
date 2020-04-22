@@ -20,8 +20,6 @@ from figure import *
 
 from modal_drilldown_tableview import *
 
-df_drilldown=pd.read_csv("data/Drilldown sample V2.csv")
-
 # Path
 BASE_PATH = pathlib.Path(__file__).parent.resolve()
 DATA_PATH = BASE_PATH.joinpath("Data").resolve()
@@ -76,15 +74,15 @@ def card_menu_volumn_based_measure():
 					[
 						dbc.CardBody(
 							[
-								html.H2("Volume Based Measure"),
-								html.H4("Volume Based Measure"),
-								html.H4("Volume Based Measure"),
-								html.H4("Volume Based Measure"),
+								html.H2("Volume Based Measure", style={"font-size":"1rem"}),
+								html.H4("Volume Based Measure", style={"font-size":"0.8rem", "padding-left":"0.5rem"}),
+								html.H4("Volume Based Measure", style={"font-size":"0.8rem", "padding-left":"0.5rem"}),
+								html.H4("Volume Based Measure", style={"font-size":"0.8rem", "padding-left":"0.5rem"}),
 							]
 						)
 					],
 					className="mr-3",
-					style={"box-shadow":"0 4px 8px 0 rgba(0, 0, 0, 0.05), 0 6px 20px 0 rgba(0, 0, 0, 0.05)", "border":"none", "border-radius":"0.5rem"}
+					style={"border-top":"none", "border-right":"none", "border-bottom":"none", "border-left":"3px solid", "border-radius":"0.5rem", "background-color":"#f5f5f5"}
 				)
 			],
 			style={"padding-top":"1rem", "padding-bottom":"1rem"}
@@ -97,15 +95,15 @@ def card_menu_outcome_based_measure():
 					[
 						dbc.CardBody(
 							[
-								html.H2("Outcome Based Measure"),
-								html.H4("Outcome Based Measure"),
-								html.H4("Outcome Based Measure"),
-								html.H4("Outcome Based Measure"),
+								html.H2("Outcome Based Measure", style={"font-size":"1rem"}),
+								html.H4("Outcome Based Measure", style={"font-size":"0.8rem", "padding-left":"0.5rem"}),
+								html.H4("Outcome Based Measure", style={"font-size":"0.8rem", "padding-left":"0.5rem"}),
+								html.H4("Outcome Based Measure", style={"font-size":"0.8rem", "padding-left":"0.5rem"}),
 							]
 						)
 					],
 					className="mr-3",
-					style={"box-shadow":"0 4px 8px 0 rgba(0, 0, 0, 0.05), 0 6px 20px 0 rgba(0, 0, 0, 0.05)", "border":"none", "border-radius":"0.5rem"}
+					style={"border":"none", "border-radius":"0.5rem", "background-color":"#f5f5f5"}
 				)
 			],
 			style={"padding-top":"1rem", "padding-bottom":"1rem"}
@@ -118,7 +116,7 @@ def col_content_drilldown():
 			[
 				dbc.Row(
 					[
-						dbc.Col(card_overview_drilldown()),
+						dbc.Col(card_overview_drilldown(0.08)),
 						dbc.Col(card_key_driver_drilldown()),
 					]
 				),
@@ -127,6 +125,7 @@ def col_content_drilldown():
                     [
                         modal_drilldown_tableview()
                     ],
+                    style={"padding-bottom":"1rem"}
                 ),
 				card_graph1_performance_drilldown(),
 				card_graph2_performance_drilldown(),
@@ -136,21 +135,31 @@ def col_content_drilldown():
 		)
 
 
-def card_overview_drilldown():
-	return html.Div(
+def card_overview_drilldown(percentage):
+    if percentage > 0:
+        color = "#dc3545"
+        condition = "worse than target"
+    elif percentage == 0:
+        color = "#1357DD"
+        condition = "same as target"
+    else:
+        color = "#28a745"
+        condition = "better than target"
+
+    return html.Div(
 			[
 				dbc.Row(
                         [
-                            dbc.Col(html.H1("Average Episode Cost"), width="auto"),
+                            dbc.Col(html.H1("Average Episode Cost", style={"font-size":"1.6rem"}), width="auto"),
                             dbc.Card(
                                 dbc.CardBody(
                                     [
-                                        html.H3("worse than target", style={"font-size":"0.5rem", "color":"#fff"}),
-                                        html.H2("8%", style={"font-size":"1.5rem", "margin-top":"-5px", "color":"#fff"}),
+                                        html.H3("worse than target", style={"font-size":"0.8rem", "color":"#fff"}),
+                                        html.H2(str(percentage*100)+"%", style={"font-size":"1.2rem", "margin-top":"-9px", "color":"#fff"}),
                                     ],
-                                    style={"margin-top":"-16px"}
+                                    style={"margin-top":"-20px"}
                                 ),
-                                style={"height":"3rem", "background-color":"#1357DD", "text-align":"center"},
+                                style={"height":"2.5rem", "border":"none", "background-color":color, "text-align":"center", "margin-top":"-6px"},
                             ),
                         ]
                     ),
@@ -207,10 +216,10 @@ def card_confounding_factors():
                         
                         dbc.Row(
                             [
-                                dbc.Col(html.Img(src=app.get_asset_url("logo-demo.png"), style={"height":"4rem"}), width=3),
-                                dbc.Col(html.Img(src=app.get_asset_url("logo-demo.png"), style={"height":"4rem"}), width=3),
-                                dbc.Col(html.Img(src=app.get_asset_url("logo-demo.png"), style={"height":"4rem"}), width=3),
-                                dbc.Col(html.Img(src=app.get_asset_url("logo-demo.png"), style={"height":"4rem"}), width=3),
+                                dbc.Col(element_confounding_factors(0.05, "New technology"), width=3),
+                                dbc.Col(element_confounding_factors(-0.02, "Benefit Change"), width=3),
+                                dbc.Col(element_confounding_factors(-0.03, "Contracting Change"), width=3),
+                                dbc.Col(element_confounding_factors(0.05, "Outlier Impact"), width=3),
                             ],
                         ),
                     ]
@@ -218,6 +227,23 @@ def card_confounding_factors():
                 className="mb-3",
                 style={"box-shadow":"0 4px 8px 0 rgba(0, 0, 0, 0.05), 0 6px 20px 0 rgba(0, 0, 0, 0.05)", "border":"none", "border-radius":"0.5rem"}
             )
+
+
+def element_confounding_factors(percentage, factor):
+    if percentage > 0:
+        color = "danger"
+    elif percentage == 0:
+        color = "secondary"
+    else:
+        color = "success"
+
+    return dbc.Row(
+            [
+                dbc.Col(dbc.Badge(str(percentage*100)+"%", color=color, className="mr-1"), width=3, style={"font-family":"NotoSans-SemiBold"}),
+                dbc.Col(html.H1(factor, style = {"font-size":"1rem", "padding-top":"0.1rem"}), width=9),
+            ],
+            style={"padding":"1rem"}
+        )
 
 
 def card_graph1_performance_drilldown():
@@ -335,7 +361,7 @@ def toggle_modal_dashboard_domain_selection(n1, n2, is_open):
     if n1 or n2:
         return not is_open
     return is_open
-    
+
 
 @app.callback(
     [Output('sub_cate_filter', 'options'),

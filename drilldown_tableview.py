@@ -53,26 +53,29 @@ def tableview():
 						[
 							html.Div(
 								[
-									html.H5("Select Dimension"),
+									html.H4("Select Dimension", style={"font-size":"1rem","padding-left":"0.5rem", "padding-top":"0.5rem"}),
+									html.H5("First Dimension", style={"font-size":"0.8rem","color":"#919191","padding-left":"0.5rem", "padding-top":"0.5rem"}),
 									dcc.Dropdown(
 										id = "dropdown-dimension-1",
 										options = [{"label": k, "value": k} for k in list(dimension.keys())],
-										placeholder ="Select a dimension",
+										placeholder ="...",
 										
 										),
+									html.H5("Second Dimension", style={"font-size":"0.8rem","color":"#919191","padding-left":"0.5rem", "padding-top":"0.5rem"}),
 									dcc.Dropdown(
 										id = "dropdown-dimension-2",
 										disabled=True,
-										placeholder ="Select a dimension",
+										placeholder ="...",
 										
 										),
+									html.H5("Third Dimension", style={"font-size":"0.8rem","color":"#919191","padding-left":"0.5rem", "padding-top":"0.5rem"}),
 									dcc.Dropdown(
 										id = "dropdown-dimension-3",
 										disabled=True,
-										placeholder ="Select a dimension",
+										placeholder ="...",
 										
 										),
-									html.H5("Select Measures"),
+									html.H4("Select Measures", style={"font-size":"1rem","padding-left":"0.5rem", "padding-top":"1rem"}),
 									dcc.Dropdown(
 										id = "dropdown-measure-1",
 										options = [{"label": k, "value": k} for k in measure],
@@ -82,27 +85,29 @@ def tableview():
 										),
 								]
 							),
+							html.Hr(className="ml-1"),
 							html.Div(
 								[
-									html.H5("Filters"),
-									html.H6("Service Category"),
+									html.H4("Filters", style={"font-size":"1rem","padding-left":"0.5rem", "padding-top":"0.5rem"}),
+									html.H5("Service Category", style={"font-size":"0.8rem","color":"#919191","padding-left":"0.5rem", "padding-top":"0.5rem"}),
 									dcc.Dropdown(
 										id = "srvc_cate_filter",
 										options = [{"label": k, "value": k} for k in list(filter_list.keys())],
 										placeholder = "Select Service Category",
 										value = 'All',
 										),
-									html.H6("Sub Category"),
+									html.H5("Sub Category", style={"font-size":"0.8rem","color":"#919191","padding-left":"0.5rem", "padding-top":"0.5rem"}),
 									dcc.Dropdown(
 										id = "sub_cate_filter",
 										placeholder = "Select Sub Category",
 										),
-									html.H6("Filter for Dimensions"),
+									html.H5("Filter for Dimensions", style={"font-size":"0.8rem","color":"#919191","padding-left":"0.5rem", "padding-top":"0.5rem"}),
 									dcc.Dropdown(
 										id = "dimension_filter_selection_1",
 										options = [{"label": k, "value": k} for k in list(dimension.keys())],
 										placeholder = "Add a Filter",
 										),
+									html.H5("", style={"font-size":"0.8rem"}),
 									dcc.Dropdown(
 										id = "dimension_filter_1",
 										placeholder = "Select Sub Category",
@@ -121,15 +126,15 @@ def tableview():
 								[
 									dash_table.DataTable(
 										id = 'datatable-tableview',
-										style_header = {'height': 'auto', 'width':'auto','whiteSpace':'normal','font-family':'NotoSans-CondensedLight','font-size':'auto'},
-										style_cell = {'font-family':'NotoSans-Condensed','font-size':'0.8rem'},
+										style_header = {'height': 'auto', 'width':'auto','whiteSpace':'normal','font-family':'NotoSans-CondensedLight','font-size':'auto','backgroundColor': '#dce7fc','color':'#1357DD'},
+										style_cell = {'font-family':'NotoSans-Condensed','font-size':'0.8rem','textAlign': 'center'},
 										#fixed_rows={ 'headers': True, 'data': 0 },
 										style_table = {'textAlign': 'center'},
 										sort_action='native',
 										page_size=200,
 										)
 								],
-								style={"padding-left":"1rem","padding-bottom":"1rem","overflow-x":"scroll",'max-height':'60rem'}
+								style={"padding-left":"1rem","padding-right":"1rem","padding-bottom":"1rem","overflow":"scroll",'max-height':'60rem'}
 							)
 							
 						],

@@ -34,17 +34,20 @@ def modal_drilldown_tableview():
                     dbc.Button("OPEN TABLE VIEW", id="open-centered", color="light", block=True, style={"color":"#1357DD","border":"1.8px dotted","border-radius":"0.5rem","font-family":"NotoSans-CondensedBlack"}),
                     dbc.Modal(
                         [
-                            dbc.ModalHeader([
-                                
-                            ],
-                            
+                            dbc.ModalHeader(
+                                html.Div(
+                                    [
+                                        html.H2("TABLE VIEW", style={"font-size":"2rem", "color":"#1357DD"})
+                                    ],
+                                    style={"color":"#1357DD"}
+                                )
                             ),
                             dbc.ModalBody(
                                 tableview()
                             ),
                             dbc.ModalFooter(
                                 dbc.Button(
-                                    "SUBMIT", id="close-centered", className="ml-auto",
+                                    "Finish", id="close-centered", className="ml-auto",
                                     style={"margin-right":"20px", "background-color":"#38160f", "border":"none", "border-radius":"10rem", "font-family":"NotoSans-Black", "font-size":"1rem"}
                                 )
                             ),
