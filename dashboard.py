@@ -812,23 +812,20 @@ def toggle_collapse_domain_selection_measures_6(v1):
 # submit measure selection
 @app.callback(
     Output("table_measure_watchlist", "children"),
-    [Input("close-centered","n_clicks")]+[Input(f"checklist-domain-measures-lv2-{d+1}-{i+1}", "value") for d in range(domain_ct) for i in range(len(list(Domain_options[list(Domain_options.keys())[d]].keys())))],
+    [Input("close-centered","n_clicks")]+[Input("switch-contract-additional-view", "n_clicks")]+[Input(f"checklist-domain-measures-lv2-{d+1}-{i+1}", "value") for d in range(domain_ct) for i in range(len(list(Domain_options[list(Domain_options.keys())[d]].keys())))],
     )
-def generate_measure_watchlist(n, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19, v20, v21, v22, v23, v24):
+def generate_measure_watchlist(n, sw, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19, v20, v21, v22, v23, v24):
     triggered = [t["prop_id"] for t in dash.callback_context.triggered]
     submit = len([1 for i in triggered if i == "close-centered.n_clicks"])
-    table_measure_to_watch = ""
-    if submit:
+    switch = len([1 for i in triggered if i == "switch-contract-additional-view.n_clicks"])
+    if switch or submit:
         measure_to_watch = []
         for i in range(24):
             if eval("v"+str(i+1)) and len(eval("v"+str(i+1))) > 0:
                 measure_to_watch.extend(eval("v"+str(i+1)))
-
-        table_measure_to_watch=tbl_non_contract(df_nocontract,measure_to_watch)
-
-    return table_measure_to_watch
+    return tbl_non_contract(df_nocontract,measure_to_watch)
     
 
 
 if __name__ == "__main__":
-    app.run_server(host="127.0.0.1",debug=True, port = 8051)
+    app.run_server(host="127.0.0.1",debug=True, port = 8052)
