@@ -899,7 +899,7 @@ def drillgraph_lv1(df_drilldown,dimension):
                                 [
                                     drillgraph_table(df_table)
                                 ],
-                                style={"padding-left":"1rem","padding-right":"6.5rem"}
+                                style={"padding-left":"1rem","padding-right":"7rem"}
                             ),
                             html.Div(
                                 [
