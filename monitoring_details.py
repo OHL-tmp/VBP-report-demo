@@ -19,8 +19,12 @@ from utils import *
 from figure import *
 
 from modal_drilldown_tableview import *
-df_drilldown=pd.read_csv("data/Drilldown sample V5.csv")
+
+
+df_drilldown=pd.read_csv("data/drilldown_sample_5.csv")
 dimensions=df_drilldown.columns[0:12]
+df_drill_waterfall=pd.read_csv("data/drilldown waterfall graph.csv")
+df_driver=pd.read_csv("data/Drilldown Odometer.csv")
 
 all_dimension=[]
 for i in list(df_drilldown.columns[0:14]):
@@ -164,7 +168,7 @@ def card_overview_drilldown():
                     html.P("As of June 30th.", style={"color":"#000", "font-size":"0.8rem"}),
                     dbc.Row(
                         [
-                            html.Img(src=app.get_asset_url("logo-demo.png")),
+                            dcc.Graph(figure=drill_waterfall(df_drill_waterfall)),
                         ],
                     ),
                 ],
@@ -178,18 +182,18 @@ def card_key_driver_drilldown():
                         dbc.Row(
                             [
                                 dbc.Col(html.Img(src=app.get_asset_url("bullet-round-blue.png"), width="10px"), width="auto", align="start", style={"margin-top":"-4px"}),
-		                        dbc.Col(html.H4("Key Dribvers", style={"font-size":"1rem", "margin-left":"10px"})),
+		                        dbc.Col(html.H4("Key Drivers", style={"font-size":"1rem", "margin-left":"10px"})),
                             ],
                             no_gutters=True,
                         ),
                         
                         dbc.Row(
                             [
-                                dbc.Col(html.Img(src=app.get_asset_url("logo-demo.png"), style={"height":"4rem"}), width=6),
-                                dbc.Col(html.Img(src=app.get_asset_url("logo-demo.png"), style={"height":"4rem"}), width=6),
-                                dbc.Col(html.Img(src=app.get_asset_url("logo-demo.png"), style={"height":"4rem"}), width=6),
-                                dbc.Col(html.Img(src=app.get_asset_url("logo-demo.png"), style={"height":"4rem"}), width=6),
-                                dbc.Col(html.Img(src=app.get_asset_url("logo-demo.png"), style={"height":"4rem"}), width=6),
+                                dbc.Col(html.Div([gaugegraph(df_driver,0)], style={"padding":"4rem"}), width=6),
+                                dbc.Col(html.Div('', style={"max-height":"4rem"}), width=6),
+                                dbc.Col(html.Div('', style={"max-height":"4rem"}), width=6),
+                                dbc.Col(html.Div('', style={"max-height":"4rem"}), width=6),
+                                dbc.Col(html.Div('', style={"max-height":"4rem"}), width=6),
                             ],
                         ),
                     ]
@@ -683,7 +687,7 @@ def datatable_data_selection(v1, v2, v3, f1, f2, f3, d, m):
 
 
 if __name__ == "__main__":
-    app.run_server(host="127.0.0.1",debug=True,port=8051)
+    app.run_server(host="127.0.0.1",debug=True,port=8048)
 
 
 
