@@ -14,8 +14,11 @@ import plotly.graph_objects as go
 
 from plotly.subplots import make_subplots
 from dash.dependencies import Input, Output, State
+
 from utils import *
 from figure import *
+
+from modal_drilldown_tableview import *
 
 df_drilldown=pd.read_csv("data/Drilldown sample V2.csv")
 
@@ -120,6 +123,11 @@ def col_content_drilldown():
 					]
 				),
 				card_confounding_factors(),
+                html.Div(
+                    [
+                        modal_drilldown_tableview()
+                    ],
+                ),
 				card_graph1_performance_drilldown(),
 				card_graph2_performance_drilldown(),
 				card_table1_performance_drilldown(),
@@ -313,6 +321,159 @@ def card_table2_performance_drilldown():
 
 
 app.layout = create_layout()
+
+
+#### callback ####
+
+## modal
+@app.callback(
+    Output("modal-centered", "is_open"),
+    [Input("open-centered", "n_clicks"), Input("close-centered", "n_clicks")],
+    [State("modal-centered", "is_open")],
+)
+def toggle_modal_dashboard_domain_selection(n1, n2, is_open):
+    if n1 or n2:
+        return not is_open
+    return is_open
+    
+
+@app.callback(
+    [Output('sub_cate_filter', 'options'),
+    Output('sub_cate_filter', 'value')],
+    [Input('srvc_cate_filter', 'value')]
+    )
+def sub_filter(v):
+    if v:
+        sub_filter = filter_list[v]
+        return [{"label": k, "value": k} for k in sub_filter],'All'
+    return [],''
+
+
+@app.callback(
+    [Output('dimension_filter_1', 'options'),
+    Output('dimension_filter_1', 'value')],
+    [Input('dimension_filter_selection_1', 'value')]
+    )
+def filter_dimension_1(v):
+    if v:
+        return [{"label": k, "value": k} for k in dimension[v]], dimension[v]
+    return [],[]
+
+@app.callback(
+    [Output('dropdown-dimension-2','options'),
+    Output('dropdown-dimension-2','disabled')],
+    [Input('dropdown-dimension-1','value')]
+    )
+def dropdown_menu_2(v):
+    if v is None:
+        return [], True
+    else:
+        dropdown_option = []
+        for k in list(dimension.keys()):
+            if k in v:
+                dropdown_option.append({'label' : k, 'value' : k, 'disabled' : True})
+            else:
+                dropdown_option.append({'label' : k, 'value' : k, 'disabled' : False})
+        return dropdown_option, False
+
+@app.callback(
+    [Output('dropdown-dimension-3','options'),
+    Output('dropdown-dimension-3','disabled')],
+    [Input('dropdown-dimension-1','value'),
+    Input('dropdown-dimension-2','value')]
+    )
+def dropdown_menu_3(v1, v2):
+    v = [v1, v2]
+    if v2 is None:
+        return [], True
+    else:
+        dropdown_option = []
+        for k in list(dimension.keys()):
+            if k in v:
+                dropdown_option.append({'label' : k, 'value' : k, 'disabled' : True})
+            else:
+                dropdown_option.append({'label' : k, 'value' : k, 'disabled' : False})
+        return dropdown_option, False
+
+
+@app.callback(
+    [Output('datatable-tableview', "columns"),
+    Output('datatable-tableview', "data")],
+    [Input('dropdown-dimension-1','value'),
+    Input('dropdown-dimension-2','value'),
+    Input('dropdown-dimension-3','value'),
+    Input('srvc_cate_filter','value'),
+    Input('sub_cate_filter','value'),
+    Input('dimension_filter_1','value'),
+    Input('dimension_filter_selection_1','value'),
+    Input('dropdown-measure-1', 'value')]
+    )
+def datatable_data_selection(v1, v2, v3, f1, f2, f3, d, m):
+    if f1 == 'All':
+        cate_cnt = 39
+        if f2 == 'All':
+            if f3:
+                df_drilldown_filtered = df_drilldown[df_drilldown[d].isin(f3)]
+            else:
+                df_drilldown_filtered = df_drilldown
+        else:
+            if f3:
+                df_drilldown_filtered = df_drilldown[(df_drilldown['Sub Category'].isin([f2])) & (df_drilldown[d].isin(f3))]
+            else: 
+                df_drilldown_filtered = df_drilldown[df_drilldown['Sub Category'].isin([f2])]
+    else:
+        cate_cnt = len(filter[f1])-1
+        if f2 == 'All':
+            if f3:
+                df_drilldown_filtered = df_drilldown[(df_drilldown['Service Category'].isin([f1])) & (df_drilldown[d].isin(f3))]
+            else:
+                df_drilldown_filtered = df_drilldown[df_drilldown['Service Category'].isin([f1])]
+        else: 
+            if f3:
+                df_drilldown_filtered = df_drilldown[(df_drilldown['Service Category'].isin([f1])) & (df_drilldown['Sub Category'].isin([f2])) & (df_drilldown[d].isin(f3))]
+            else: 
+                df_drilldown_filtered = df_drilldown[(df_drilldown['Service Category'].isin([f1])) & (df_drilldown['Sub Category'].isin([f2]))]
+        
+    table_column = []
+    selected_dimension = []
+    if v1 is not None:
+        selected_dimension.append(v1)
+    if v2 is not None:
+        selected_dimension.append(v2)
+    if v3 is not None:
+        selected_dimension.append(v3)
+
+    table_column.extend(selected_dimension)
+    table_column.append("Pt Count")
+    percent_list = ['Diff % from Target Utilization', 'Diff % from Target Total Cost', 'Diff % from Target Unit Cost']
+    if len(selected_dimension) > 0:
+        table_column.extend(measure_ori) 
+        df_agg = df_drilldown_filtered[table_column].groupby(by = selected_dimension).sum()
+        df_agg['Pt Count'] = df_agg['Pt Count']/cate_cnt
+        df_agg['YTD Utilization'] = df_agg['YTD Utilization']/df_agg['Pt Count']
+        df_agg['Annualized Utilization'] = df_agg['Annualized Utilization']/df_agg['Pt Count']
+        df_agg['Target Utilization'] = df_agg['Target Utilization']/df_agg['Pt Count']
+        df_agg['Diff % from Target Utilization'] = (df_agg['Annualized Utilization'] - df_agg['Target Utilization'])/df_agg['Target Utilization']
+        df_agg['YTD Total Cost'] = df_agg['YTD Total Cost']/df_agg['Pt Count']
+        df_agg['Annualized Total Cost'] = df_agg['Annualized Total Cost']/df_agg['Pt Count']
+        df_agg['Target Total Cost'] = df_agg['Target Total Cost']/df_agg['Pt Count']
+        df_agg['Diff % from Target Total Cost'] = (df_agg['Annualized Total Cost'] - df_agg['Target Total Cost'])/df_agg['Target Total Cost']
+        df_agg['YTD Unit Cost'] = df_agg['YTD Total Cost']/df_agg['YTD Utilization']
+        df_agg['Annualized Unit Cost'] = df_agg['Annualized Total Cost']/df_agg['Annualized Utilization']
+        df_agg['Target Unit Cost'] = df_agg['Target Total Cost']/df_agg['Target Utilization']
+        df_agg['Diff % from Target Unit Cost'] = (df_agg['Annualized Unit Cost'] - df_agg['Target Unit Cost'])/df_agg['Target Unit Cost']
+        df_agg.style.format({'Diff % from Target Utilization' : "{:.2%}", 'Diff % from Target Total Cost': "{:.2%}", 'Diff % from Target Unit Cost' : "{:.2%}"})
+        df_agg.reset_index(inplace = True)
+        show_column = selected_dimension + ["Pt Count"] + m 
+        df_agg = df_agg[show_column]
+    else:
+        show_column = ["Pt Count"] + m 
+        df_agg = df_drilldown_filtered[show_column]
+    
+    
+    return [{"name": i, "id": i, "selectable":True,"type":"numeric", "format": FormatTemplate.percentage(1)} if i in percent_list else {"name": i, "id": i, "selectable":True, "type":"numeric","format": Format(precision=0, scheme = Scheme.fixed)} if i == "Pt Count" else {"name": i, "id": i, "selectable":True, "type":"numeric","format": Format(precision=1, scheme = Scheme.fixed)} for i in show_column], df_agg.to_dict('records')
+
+
 
 
 if __name__ == "__main__":
