@@ -694,7 +694,7 @@ def tbl_measure(df_measure_perform,d):
         {
             'if': {'column_id':c,
                 'filter_query': '{highlight} eq 1' },
-            'backgroundColor': '#3D9970',
+            'backgroundColor': 'rgba(255,0,0,0.6)',
             'color': 'white',
         }  for c in df.columns
         ],
@@ -726,6 +726,45 @@ def tbl_measure(df_measure_perform,d):
     
        
     return html.Div(measure_tbl, style={"padding":"1rem"})
+
+def tbl_non_contract(df,measures):
+    df=df[df['Measure'].isin(measures)]
+    
+    measure_tbl=dash_table.DataTable(
+        data=df.to_dict('records'),
+        columns=[ {'id': c, 'name': c} for c in df.columns ],
+        sort_action="native",
+        sort_mode='multi',
+        style_data={
+            'whiteSpace': 'normal',
+            'height': 'auto'
+        },
+        style_cell={
+            'textAlign': 'center',
+            'font-family':'NotoSans-CondensedBlack',
+            'fontSize':14
+        },
+        style_cell_conditional=[
+            {'if': {'column_id': df.columns[0]},
+             'width': '2.5rem',
+             'font-family':'NotoSans-CondensedLight',
+            },            
+        ],
+        style_table={
+            'back':  colors['blue']
+        },
+        style_header={
+            'height': '2rem',
+            'backgroundColor': '#F5B111',
+            'fontWeight': 'bold',
+            'font-family':'NotoSans-Condensed',
+            'fontSize':12,
+            'color': '#381610'
+        },
+    )
+    
+       
+    return measure_tbl
 
 ############################################################
 ################Drilldown###################################  

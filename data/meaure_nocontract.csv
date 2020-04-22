@@ -1,0 +1,25 @@
+﻿Domain,Measure,YTD Level,Annualized Level ,Target(Risk Adj) ,Performance Diff from Target,Weight
+Cost & Utilization Reduction,All Causes Average Cost per Patient,NA,NA,NA,NA,NA
+Cost & Utilization Reduction,CHF Related Average Cost per Patient ,"7,131.60","17,829.00","16,208.18",-0.1,0.4
+Cost & Utilization Reduction,All Causes Average IP Cost per Patient,NA,NA,NA,NA,NA
+Cost & Utilization Reduction,CHF Related Average IP Cost per Patient ,NA,NA,NA,NA,NA
+Cost & Utilization Reduction,All Causes Hospitalization Rate,NA,NA,NA,NA,NA
+Cost & Utilization Reduction,CHF Related Hospitalization Rate,0.2,0.33,0.341,0.033,0.3
+Cost & Utilization Reduction,All Causes ER Rate,NA,NA,NA,NA,NA
+Cost & Utilization Reduction,CHF Related ER Rate,NA,NA,NA,NA,NA
+Cost & Utilization Reduction,NT-proBNP Improvement %,-0.25,-0.3,-0.28,0.071,0.2
+Cost & Utilization Reduction,LVEF Improvement %,NA,NA,NA,NA,NA
+Cost & Utilization Reduction,LAVi Improvement %,NA,NA,NA,NA,NA
+Cost & Utilization Reduction,LVEDVi Improvement %,NA,NA,NA,NA,NA
+Cost & Utilization Reduction,LVESVi and E/e’ Improvement %,NA,NA,NA,NA,NA
+Cost & Utilization Reduction,Change in Self-Care Score,NA,NA,NA,NA,NA
+Cost & Utilization Reduction,Change in Mobility Score ,NA,NA,NA,NA,NA
+Cost & Utilization Reduction,CV Mortality Rate,NA,NA,NA,NA,NA
+Increasing Patient Safety,Emergent care rate for medication side effect,0.035,0.049,0.05,0.02,0.1
+Increasing Patient Safety,Hospitalization rate for medication side effect,NA,NA,NA,NA,NA
+Enhancing Care Quality,DOT,NA,NA,NA,NA,NA
+Enhancing Care Quality,PDC,NA,NA,NA,NA,NA
+Enhancing Care Quality,MPR,NA,NA,NA,NA,NA
+Better Patient Experience,Patient Reported SOB changes,NA,NA,NA,NA,NA
+Better Patient Experience,Patient Reported Fatigue and Tiredness Changes,NA,NA,NA,NA,NA
+Better Patient Experience,Patient Reported Peripheral Oedema Changes,NA,NA,NA,NA,NA

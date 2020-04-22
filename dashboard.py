@@ -39,7 +39,7 @@ def load_data():
     global bargraph_overall1, waterfall_overall1
     global tbl_utilizer1, piechart_utilizer1, bargraph_script_per_util, bargraph_tot_script, bargraph_tot_script_split, bargraph_tot_unit_split, bargraph_tot_unit
     global bubble_graph_domain
-    global df_domain_perform,df_measure_perform
+    global df_domain_perform,df_measure_perform,df_nocontract
     
     df_overall = pd.read_csv("data/overall_performance.csv")
     df_waterfall = pd.read_csv("data/overall_waterfall.csv")
@@ -51,6 +51,8 @@ def load_data():
     df_domain_perform=pd.read_csv("data/domain_perform.csv")
     df_domain_waterfall = pd.read_csv("data/domain_waterfall.csv")
     df_measure_perform=pd.read_csv("data/measure_performance.csv")
+    df_nocontract=pd.read_csv("data/meaure_nocontract.csv")
+    
     df_tot_script=pd.DataFrame(df_tot_script_split.sum(axis=0)[1:4,],columns=['tot_script']).iloc[[2,1,0],]
     df_tot_unit=pd.DataFrame(df_tot_unit_split.sum(axis=0)[1:4,],columns=['tot_unit']).iloc[[2,1,0],]
     
@@ -815,17 +817,17 @@ def toggle_collapse_domain_selection_measures_6(v1):
 def generate_measure_watchlist(n, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19, v20, v21, v22, v23, v24):
     triggered = [t["prop_id"] for t in dash.callback_context.triggered]
     submit = len([1 for i in triggered if i == "close-centered.n_clicks"])
-    
+    table_measure_to_watch = ""
     if submit:
         measure_to_watch = []
         for i in range(24):
             if eval("v"+str(i+1)) and len(eval("v"+str(i+1))) > 0:
                 measure_to_watch.extend(eval("v"+str(i+1)))
 
+        table_measure_to_watch=tbl_non_contract(df_nocontract,measure_to_watch)
 
-
-
-    return measure_to_watch
+    return table_measure_to_watch
+    
 
 
 if __name__ == "__main__":
