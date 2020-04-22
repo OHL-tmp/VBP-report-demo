@@ -20,14 +20,14 @@ from figure import *
 
 from modal_drilldown_tableview import *
 
-df_drilldown=pd.read_csv("data/Drilldown sample V2.csv")
+df_drilldown=pd.read_csv("data/drilldown_sample_5.csv")
 
 # Path
 BASE_PATH = pathlib.Path(__file__).parent.resolve()
 DATA_PATH = BASE_PATH.joinpath("Data").resolve()
 
 
-app = dash.Dash(__name__, url_base_pathname='/vbc-demo/monitor/')
+app = dash.Dash(__name__, url_base_pathname='/vbc-demo/drilldown/')
 
 server = app.server
 
@@ -339,14 +339,17 @@ def toggle_modal_dashboard_domain_selection(n1, n2, is_open):
 
 @app.callback(
     [Output('sub_cate_filter', 'options'),
-    Output('sub_cate_filter', 'value')],
+    Output('sub_cate_filter', 'value'),
+    Output('sub_cate_filter', 'disabled'),],
     [Input('srvc_cate_filter', 'value')]
     )
 def sub_filter(v):
     if v:
         sub_filter = filter_list[v]
-        return [{"label": k, "value": k} for k in sub_filter],'All'
-    return [],''
+        if v == 'All':
+            return [{"label": k, "value": k} for k in sub_filter], 'All', True
+        return [{"label": k, "value": k} for k in sub_filter], 'All', False
+    return [],'',True
 
 
 @app.callback(
@@ -410,7 +413,7 @@ def dropdown_menu_3(v1, v2):
     )
 def datatable_data_selection(v1, v2, v3, f1, f2, f3, d, m):
     if f1 == 'All':
-        cate_cnt = 39
+        cate_cnt = 45
         if f2 == 'All':
             if f3:
                 df_drilldown_filtered = df_drilldown[df_drilldown[d].isin(f3)]
@@ -422,13 +425,14 @@ def datatable_data_selection(v1, v2, v3, f1, f2, f3, d, m):
             else: 
                 df_drilldown_filtered = df_drilldown[df_drilldown['Sub Category'].isin([f2])]
     else:
-        cate_cnt = len(filter[f1])-1
         if f2 == 'All':
+            cate_cnt = len(filter_list[f1])-1
             if f3:
                 df_drilldown_filtered = df_drilldown[(df_drilldown['Service Category'].isin([f1])) & (df_drilldown[d].isin(f3))]
             else:
                 df_drilldown_filtered = df_drilldown[df_drilldown['Service Category'].isin([f1])]
         else: 
+            cate_cnt = 1
             if f3:
                 df_drilldown_filtered = df_drilldown[(df_drilldown['Service Category'].isin([f1])) & (df_drilldown['Sub Category'].isin([f2])) & (df_drilldown[d].isin(f3))]
             else: 
@@ -445,11 +449,13 @@ def datatable_data_selection(v1, v2, v3, f1, f2, f3, d, m):
 
     table_column.extend(selected_dimension)
     table_column.append("Pt Count")
-    percent_list = ['Diff % from Target Utilization', 'Diff % from Target Total Cost', 'Diff % from Target Unit Cost']
+    percent_list = ['Diff % from Target Utilization', 'Diff % from Target Total Cost', 'Diff % from Target Unit Cost', 'Patient %']
+    dollar_list = ['YTD Total Cost', 'Annualized Total Cost', 'Target Total Cost', 'YTD Unit Cost', 'Annualized Unit Cost', 'Target Unit Cost']
     if len(selected_dimension) > 0:
         table_column.extend(measure_ori) 
         df_agg = df_drilldown_filtered[table_column].groupby(by = selected_dimension).sum()
         df_agg['Pt Count'] = df_agg['Pt Count']/cate_cnt
+        df_agg['Patient %'] = df_agg['Pt Count']/895500
         df_agg['YTD Utilization'] = df_agg['YTD Utilization']/df_agg['Pt Count']
         df_agg['Annualized Utilization'] = df_agg['Annualized Utilization']/df_agg['Pt Count']
         df_agg['Target Utilization'] = df_agg['Target Utilization']/df_agg['Pt Count']
@@ -462,16 +468,19 @@ def datatable_data_selection(v1, v2, v3, f1, f2, f3, d, m):
         df_agg['Annualized Unit Cost'] = df_agg['Annualized Total Cost']/df_agg['Annualized Utilization']
         df_agg['Target Unit Cost'] = df_agg['Target Total Cost']/df_agg['Target Utilization']
         df_agg['Diff % from Target Unit Cost'] = (df_agg['Annualized Unit Cost'] - df_agg['Target Unit Cost'])/df_agg['Target Unit Cost']
-        df_agg.style.format({'Diff % from Target Utilization' : "{:.2%}", 'Diff % from Target Total Cost': "{:.2%}", 'Diff % from Target Unit Cost' : "{:.2%}"})
+#        df_agg.style.format({'Diff % from Target Utilization' : "{:.2%}", 'Diff % from Target Total Cost': "{:.2%}", 'Diff % from Target Unit Cost' : "{:.2%}"})
         df_agg.reset_index(inplace = True)
-        show_column = selected_dimension + ["Pt Count"] + m 
-        df_agg = df_agg[show_column]
+        show_column = selected_dimension + ['Patient %'] + m 
+        if 'Diff % from Target Total Cost' in m:
+            df_agg =  df_agg[show_column].sort_values(by =  'Diff % from Target Total Cost', ascending =False)
+        else:
+            df_agg = df_agg[show_column]
     else:
-        show_column = ["Pt Count"] + m 
+        show_column = ['Patient %'] + m 
         df_agg = df_drilldown_filtered[show_column]
     
     
-    return [{"name": i, "id": i, "selectable":True,"type":"numeric", "format": FormatTemplate.percentage(1)} if i in percent_list else {"name": i, "id": i, "selectable":True, "type":"numeric","format": Format(precision=0, scheme = Scheme.fixed)} if i == "Pt Count" else {"name": i, "id": i, "selectable":True, "type":"numeric","format": Format(precision=1, scheme = Scheme.fixed)} for i in show_column], df_agg.to_dict('records')
+    return [{"name": i, "id": i, "selectable":True,"type":"numeric", "format": FormatTemplate.percentage(1)} if i in percent_list else {"name": i, "id": i, "selectable":True, "type":"numeric","format": FormatTemplate.money(1)} if i in dollar_list else {"name": i, "id": i, "selectable":True, "type":"numeric","format": Format(precision=1, scheme = Scheme.fixed)} for i in show_column], df_agg.to_dict('records')
 
 
 
