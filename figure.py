@@ -195,6 +195,8 @@ def waterfall_overall(x,y1,y2): #df_waterfall['label']  df_waterfall['base'] df_
     )
     return fig_waterfall  
 
+
+
 def tbl_utilizer(df_utilizer):
     utilizer_tbl=dash_table.DataTable(
         data=df_utilizer.to_dict('records'),
@@ -1057,21 +1059,72 @@ def drilldata_process(df_drilldown,dimension,dim1='All',f1='All',dim2='All',f2='
     return df
 
 def drill_waterfall(df):
-    bar1_y=df['base'][0:3].values.tolist()
-    bar2_base=df[['base']][3:4].values[0,0]
-    bar2_adjust=df[['adjusted']][4:5].values[0,0]
-    
-    fig = make_subplots(
-        rows=2, cols=2,
-        specs=[[ {"rowspan": 2},{}],
-           [None,{} ]],
-        shared_yaxes=True,
-        column_widths=[0.6, 0.4],
-        row_heights=[0.6, 0.4]
-        #vertical_spacing=0.02,   
+
+    x_waterfall=['Target','Adj','Target Adj']
+    y_base=df[['base']][3:4].values[0,0]
+    y_adjust=df[['adjusted']][4:5].values[0,0]
+
+    fig_waterfall = go.Figure(data=[
+        go.Bar(
+            
+            x=x_waterfall, 
+            y=[y_base,y_base,y_base+y_adjust],
+            text=[y_base,y_base,y_base+y_adjust],
+            textposition='auto',
+            textfont=dict(color=['white',colors['transparent'],'white']),
+            texttemplate='%{y:.2s}',
+            marker=dict(
+                    color=[colors['grey'],colors['transparent'],colors['grey']],
+                    opacity=[0.5,0,0.7]
+                    ),
+            marker_line=dict( color = colors['transparent'] )
+            
+        ),
+        go.Bar(     
+            x=x_waterfall, 
+            y=[0,y_adjust,0],
+            text=[0,y_adjust,0],
+            textposition='outside',
+            textfont=dict(color=[colors['transparent'],'black',colors['transparent']]),
+            texttemplate='%{y:.2s}',
+            marker=dict(
+                    color=colors['yellow'],
+                    opacity=0.7
+                    )
+        )
+    ])
+    # Change the bar mode
+    fig_waterfall.update_layout(
+        barmode='stack',
+        plot_bgcolor=colors['transparent'],
+        paper_bgcolor=colors['transparent'],
+        yaxis = dict(
+            showgrid = True, 
+            gridcolor =colors['grey'],
+            nticks=5,
+            showticklabels=True,
+            zeroline=True,
+            zerolinecolor=colors['grey'],
+            zerolinewidth=1,
+        ),
+        showlegend=False,
+        modebar=dict(
+            bgcolor=colors['transparent']
+        ),
+        #margin=dict(l=10,r=10,b=100,t=40,pad=0),
+        font=dict(
+            family="NotoSans-Condensed",
+            size=12,
+            color="#38160f"
+        ),
     )
-    fig.add_trace(
-       go.Bar(        
+    return fig_waterfall 
+
+def drill_bar(df):
+    bar1_y=df['base'][0:3].values.tolist()
+
+    fig_bar = go.Figure(data=[
+        go.Bar(        
             x=['YTD','Annualized','Target Adj'], 
             y=bar1_y,
             text=bar1_y,
@@ -1083,47 +1136,26 @@ def drill_waterfall(df):
                 color=[colors['blue'],colors['blue'],colors['grey']],
                 opacity=[1,0.7,0.7]
                        )
-     
+
         ),
-        row=1, col=1
-    )
-                       
-    fig.add_trace(
-       go.Waterfall(        
-            x=['Target','Adj','Target Adj'],
-            measure = ["absolute", "relative", "total"],
-            y=[bar2_base,bar2_adjust,None],
-            text=[bar2_base,bar2_adjust,bar2_base+bar2_adjust],
-            textposition='inside',
-            texttemplate='%{text:.2s}',
-            textangle=0,
-            width=0.5,
-            decreasing = {"marker":{"color":colors['yellow']}},
-            increasing = {"marker":{"color":colors['yellow']}},
-            totals = {"marker":{"color":colors['grey']}},
-            opacity=0.7
-        ),
-        row=1, col=2
-    )
-    
-    fig.update_layout(
+    ])
+    fig_bar.update_layout(
         paper_bgcolor=colors['transparent'],
         plot_bgcolor=colors['transparent'],
         showlegend=False,
         modebar=dict( bgcolor=colors['transparent'] ),
-        xaxis=dict(showline=True,linecolor=colors['grey'],zeroline=True ,zerolinecolor=colors['grey']),
-        xaxis2=dict(showline=True,linecolor=colors['grey'],zeroline=True ,zerolinecolor=colors['grey']),
-        yaxis=dict(showline=True,linecolor=colors['grey'],gridcolor=colors['grey'],zeroline=True ,zerolinecolor=colors['grey']),
-        yaxis2=dict(showline=True,linecolor=colors['grey'],gridcolor=colors['grey'],zeroline=True ,zerolinecolor=colors['grey']),
-        annotations=[
-            dict(text = '', x = 0.62, y = 0.8,ax=-60,ay=120
-                 , ayref = 'pixel', axref = 'pixel', xref = 'paper', yref = 'paper'
-                 ,showarrow = True,arrowcolor=colors['grey'],arrowhead=1,arrowwidth=1.5),
-    
-                    ],
-        hovermode=False
-    )    
-    return fig
+        xaxis=dict(showline=True,linecolor=colors['grey'],zeroline=True ,zerolinecolor=colors['grey']), 
+        yaxis=dict(showline=True,linecolor=colors['grey'],gridcolor=colors['grey'],zeroline=True ,zerolinecolor=colors['grey']),  
+        hovermode=False,
+        #margin=dict(l=10,r=10,b=100,t=40,pad=0),
+        font=dict(
+            family="NotoSans-Condensed",
+            size=12,
+            color="#38160f"
+        ),
+    )
+    return fig_bar
+
 
 def gaugegraph(df,row):
     fig=daq.Gauge(

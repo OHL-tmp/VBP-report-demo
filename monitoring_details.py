@@ -687,7 +687,7 @@ def datatable_data_selection(v1, v2, v3, f1, f2, f3, d, m):
 
 
 if __name__ == "__main__":
-    app.run_server(host="127.0.0.1",debug=True,port=8048)
+    app.run_server(host="127.0.0.1",debug=True)
 
 
 
