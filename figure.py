@@ -20,6 +20,8 @@ from dash_table.Format import Format, Scheme
 import dash_table.FormatTemplate as FormatTemplate
 import dash_daq as daq
 
+df_dim_order=pd.read_csv("data/dimvalue_ordering.csv")
+
 colors={'blue':'rgba(18,85,222,100)','yellow':'rgba(246,177,17,100)','transparent':'rgba(255,255,255,0)','grey':'rgba(191,191,191,100)',
        'lightblue':'rgba(143,170,220,100)'}
 
@@ -734,11 +736,13 @@ def tbl_measure(df_measure_perform,d):
 def tbl_non_contract(df,measures):
     df=df[df['Measure'].isin(measures)]
     
+    percent_list=['Performance Diff from Target','Weight']
+    
     measure_tbl=dash_table.DataTable(
         data=df.to_dict('records'),
-        columns=[ {'id': c, 'name': c} for c in df.columns ],
+        columns=[ {'id': c, 'name': c,'type': 'numeric',"format":FormatTemplate.percentage(1)} if c in percent_list else {'id': c, 'name': c} for c in df.columns ],
         sort_action="native",
-        sort_mode='multi',
+        sort_mode='single',
         style_data={
             'whiteSpace': 'normal',
             'height': 'auto'
@@ -776,18 +780,19 @@ def tbl_non_contract(df,measures):
 def drill_bubble(df):
     df['Weight']=df['Pt_Count']/df.values[len(df)-1,7]
     n=len(df)
-    valmax=((df['% Cost Diff from Target']/0.05).apply(np.ceil)*0.05).max()
+    valmax=((df['% Cost Diff from Target']/0.05).apply(np.ceil)*0.05).max()+0.05
+    divide=valmax/2
     
     colorbar=dict(
         len=1,
        tickmode='array',
-       tickvals=[-valmax,valmax],
+       tickvals=[-valmax+0.05,valmax-0.05],
        ticktext=['Low risk','High risk'],
        thickness=5,
        #x=1,y=0.7
     )
     colorscale=[[0, 'rgba(0,255,0,1)'],[0.5, 'rgba(0,255,0,0.2)'],[0.5, 'rgba(255,0,0,0.2)'], [1, 'rgba(255,0,0,1)']]
-    color_axis=dict(cmin=-valmax,cmax=valmax,colorscale=colorscale,colorbar=colorbar,)
+    #color_axis=dict(cmin=-valmax,cmax=valmax,colorscale=colorscale,colorbar=colorbar,)
 
     fig = make_subplots(
         rows=2, cols=1,
@@ -807,11 +812,11 @@ def drill_bubble(df):
             texttemplate='%{y:.1%}',
             mode="markers+text",
             marker=dict(
-                size=df['Weight']*400,
+                size=df['Weight']*300,
                 sizemode='area',
                 color=df['% Cost Diff from Target'],#df['performance'].apply(lambda x: 'red' if x>0 else 'green'),
-                cmin=-valmax,
-                cmax=valmax,
+                cmin=-valmax+0.05,
+                cmax=valmax-0.05,
                 #opacity=0.8,
                 colorbar=colorbar,
                 colorscale=colorscale,
@@ -833,11 +838,11 @@ def drill_bubble(df):
             texttemplate='%{y:.1%}',
             mode="markers+text",
             marker=dict(
-                size=df['Weight']*400,
+                size=df['Weight']*300,
                 sizemode='area',
                 color=df['Contribution to Overall Performance Difference'],#df['Contribution'].apply(lambda x: 'red' if x>0 else 'green'),
-                cmin=-valmax,
-                cmax=valmax,
+                cmin=-valmax+0.05,
+                cmax=valmax-0.05,
                 #opacity=0.8,
                 colorbar=colorbar,
                 colorscale=colorscale,
@@ -862,8 +867,8 @@ def drill_bubble(df):
         modebar=dict( bgcolor=colors['transparent']),
         xaxis=dict(showline=True,mirror=True,linecolor=colors['grey'],showticklabels=False,range=[0,n],dtick=1,autorange=False,gridcolor=colors['grey'],zeroline=True ,zerolinecolor=colors['grey']),
         xaxis2=dict(showline=True,mirror=True,linecolor=colors['grey'],showticklabels=False,range=[0,n],dtick=1,autorange=False,gridcolor=colors['grey'],zeroline=True ,zerolinecolor=colors['grey']),
-        yaxis=dict(showline=True,mirror=True,linecolor=colors['grey'],showticklabels=True,tickformat='%',range=[-valmax,valmax],autorange=False,zeroline=True ,zerolinecolor=colors['grey']),
-        yaxis2=dict(showline=True,mirror=True,linecolor=colors['grey'],showticklabels=True,tickformat='%',range=[-valmax,valmax],autorange=False
+        yaxis=dict(showline=True,mirror=True,linecolor=colors['grey'],showticklabels=True,tickformat='%',range=[-valmax,valmax],dtick=divide,autorange=False,zeroline=True ,zerolinecolor=colors['grey']),
+        yaxis2=dict(showline=True,mirror=True,linecolor=colors['grey'],showticklabels=True,tickformat='%',range=[-valmax,valmax],dtick=divide,autorange=False
                     ,zeroline=True ,zerolinecolor=colors['grey'] ),
         #coloraxis=dict(cmin=-0.5,cmax=0.5,colorscale=colorscale,colorbar=colorbar,),
         #coloraxis2=dict(cmin=-0.5,cmax=0.5,colorscale=colorscale,colorbar=colorbar,),
@@ -964,10 +969,20 @@ def drillgraph_lv1(df,tableid):
     return drillgraph
        
    
-def dashtable_lv3(df,dimension,tableid):
-     
+def dashtable_lv3(df,dimension,tableid,row_select):#row_select: numeric 0 or 1
+    
+    df1=df[0:len(df)-1].sort_values(by='Contribution to Overall Performance Difference',ascending=False)
+    df1.append(df[len(df)-1:len(df)])
+    df1['id']=df1[df1.columns[0]]
+    df1.set_index('id', inplace=True, drop=False)
+
+    if row_select==0:
+        row_sel=False
+    else:
+        row_sel='single'
+        
     table_lv3=dash_table.DataTable(
-        data=df.to_dict('records'),
+        data=df1.to_dict('records'),
         id=tableid,
         columns=[
         {"name": ["", dimension], "id": dimension},
@@ -983,7 +998,7 @@ def dashtable_lv3(df,dimension,tableid):
         sort_action="native",
         sort_mode='single',
         #sort_by={"column_id":"Contribution to Overall Performance Difference","direction":"desc"},
-        row_selectable='single',
+        row_selectable=row_sel,
         selected_rows=[],
         style_data={
             'whiteSpace': 'normal',

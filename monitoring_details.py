@@ -21,7 +21,7 @@ from figure import *
 from modal_drilldown_tableview import *
 
 
-df_drilldown=pd.read_csv("data/drilldown_sample_5.csv")
+df_drilldown=pd.read_csv("data/drilldown_sample_6.csv")
 dimensions=df_drilldown.columns[0:12]
 df_drill_waterfall=pd.read_csv("data/drilldown waterfall graph.csv")
 df_driver=pd.read_csv("data/Drilldown Odometer.csv")
@@ -349,7 +349,7 @@ def card_table1_performance_drilldown():
                                         html.Div(filter_template("Risk Score Band","filter1_3_value",default_val='All')),
                                         html.Div("Managing Physician (Group)",id="filter2_3_name"),
                                         html.Div(filter_template("Managing Physician (Group)","filter2_3_value",default_val='All')),
-                                        html.Div(dashtable_lv3(drilldata_process(df_drilldown,'Service Category'),'Service Category','dashtable_lv3'),id="drill_lv3"),]                                       
+                                        html.Div(dashtable_lv3(drilldata_process(df_drilldown,'Service Category'),'Service Category','dashtable_lv3',1),id="drill_lv3"),]                                       
                                         ),
                             ],
                          style={"max-height":"80rem"}
@@ -382,7 +382,7 @@ def card_table2_performance_drilldown():
                                         html.Div(filter_template("Managing Physician (Group)","filter2_4_value",default_val='All')),
                                         html.Div("Service Category",id="filter3_4_name"),
                                         html.Div(filter_template("Service Category","filter3_4_value",default_val='All')),
-                                        html.Div(dashtable_lv3(drilldata_process(df_drilldown,'Sub Category'),'Sub Category','dashtable_lv4'),id="drill_lv4"),]
+                                        html.Div(dashtable_lv3(drilldata_process(df_drilldown,'Sub Category'),'Sub Category','dashtable_lv4',0),id="drill_lv4"),]
                      
                                  ),
                             ],
@@ -460,23 +460,24 @@ def update_filter2value(col):
 
 #update filter3 on following page based on selected rows
 
-'''@app.callback(
-   [ Output("filter3_4_value","value"),    
-   ],
-   [Input("dashtable_lv3","selected_rows"),
+@app.callback(
+   Output("filter3_4_value","value"),   
+   [Input("dashtable_lv3","selected_row_ids"),
     Input("dashtable_lv3","data"),
    ] 
 )
 def update_filter3value(row,data):
-    row_1=row[0]        
-    print(data)
-    return row_1'''
-
+    if row is None:
+        row_1='All'
+    else:
+        row_1=row[0]
+    print(row_1)    
+    return row_1
+    
 #update lv2 on filter1
 
 @app.callback(
-   [ Output("drill_lv2","children"),    
-   ],
+    Output("drill_lv2","children"),    
    [ Input("filter1_2_name","children"),
      Input("filter1_2_value","value"),
    ] 
@@ -489,8 +490,7 @@ def update_table2(dim,val):
 #update lv3 on filter1,filter2
 
 @app.callback(
-   [ Output("drill_lv3","children"),    
-   ],
+   Output("drill_lv3","children"),    
    [ Input("filter1_3_name","children"),
      Input("filter1_3_value","value"),
      Input("filter2_3_name","children"),
@@ -499,13 +499,12 @@ def update_table2(dim,val):
 )
 def update_table3(dim1,val1,dim2,val2):       
     
-    return [dashtable_lv3(drilldata_process(df_drilldown,'Service Category',dim1,val1,dim2,val2),'Service Category','dashtable_lv3')]
+    return [dashtable_lv3(drilldata_process(df_drilldown,'Service Category',dim1,val1,dim2,val2),'Service Category','dashtable_lv3',1)]
 
 #update lv4 on filter1,filter2,filter3
 
 @app.callback(
-   [ Output("drill_lv4","children"),    
-   ],
+    Output("drill_lv4","children"),    
    [ Input("filter1_4_name","children"),
      Input("filter1_4_value","value"),
      Input("filter2_4_name","children"),
@@ -516,10 +515,8 @@ def update_table3(dim1,val1,dim2,val2):
 )
 def update_table4(dim1,val1,dim2,val2,dim3,val3):       
     
-    return [dashtable_lv3(drilldata_process(df_drilldown,'Sub Category',dim1,val1,dim2,val2,dim3,val3),'Sub Category','dashtable_lv4')]
+    return [dashtable_lv3(drilldata_process(df_drilldown,'Sub Category',dim1,val1,dim2,val2,dim3,val3),'Sub Category','dashtable_lv4',0)]
 
-#drillgraph_lv2=drillgraph_lv1(drilldata_process(df_drilldown,'Managing Physician (Group)',dim1=dim,f1=col_1),'dashtable_lv2')
-#drillgraph_lv3=dashtable_lv3(df,tableid)
 
 
 
