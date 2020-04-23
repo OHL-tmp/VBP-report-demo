@@ -895,14 +895,11 @@ def drillgraph_table(df_table,tableid):
        
         style_cell={
             'textAlign': 'center',
-            'font-family':'NotoSans-CondensedLight',
-            'fontSize':12
+            'font-family':'NotoSans-Condensed',
+            'fontSize':14
         },
         style_cell_conditional=[
-            {'if': {'column_id': df_table.columns[0]},
-             
-             'fontWeight': 'bold',
-            }, 
+            
             {'if': {'column_id': 'highlight'},
             'display': 'none'}
         ],
@@ -914,11 +911,11 @@ def drillgraph_table(df_table,tableid):
             'minWidth': '3rem',
             'maxWidth':'3rem',
             'whiteSpace': 'normal',
-            'backgroundColor': colors['yellow'],
+            'backgroundColor': "#f1f6ff",
             'fontWeight': 'bold',
             'font-family':'NotoSans-CondensedLight',
-            'fontSize':14,
-            'color': 'white',
+            'fontSize':16,
+            'color': '#1357DD',
             'text-align':'center',
         },
     )
@@ -935,8 +932,10 @@ def drillgraph_lv1(df,tableid):
                 [
                     dbc.Col(
                         [
-                            html.Div(html.H2("YTD Cost per Episode",style={"font-size":"1rem","display":"table-cell", "vertical-align":"middle"}), style={"height":"6rem","display":"table"}),
-                            html.Div(html.H2("% Diff from Target", style={"font-size":"1rem","display":"table-cell", "vertical-align":"middle"}), style={"height":"10rem","display":"table"}),
+                            html.Div(html.H2("YTD Cost per Episode",style={"font-size":"1rem","display":"table-cell", "vertical-align":"middle"}), style={"height":"5.5rem","display":"table"}),
+                            html.Hr(className="ml-1"),
+                            html.Div(html.H2("% Diff from Target", style={"font-size":"1rem","display":"table-cell", "vertical-align":"middle"}), style={"height":"7.5rem","display":"table"}),
+                            html.Hr(className="ml-1"),
                             html.Div(html.H2("Contribution to Overall Difference", style={"font-size":"1rem","display":"table-cell", "vertical-align":"middle"}), style={"height":"10rem","display":"table"}),
                         ],
                         width=3,
@@ -1007,7 +1006,7 @@ def dashtable_lv3(df,dimension,tableid,row_select):#row_select: numeric 0 or 1
        
         style_cell={
             'textAlign': 'center',
-            'font-family':'NotoSans-CondensedLight',
+            'font-family':'NotoSans-Regular',
             'fontSize':12
         },
         style_cell_conditional=[
@@ -1025,11 +1024,11 @@ def dashtable_lv3(df,dimension,tableid,row_select):#row_select: numeric 0 or 1
             'minWidth': '3rem',
             'maxWidth':'3rem',
             'whiteSpace': 'normal',
-            'backgroundColor': colors['yellow'],
+            'backgroundColor': '#f1f6ff',
             'fontWeight': 'bold',
             'font-family':'NotoSans-CondensedLight',
             'fontSize':14,
-            'color': 'white',
+            'color': '#1357DD',
             'text-align':'center',
         },
     )
@@ -1142,6 +1141,7 @@ def drill_waterfall(df):
             size=12,
             color="#38160f"
         ),
+        margin=dict(l=30,r=30,b=0,t=40,pad=0),
     )
     return fig_waterfall 
 
@@ -1178,20 +1178,23 @@ def drill_bar(df):
             size=12,
             color="#38160f"
         ),
+        margin=dict(l=30,r=30,b=80,t=40,pad=0),
     )
     return fig_bar
 
 
 def gaugegraph(df,row):
     fig=daq.Gauge(
-    showCurrentValue=True,
-    scale={'start': -20, 'interval': 5, 'labelInterval': 1},
-    units="%",
-    color={"gradient":True,"ranges":{"green":[-20,8],"yellow":[8,12],"red":[12,20]}}, #
-    value=df['%'][row]*100,
-    label=df['Name'][row],
-    labelPosition='top',    
-    max=20,
-    min=-20,
-)  
+            #showCurrentValue=True,
+            scale={'start': -20, 'interval': 5, 'labelInterval': 1},
+            #units="%",
+            color={"gradient":True,"ranges":{"#18cc75":[-20,8],"#39db44":[8,10],"#aeff78":[10,12],"#ffeb78":[12,16],"#ff4d17":[16,20]}}, #
+            value=df['%'][row]*100,
+            label=df['Name'][row],
+            labelPosition='top',    
+            max=20,
+            min=-20,
+            size=110,
+            style={"font-family":"NotoSans-CondensedLight","font-size":"0.4rem"}
+        )  
     return fig
