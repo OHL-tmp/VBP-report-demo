@@ -50,17 +50,7 @@ def create_layout():
                     
                     html.Div(
                         [
-                            dbc.Row(
-                                [
-                                    dbc.Col(html.Div(
-		                                    	[
-		                                    		col_menu_drilldown(),
-		                                    	]
-		                                    ),
-                                   		width=3),
-                                    dbc.Col(col_content_drilldown(), width=9),
-                                ]
-                            ),
+                            col_content_drilldown(),
                         ],
                         className="mb-3",
                     ),
@@ -74,52 +64,52 @@ def col_menu_drilldown():
 
 	return html.Div(
 				[
-					card_menu_volumn_based_measure(),
-					card_menu_outcome_based_measure(),
-				]
+                    dbc.Row(
+                        [
+                            dbc.Col(html.Hr(className="ml-1", style={"background-color":"#1357DD"})),
+                            dbc.Col(dropdownmenu_select_measures(), width="auto"),
+                            dbc.Col(html.Hr(className="ml-1", style={"background-color":"#1357DD"})),
+                            #dbc.Col(card_selected_measures(),)
+                        ]
+                    ),
+                    dbc.Row(
+                        [
+                            dbc.Col(html.Div()),
+                            dbc.Col(html.H6("click to change measure", style={"font-size":"0.6rem"}), width="auto"),
+                            dbc.Col(html.Div()),
+                            #dbc.Col(card_selected_measures(),)
+                        ]
+                    )
+				],
+                style={"padding":"0.5rem"}
 			)
 
 
-def card_menu_volumn_based_measure():
-	return html.Div(
-			[
-				dbc.Card(
-					[
-						dbc.CardBody(
-							[
-								html.H2("Volume Based Measure", style={"font-size":"1rem"}),
-								html.H4("Volume Based Measure", style={"font-size":"0.8rem", "padding-left":"0.5rem"}),
-								html.H4("Volume Based Measure", style={"font-size":"0.8rem", "padding-left":"0.5rem"}),
-								html.H4("Volume Based Measure", style={"font-size":"0.8rem", "padding-left":"0.5rem"}),
-							]
-						)
-					],
-					className="mr-3",
-					style={"border-top":"none", "border-right":"none", "border-bottom":"none", "border-left":"3px solid", "border-radius":"0.5rem", "background-color":"#f5f5f5"}
-				)
-			],
-			style={"padding-top":"1rem", "padding-bottom":"1rem"}
-		)
+def dropdownmenu_select_measures():
+	return dbc.DropdownMenu(
+                [
+                    dbc.DropdownMenuItem("Volume Based Measures", header=True),
+                    dbc.DropdownMenuItem("measure 1"),
+                    dbc.DropdownMenuItem("measure 2"),
+                    dbc.DropdownMenuItem("measure 3"),
+                    dbc.DropdownMenuItem(divider=True),
+                    dbc.DropdownMenuItem("Value Based Measures", header=True),
+                    dbc.DropdownMenuItem("measure 1"),
+                    dbc.DropdownMenuItem("measure 2", disabled=True),
+                    dbc.DropdownMenuItem(divider=True),
+                    html.P(
+                        "Select measure to drill.",
+                    style={"padding-left":"1rem", "font-size":"0.6rem"}),
+                ],
+                label="Measure 1",
+                toggle_style={"font-family":"NotoSans-SemiBold","font-size":"1.2rem","border-radius":"5rem","background-color":"#1357DD"},
+            )
 
-def card_menu_outcome_based_measure():
+def card_selected_measures():
 	return html.Div(
 			[
-				dbc.Card(
-					[
-						dbc.CardBody(
-							[
-								html.H2("Outcome Based Measure", style={"font-size":"1rem"}),
-								html.H4("Outcome Based Measure", style={"font-size":"0.8rem", "padding-left":"0.5rem"}),
-								html.H4("Outcome Based Measure", style={"font-size":"0.8rem", "padding-left":"0.5rem"}),
-								html.H4("Outcome Based Measure", style={"font-size":"0.8rem", "padding-left":"0.5rem"}),
-							]
-						)
-					],
-					className="mr-3",
-					style={"border":"none", "border-radius":"0.5rem", "background-color":"#f5f5f5"}
-				)
+				html.H2("Current measure : Domain 1 - Measure 1", style={"font-size":"1.5rem"})
 			],
-			style={"padding-top":"1rem", "padding-bottom":"1rem"}
 		)
 
 
@@ -127,18 +117,30 @@ def card_menu_outcome_based_measure():
 def col_content_drilldown():
 	return html.Div(
 			[
+                html.Div([html.Div([col_menu_drilldown()], style={"border-radius":"5rem","background-color":"none"})], style={"padding-bottom":"3rem"}),
 				dbc.Row(
 					[
-						dbc.Col(card_overview_drilldown(0.08)),
-						dbc.Col(card_key_driver_drilldown()),
+						dbc.Col(card_overview_drilldown(0.01),width=8),
+						dbc.Col(card_key_driver_drilldown(),width=4),
 					]
 				),
 				card_confounding_factors(),
                 html.Div(
                     [
-                        modal_drilldown_tableview()
+                        dbc.Row(
+                            [
+                                dbc.Col(html.Div(
+                                        [
+                                            html.H2("DRILLDOWN GRAPH VIEW", style={"font-size":"3rem"}),
+                                            html.H3("check table view for more details...", style={"font-size":"1rem"}),
+                                        ],
+                                        style={"padding-left":"2rem"}
+                                    ), width=8),
+                                dbc.Col(modal_drilldown_tableview(), width=4)
+                            ]
+                        )
                     ],
-                    style={"padding-bottom":"1rem"}
+                    style={"padding-bottom":"1rem", "padding-top":"2rem"}
                 ),
 				card_graph1_performance_drilldown(),
 				card_graph2_performance_drilldown(),
@@ -174,15 +176,16 @@ def card_overview_drilldown(percentage):
                                 ),
                                 style={"height":"2.5rem", "border":"none", "background-color":color, "text-align":"center", "margin-top":"-6px"},
                             ),
-                        ]
-                    ),
-                    html.P("As of June 30th.", style={"color":"#000", "font-size":"0.8rem"}),
-                    dbc.Row(
-                        [
-                            dcc.Graph(figure=drill_waterfall(df_drill_waterfall)),
                         ],
+                        style={"padding-left":"1rem"}
                     ),
-                ],
+                html.P("As of June 30th.", style={"color":"#000", "font-size":"0.8rem","padding-left":"1rem"}),
+                dbc.Row(
+                    [
+                        dcc.Graph(figure=drill_waterfall(df_drill_waterfall)),
+                    ],
+                ),
+            ],
 		)
 
 
@@ -200,17 +203,30 @@ def card_key_driver_drilldown():
                         
                         dbc.Row(
                             [
-                                dbc.Col(html.Div([gaugegraph(df_driver,0)], style={"padding":"4rem"}), width=6),
-                                dbc.Col(html.Div('', style={"max-height":"4rem"}), width=6),
-                                dbc.Col(html.Div('', style={"max-height":"4rem"}), width=6),
-                                dbc.Col(html.Div('', style={"max-height":"4rem"}), width=6),
-                                dbc.Col(html.Div('', style={"max-height":"4rem"}), width=6),
+                                dbc.Col(
+                                    [
+                                        html.Div([gaugegraph(df_driver,0)], style={"padding-top":"1.5rem"}),
+                                        html.Div(html.H4("{:.1f} %".format(df_driver['%'][0]*100)), style={"margin-top":"-1.5rem","margin-left":"3rem","font-size":"1rem","color":"#919191"}),
+                                    ],
+                                    width=6),
+                                dbc.Col(
+                                    [
+                                        html.Div([gaugegraph(df_driver,1)], style={"padding-top":"1.5rem"}),
+                                        html.Div(html.H4("{:.1f} %".format(df_driver['%'][1]*100)), style={"margin-top":"-1.5rem","margin-left":"3rem","font-size":"1rem","color":"#919191"}),
+                                    ],
+                                    width=6),
+                                dbc.Col(
+                                    [
+                                        html.Div([gaugegraph(df_driver,2)], style={"padding-top":"1.5rem"}),
+                                        html.Div(html.H4("{:.1f} %".format(df_driver['%'][2]*100)), style={"margin-top":"-1.5rem","margin-left":"2.5rem","font-size":"1rem","color":"#919191"}),
+                                    ],
+                                    width=6),
                             ],
                         ),
                     ]
                 ),
                 className="mb-3",
-                style={"background-color":"#fff", "border":"none", "border-radius":"0.5rem"}
+                style={"box-shadow":"0 4px 8px 0 rgba(0, 0, 0, 0.05), 0 6px 20px 0 rgba(0, 0, 0, 0.05)", "border":"none", "border-radius":"0.5rem"}
             )
 
 
@@ -253,7 +269,7 @@ def element_confounding_factors(percentage, factor):
     return dbc.Row(
             [
                 dbc.Col(dbc.Badge(str(percentage*100)+"%", color=color, className="mr-1"), width=3, style={"font-family":"NotoSans-SemiBold"}),
-                dbc.Col(html.H1(factor, style = {"font-size":"1rem", "padding-top":"0.1rem"}), width=9),
+                dbc.Col(html.H6(factor, style = {"font-size":"1rem", "padding-top":"0.1rem"}), width=9),
             ],
             style={"padding":"1rem"}
         )
@@ -266,14 +282,24 @@ def card_graph1_performance_drilldown():
                         dbc.Row(
                             [
                                 dbc.Col(html.Img(src=app.get_asset_url("bullet-round-blue.png"), width="10px"), width="auto", align="start", style={"margin-top":"-4px"}),
-                                dbc.Col(html.H4("Performance Drilldown by Patient Cohort: By Comorbidity Type", style={"font-size":"1rem", "margin-left":"10px"}), width=8),
+                                dbc.Col(html.H4("Performance Drilldown by Patient Cohort", style={"font-size":"1rem", "margin-left":"10px"}), width=8),
                             ],
                             no_gutters=True,
                         ),
                         
-                         html.Div(
+                        html.Div(
                             [
-                                html.Div( mod_criteria_button()), 
+                                html.Div(
+                                    [
+                                        dbc.Row(
+                                            [
+                                                dbc.Col(html.H1("By Comorbidity Type", style={"color":"#f0a800", "font-size":"1.5rem","padding-top":"0.8rem"}), width=9),
+                                                dbc.Col(mod_criteria_button(), style={"padding-top":"0.8rem"}),
+                                            ]
+                                        )
+                                    ],
+                                    style={"padding-left":"2rem","padding-right":"1rem","border-radius":"5rem","background-color":"#f7f7f7","margin-top":"2rem"}
+                                ), 
                                 html.Div(drillgraph_lv1(drilldata_process(df_drilldown,'Risk Score Band'),'dashtable_lv1'),id="drill_lv1",style={"padding-top":"2rem","padding-bottom":"2rem"}), 
                             ], 
                             style={"max-height":"80rem"}
@@ -287,13 +313,13 @@ def card_graph1_performance_drilldown():
 def mod_criteria_button():
     return [
                                 dbc.Button(
-                                    "Modify criteria",
+                                    "Click to modify criteria",
                                     id="button-mod-dim-lv1",
                                     className="mb-3",
-                                    style={"background-color":"#38160f", "border":"none", "border-radius":"10rem", "font-family":"NotoSans-Regular", "font-size":"0.6rem"},
+                                    style={"background-color":"#38160f", "border":"none", "border-radius":"10rem", "font-family":"NotoSans-Regular", "font-size":"0.8rem"},
                                 ),
                                 dbc.Popover([
-                                    dbc.PopoverHeader("Modify criteria"),
+                                    dbc.PopoverHeader("Mdify criteria"),
                                     dbc.PopoverBody([
                                         html.Div(
                                             [
@@ -331,19 +357,36 @@ def card_graph2_performance_drilldown():
                         dbc.Row(
                             [
                                 dbc.Col(html.Img(src=app.get_asset_url("bullet-round-blue.png"), width="10px"), width="auto", align="start", style={"margin-top":"-4px"}),
-                                dbc.Col(html.H4("Performance Drilldown by Provider: By Physician Group", style={"font-size":"1rem", "margin-left":"10px"}), width=8),
+                                dbc.Col(html.H4("Performance Drilldown by Provider", style={"font-size":"1rem", "margin-left":"10px"}), width=8),
                             ],
                             no_gutters=True,
                         ),
-                        
-                        dbc.Row(
+
+                        html.Div(
                             [
-                                dbc.Col([html.Div("Risk Score Band",id="filter1_2_name"),
-                                         html.Div(filter_template("Risk Score Band","filter1_2_value",default_val='All')),
-                                         html.Div(drillgraph_lv1(drilldata_process(df_drilldown,'Managing Physician (Group)'),'dashtable_lv2'),id="drill_lv2",style={"padding-top":"2rem","padding-bottom":"2rem"}), 
-                     ]
-                   , style={"max-height":"80rem"}),
-                            ],
+                                html.Div(
+                                    [
+                                        dbc.Row(
+                                            [
+                                                dbc.Col(html.H1("By Physician Group", style={"color":"#f0a800", "font-size":"1.5rem","padding-top":"1.2rem"}), width=6),
+                                                dbc.Col(
+                                                    html.Div(
+                                                        [
+                                                            html.Div(html.H4("Risk Score Band"),id="filter1_2_name", style={"font-size":"0.8rem"}),
+                                                            html.Div(filter_template("Risk Score Band","filter1_2_value",default_val='All')),
+                                                        ]
+                                                    ), 
+                                                    style={"padding":"0.8rem"},
+                                                    width=5,
+                                                ),
+                                            ]
+                                        )
+                                    ],
+                                    style={"padding-left":"2rem","padding-right":"1rem","border-radius":"5rem","background-color":"#f7f7f7","margin-top":"2rem"}
+                                ), 
+                                html.Div(drillgraph_lv1(drilldata_process(df_drilldown,'Managing Physician (Group)'),'dashtable_lv2'),id="drill_lv2",style={"padding-top":"2rem","padding-bottom":"2rem"}), 
+                            ], 
+                            style={"max-height":"80rem"}
                         ),
                     ]
                 ),
@@ -365,24 +408,42 @@ def card_table1_performance_drilldown():
                         dbc.Row(
                             [
                                 dbc.Col(html.Img(src=app.get_asset_url("bullet-round-blue.png"), width="10px"), width="auto", align="start", style={"margin-top":"-4px"}),
-                                dbc.Col(html.H4("Performance by Drilldown Service Categories", style={"font-size":"1rem", "margin-left":"10px"}), width=8),
+                                dbc.Col(html.H4("Performance rilldown by Service Categories", style={"font-size":"1rem", "margin-left":"10px"}), width=8),
                             ],
                             no_gutters=True,
                         ),
-                        
-                        dbc.Row(
+
+                        html.Div(
                             [
-                                dbc.Col( 
+                                html.Div(
                                     [
-                                        html.Div("Risk Score Band",id="filter1_3_name"),
-                                        html.Div(filter_template("Risk Score Band","filter1_3_value",default_val='All')),
-                                        html.Div("Managing Physician (Group)",id="filter2_3_name"),
-                                        html.Div(filter_template("Managing Physician (Group)","filter2_3_value",default_val='All')),
-                                        html.Div(dashtable_lv3(drilldata_process(df_drilldown,'Service Category'),'Service Category','dashtable_lv3'),id="drill_lv3",style={"padding":"1rem"}),
-                                    ]                                       
-                                ),
-                            ],
-                         style={"max-height":"80rem"}
+                                        dbc.Row(
+                                            [
+                                                dbc.Col(html.H1("By Service Categories", style={"color":"#f0a800", "font-size":"1.5rem","padding-top":"1.2rem"}), width=5),
+                                                dbc.Col( 
+                                                    [
+                                                        html.Div("Risk Score Band",id="filter1_3_name", style={"font-size":"0.8rem"}),
+                                                        html.Div(filter_template("Risk Score Band","filter1_3_value",default_val='All')),
+                                                    ], 
+                                                    style={"padding":"0.8rem"},
+                                                    width=3,
+                                                ),
+                                                dbc.Col( 
+                                                    [
+                                                        html.Div("Managing Physician (Group)",id="filter2_3_name", style={"font-size":"0.8rem"}),
+                                                        html.Div(filter_template("Managing Physician (Group)","filter2_3_value",default_val='All')),
+                                                    ], 
+                                                    style={"padding":"0.8rem"},
+                                                    width=3,
+                                                )
+                                            ]
+                                        )
+                                    ],
+                                    style={"padding-left":"2rem","padding-right":"1rem","border-radius":"5rem","background-color":"#f7f7f7","margin-top":"2rem"}
+                                ), 
+                                html.Div(dashtable_lv3(drilldata_process(df_drilldown,'Service Category'),'Service Category','dashtable_lv3'),id="drill_lv3",style={"padding":"1rem"}),
+                            ], 
+                            style={"max-height":"80rem"}
                         ),
                     ]
                 ),
@@ -403,23 +464,51 @@ def card_table2_performance_drilldown():
                             ],
                             no_gutters=True,
                         ),
-                        
-                        dbc.Row(
+
+                        html.Div(
                             [
-                                dbc.Col(
+                                html.Div(
                                     [
-                                        html.Div("Risk Score Band",id="filter1_4_name"),
-                                        html.Div(filter_template("Risk Score Band","filter1_4_value",default_val='All')),
-                                        html.Div("Managing Physician (Group)",id="filter2_4_name"),
-                                        html.Div(filter_template("Managing Physician (Group)","filter2_4_value",default_val='All')),
-                                        html.Div("Service Category",id="filter3_4_name"),
-                                        html.Div(filter_template("Service Category","filter3_4_value",default_val='All')),
-                                        html.Div(dashtable_lv3(drilldata_process(df_drilldown,'Sub Category'),'Sub Category','dashtable_lv4'),id="drill_lv4",style={"padding":"1rem"})
-                                    ]
-                     
-                                 ),
-                            ],
+                                        dbc.Row(
+                                            [
+                                                dbc.Col(html.H1("By Service Categories", style={"color":"#f0a800", "font-size":"1.5rem","padding-top":"1.2rem"}), width=5),
+                                                
+                                                dbc.Col(
+                                                    [
+                                                        html.Div("Risk Score Band",id="filter1_4_name", style={"font-size":"0.6rem"}),
+                                                        html.Div(filter_template("Risk Score Band","filter1_4_value",default_val='All')),
+                                                    ], 
+                                                    style={"padding":"0.8rem"},
+                                                    width=2,
+                                                ),
+                                                dbc.Col(
+                                                    [
+                                                        html.Div("Managing Physician (Group)",id="filter2_4_name", style={"font-size":"0.6rem"}),
+                                                        html.Div(filter_template("Managing Physician (Group)","filter2_4_value",default_val='All')),
+                                                    ], 
+                                                    style={"padding":"0.8rem"},
+                                                    width=2,
+                                                ),
+                                                dbc.Col(
+                                                    [
+                                                        html.Div("Service Category",id="filter3_4_name", style={"font-size":"0.6rem"}),
+                                                        html.Div(filter_template("Service Category","filter3_4_value",default_val='All')),
+                                                    ], 
+                                                    style={"padding":"0.8rem"},
+                                                    width=2,
+                                                ),
+                                    
+                                            ]
+                                        )
+                                    ],
+                                    style={"padding-left":"2rem","padding-right":"1rem","border-radius":"5rem","background-color":"#f7f7f7","margin-top":"2rem"}
+                                ), 
+                                html.Div(dashtable_lv3(drilldata_process(df_drilldown,'Sub Category'),'Sub Category','dashtable_lv4'),id="drill_lv4",style={"padding":"1rem"})
+                            ], 
+                            style={"max-height":"80rem"}
                         ),
+                        
+
                     ]
                 ),
                 className="mb-3",
