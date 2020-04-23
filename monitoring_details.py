@@ -19,7 +19,7 @@ from utils import *
 from figure import *
 
 from modal_drilldown_tableview import *
-df_drilldown=pd.read_csv("data/Drilldown sample V5.csv")
+df_drilldown=pd.read_csv("data/drilldown_sample_5.csv")
 dimensions=df_drilldown.columns[0:12]
 
 all_dimension=[]
@@ -368,12 +368,15 @@ def card_table1_performance_drilldown():
                         
                         dbc.Row(
                             [
-                                dbc.Col( [html.Div("Risk Score Band",id="filter1_3_name"),
+                                dbc.Col( 
+                                    [
+                                        html.Div("Risk Score Band",id="filter1_3_name"),
                                         html.Div(filter_template("Risk Score Band","filter1_3_value",default_val='All')),
                                         html.Div("Managing Physician (Group)",id="filter2_3_name"),
                                         html.Div(filter_template("Managing Physician (Group)","filter2_3_value",default_val='All')),
-                                        html.Div(dashtable_lv3(drilldata_process(df_drilldown,'Service Category'),'Service Category','dashtable_lv3'),id="drill_lv3"),]                                       
-                                        ),
+                                        html.Div(dashtable_lv3(drilldata_process(df_drilldown,'Service Category'),'Service Category','dashtable_lv3'),id="drill_lv3",style={"padding":"1rem"}),
+                                    ]                                       
+                                ),
                             ],
                          style={"max-height":"80rem"}
                         ),
@@ -399,13 +402,16 @@ def card_table2_performance_drilldown():
                         
                         dbc.Row(
                             [
-                                dbc.Col([html.Div("Risk Score Band",id="filter1_4_name"),
+                                dbc.Col(
+                                    [
+                                        html.Div("Risk Score Band",id="filter1_4_name"),
                                         html.Div(filter_template("Risk Score Band","filter1_4_value",default_val='All')),
                                         html.Div("Managing Physician (Group)",id="filter2_4_name"),
                                         html.Div(filter_template("Managing Physician (Group)","filter2_4_value",default_val='All')),
                                         html.Div("Service Category",id="filter3_4_name"),
                                         html.Div(filter_template("Service Category","filter3_4_value",default_val='All')),
-                                        html.Div(dashtable_lv3(drilldata_process(df_drilldown,'Sub Category'),'Sub Category','dashtable_lv4'),id="drill_lv4"),]
+                                        html.Div(dashtable_lv3(drilldata_process(df_drilldown,'Sub Category'),'Sub Category','dashtable_lv4'),id="drill_lv4",style={"padding":"1rem"})
+                                    ]
                      
                                  ),
                             ],
@@ -526,7 +532,7 @@ def update_table2(dim1,val1,dim2,val2):
 
 #update lv4 on filter1,filter2,filter3
 
-'''@app.callback(
+@app.callback(
    [ Output("drill_lv4","children"),    
    ],
    [ Input("filter1_4_name","children"),
@@ -539,7 +545,7 @@ def update_table2(dim1,val1,dim2,val2):
 )
 def update_table2(dim1,val1,dim2,val2,dim3,val3):       
     
-    return [dashtable_lv3(drilldata_process(df_drilldown,'Sub Category',dim1,val1,dim2,val2,dim3,val3))],'Sub Category','dashtable_lv4')'''
+    return [dashtable_lv3(drilldata_process(df_drilldown,'Sub Category',dim1,val1,dim2,val2,dim3,val3),'Sub Category','dashtable_lv4')]
 
 #drillgraph_lv2=drillgraph_lv1(drilldata_process(df_drilldown,'Managing Physician (Group)',dim1=dim,f1=col_1),'dashtable_lv2')
 #drillgraph_lv3=dashtable_lv3(df,tableid)

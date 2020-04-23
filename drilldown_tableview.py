@@ -64,20 +64,21 @@ def tableview():
 										placeholder ="...",
 										value = 'Risk Score Band',
 										clearable = False,
+										style = {"font-family":"NotoSans-Condensed"}
 										),
 									html.H5("Second Dimension", style={"font-size":"0.8rem","color":"#919191","padding-left":"0.5rem", "padding-top":"0.5rem"}),
 									dcc.Dropdown(
 										id = "dropdown-dimension-2",
 										disabled=True,
 										placeholder ="...",
-										
+										style = {"font-family":"NotoSans-Condensed"}
 										),
 									html.H5("Third Dimension", style={"font-size":"0.8rem","color":"#919191","padding-left":"0.5rem", "padding-top":"0.5rem"}),
 									dcc.Dropdown(
 										id = "dropdown-dimension-3",
 										disabled=True,
 										placeholder ="...",
-										
+										style = {"font-family":"NotoSans-Condensed"}
 										),
 									html.H4("Select Measures", style={"font-size":"1rem","padding-left":"0.5rem", "padding-top":"1rem"}),
 									dcc.Dropdown(
@@ -86,6 +87,7 @@ def tableview():
 										value = ['YTD Total Cost', 'Annualized Total Cost', 'Target Total Cost', 'Diff % from Target Total Cost'],
 										placeholder ="Select measures",
 										multi = True,
+										style = {"font-family":"NotoSans-Condensed"}
 										),
 								]
 							),
@@ -100,6 +102,7 @@ def tableview():
 										placeholder = "Select Service Category",
 										value = 'All',
 										clearable = False,
+										style = {"font-family":"NotoSans-Condensed"}
 										),
 									html.H5("Sub Category", style={"font-size":"0.8rem","color":"#919191","padding-left":"0.5rem", "padding-top":"0.5rem"}),
 									dcc.Dropdown(
@@ -107,18 +110,21 @@ def tableview():
 										placeholder = "Select Sub Category",
 										value = 'All',
 										clearable = False,
+										style = {"font-family":"NotoSans-Condensed"}
 										),
 									html.H5("Filter for Dimensions", style={"font-size":"0.8rem","color":"#919191","padding-left":"0.5rem", "padding-top":"0.5rem"}),
 									dcc.Dropdown(
 										id = "dimension_filter_selection_1",
 										options = [{"label": k, "value": k} for k in list(dimension.keys())],
 										placeholder = "Add a Filter",
+										style = {"font-family":"NotoSans-Condensed"}
 										),
 									html.H5("", style={"font-size":"0.8rem"}),
 									dcc.Dropdown(
 										id = "dimension_filter_1",
 										placeholder = "Select Sub Category",
 										multi = True,
+										style = {"font-family":"NotoSans-Condensed"}
 										),
 								]
 							)
@@ -133,8 +139,8 @@ def tableview():
 								[
 									dash_table.DataTable(
 										id = 'datatable-tableview',
-										style_header = {'height': 'auto', 'width':'auto','whiteSpace':'normal','font-family':'NotoSans-CondensedLight','font-size':'auto','backgroundColor': '#dce7fc','color':'#1357DD'},
-										style_cell = {'font-family':'NotoSans-Condensed','font-size':'0.8rem','textAlign': 'center'},
+										style_header = {'height': 'auto', 'width':'auto','whiteSpace':'normal','font-family':'NotoSans-Condensed','font-size':'auto','backgroundColor': '#dce7fc','color':'#1357DD'},
+										style_cell = {'font-family':'NotoSans-Regular','font-size':'0.8rem','textAlign': 'center'},
 										#fixed_rows={ 'headers': True, 'data': 0 },
 										style_table = {'textAlign': 'center'},
 										sort_action='native',
