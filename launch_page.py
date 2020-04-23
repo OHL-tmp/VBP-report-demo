@@ -15,12 +15,23 @@ def launch_layout():
     return dbc.Col([
                     html.Div(
                         [
+                            html.H2("ValueGen Solution")
                             html.Img(src=app.get_asset_url("logo-demo.png"), style={"height":"4rem", "padding-top":"1px"})
                         ]
                     ),
                     dbc.Card([
-                        dbc.CardLink("VBC Contract Setup", href = "/vbc-demo/contract-simulation/"),
-                        dbc.CardLink("VBC Contract Management Reporting", href = "/vbc-demo/dashboard/")
+                        dbc.CardBody([
+                            dbc.CardLink("Contract Optimizer", href = "/vbc-demo/contract-optimizer/"),
+                        ]),
+                        dbc.CardBody([
+                            dbc.CardLink("Contract Manager", href = "/vbc-demo/contract-manager/"),  
+                        ]),
+                        dbc.CardBody([
+                            dbc.CardLink("Contract Validator", href = "/vbc-demo/contract-alidator/"),  
+                        ]),
+                        dbc.CardBody([
+                            dbc.CardLink("Tele Case Manager", href = "/vbc-demo/tele-case-manager/"),  
+                        ]),
                     ]),
     ])
         
