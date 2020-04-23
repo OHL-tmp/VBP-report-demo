@@ -857,7 +857,7 @@ def drill_bubble(df):
     annotations.append(dict(xref='paper', yref='paper',
                             x=0, y=-0.02,yanchor='top',
                             text='*Bubble size proportional to patient count',
-                            font=dict(family='NotoSans-CondensedLight', size=10, color='#38160f'),
+                            font=dict(family='NotoSans-CondensedLight', size=11, color='#38160f'),
                             showarrow=False))
     
     fig.update_layout(

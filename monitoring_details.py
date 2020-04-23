@@ -317,7 +317,7 @@ def card_graph1_performance_drilldown():
                                     [
                                         dbc.Row(
                                             [
-                                                dbc.Col(html.H1("By Comorbidity Type", style={"color":"#f0a800", "font-size":"1.5rem","padding-top":"0.8rem"}), width=9),
+                                                dbc.Col(html.H1("By Comorbidity Type",id='dimname_on_lv1', style={"color":"#f0a800", "font-size":"1.5rem","padding-top":"0.8rem"}), width=9),
                                                 dbc.Col(mod_criteria_button(), style={"padding-top":"0.8rem"}),
                                             ]
                                         )
@@ -343,7 +343,7 @@ def mod_criteria_button():
                                     style={"background-color":"#38160f", "border":"none", "border-radius":"10rem", "font-family":"NotoSans-Regular", "font-size":"0.8rem"},
                                 ),
                                 dbc.Popover([
-                                    dbc.PopoverHeader("Mdify criteria"),
+                                    dbc.PopoverHeader("Modify criteria"),
                                     dbc.PopoverBody([
                                         html.Div(
                                             [
@@ -465,7 +465,7 @@ def card_table1_performance_drilldown():
                                     ],
                                     style={"padding-left":"2rem","padding-right":"1rem","border-radius":"5rem","background-color":"#f7f7f7","margin-top":"2rem"}
                                 ), 
-                                html.Div(dashtable_lv3(drilldata_process(df_drilldown,'Service Category'),'Service Category','dashtable_lv3',1),id="drill_lv3",style={"padding":"1rem"}),
+                                html.Div([dashtable_lv3(drilldata_process(df_drilldown,'Service Category'),'Service Category','dashtable_lv3',1)],id="drill_lv3",style={"padding":"1rem"}),
                             ], 
                             style={"max-height":"80rem"}
                         ),
@@ -527,7 +527,7 @@ def card_table2_performance_drilldown():
                                     ],
                                     style={"padding-left":"2rem","padding-right":"1rem","border-radius":"5rem","background-color":"#f7f7f7","margin-top":"2rem"}
                                 ), 
-                                html.Div(dashtable_lv3(drilldata_process(df_drilldown,'Sub Category'),'Sub Category','dashtable_lv4',0),id="drill_lv4",style={"padding":"1rem"})
+                                html.Div([dashtable_lv3(drilldata_process(df_drilldown,'Sub Category'),'Sub Category','dashtable_lv4',0)],id="drill_lv4",style={"padding":"1rem"})
                             ], 
                             style={"max-height":"80rem"}
                         ),
@@ -561,7 +561,8 @@ def toggle_popover_mod_criteria(n1, is_open):
      Output("filter1_3_name","children"),
      Output("filter1_3_value","options"),
      Output("filter1_4_name","children"),
-     Output("filter1_4_value","options"),     
+     Output("filter1_4_value","options"), 
+     Output("dimname_on_lv1","children"),
    ],
    [Input("list-dim-lv1","value")] 
 )
@@ -569,7 +570,7 @@ def update_table_dimension(dim):
     f1_name=dim
     filter1_value_list=[{'label': i, 'value': i} for i in all_dimension[all_dimension['dimension']==dim].loc[:,'value']]
     
-    return drillgraph_lv1(drilldata_process(df_drilldown,dim),'dashtable_lv1'),f1_name,filter1_value_list,f1_name,filter1_value_list,f1_name,filter1_value_list
+    return drillgraph_lv1(drilldata_process(df_drilldown,dim),'dashtable_lv1'),f1_name,filter1_value_list,f1_name,filter1_value_list,f1_name,filter1_value_list,'By '+f1_name
 
 #update filter1 on following page based on selected columns
 
