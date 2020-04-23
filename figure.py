@@ -390,7 +390,8 @@ def bubblegraph(df_domain_perform,traces,obj): # 数据，[0,1] ,'Domain' or 'Me
                                                            tickvals=[0.08,0.6],
                                                            ticktext=['High risk','Low risk'],
                                                            x=1,y=0.7
-                                                           )))
+                                                           ),
+                                            hoverinfo='skip',))
 
     for k in traces:
         fig_domain_perform.add_trace(
@@ -436,7 +437,7 @@ def bubblegraph(df_domain_perform,traces,obj): # 数据，[0,1] ,'Domain' or 'Me
             dtick=0.1,
             showticklabels=True,
             tickformat='%',
-            position=0.47,
+            position=0.48,
 
             showgrid=True,
             gridcolor =colors['grey'],
@@ -469,7 +470,7 @@ def bubblegraph(df_domain_perform,traces,obj): # 数据，[0,1] ,'Domain' or 'Me
             orientation='h',
             x=0,y=-0.05
         ),
-        hovermode=False,
+        #hovermode=True,
         modebar=dict(
             bgcolor=colors['transparent']
         ),
@@ -773,24 +774,25 @@ def tbl_non_contract(df,measures):
 ################Drilldown###################################  
 ############################################################ 
 def drill_bubble(df):
-    df['Weight']=df['Annualized_Total_cost']/(df['Annualized_Total_cost'].sum()/2)
+    df['Weight']=df['Pt_Count']/df.values[len(df)-1,7]
     n=len(df)
+    valmax=((df['% Cost Diff from Target']/0.05).apply(np.ceil)*0.05).max()
     
     colorbar=dict(
         len=1,
        tickmode='array',
-       tickvals=[-0.5,0.5],
+       tickvals=[-valmax,valmax],
        ticktext=['Low risk','High risk'],
        thickness=5,
        #x=1,y=0.7
     )
     colorscale=[[0, 'rgba(0,255,0,1)'],[0.5, 'rgba(0,255,0,0.2)'],[0.5, 'rgba(255,0,0,0.2)'], [1, 'rgba(255,0,0,1)']]
-    color_axis=dict(cmin=-0.5,cmax=0.5,colorscale=colorscale,colorbar=colorbar,)
+    color_axis=dict(cmin=-valmax,cmax=valmax,colorscale=colorscale,colorbar=colorbar,)
 
     fig = make_subplots(
         rows=2, cols=1,
-        shared_xaxes=True,
-        vertical_spacing=0.05,
+        shared_xaxes=False,
+        vertical_spacing=0.1,
         row_heights = [0.5,0.5],
         specs=[[{"type": "scatter"}],
                [{"type": "scatter"}]]
@@ -801,15 +803,15 @@ def drill_bubble(df):
             x=[0.5+i for i in range(n)],
             y=df['% Cost Diff from Target'],
             text=df['% Cost Diff from Target'],
-            textposition='top center',
+            textposition='middle center',
             texttemplate='%{y:.1%}',
             mode="markers+text",
             marker=dict(
-                size=df['Weight']*600,
+                size=df['Weight']*400,
                 sizemode='area',
                 color=df['% Cost Diff from Target'],#df['performance'].apply(lambda x: 'red' if x>0 else 'green'),
-                cmin=-0.5,
-                cmax=0.5,
+                cmin=-valmax,
+                cmax=valmax,
                 #opacity=0.8,
                 colorbar=colorbar,
                 colorscale=colorscale,
@@ -827,15 +829,15 @@ def drill_bubble(df):
             x=[0.5+i for i in range(n)],
             y=df['Contribution to Overall Performance Difference'],
             text=df['Contribution to Overall Performance Difference'],
-            textposition='top center',
+            textposition='middle center',
             texttemplate='%{y:.1%}',
             mode="markers+text",
             marker=dict(
-                size=df['Weight']*600,
+                size=df['Weight']*400,
                 sizemode='area',
                 color=df['Contribution to Overall Performance Difference'],#df['Contribution'].apply(lambda x: 'red' if x>0 else 'green'),
-                cmin=-0.5,
-                cmax=0.5,
+                cmin=-valmax,
+                cmax=valmax,
                 #opacity=0.8,
                 colorbar=colorbar,
                 colorscale=colorscale,
@@ -845,6 +847,14 @@ def drill_bubble(df):
         ),
         row=2, col=1
     )
+    
+    annotations = []
+    annotations.append(dict(xref='paper', yref='paper',
+                            x=0, y=-0.02,yanchor='top',
+                            text='*Bubble size proportional to patient count',
+                            font=dict(family='NotoSans-CondensedLight', size=10, color='#38160f'),
+                            showarrow=False))
+    
     fig.update_layout(
         paper_bgcolor=colors['transparent'],
         plot_bgcolor=colors['transparent'],
@@ -852,14 +862,15 @@ def drill_bubble(df):
         modebar=dict( bgcolor=colors['transparent']),
         xaxis=dict(showline=True,mirror=True,linecolor=colors['grey'],showticklabels=False,range=[0,n],dtick=1,autorange=False,gridcolor=colors['grey'],zeroline=True ,zerolinecolor=colors['grey']),
         xaxis2=dict(showline=True,mirror=True,linecolor=colors['grey'],showticklabels=False,range=[0,n],dtick=1,autorange=False,gridcolor=colors['grey'],zeroline=True ,zerolinecolor=colors['grey']),
-        yaxis=dict(showline=True,mirror=True,linecolor=colors['grey'],showticklabels=False,range=[-0.5,0.5],autorange=False,zeroline=True ,zerolinecolor=colors['grey']),
-        yaxis2=dict(showline=True,mirror=True,linecolor=colors['grey'],showticklabels=False,range=[-0.5,0.5],autorange=False
+        yaxis=dict(showline=True,mirror=True,linecolor=colors['grey'],showticklabels=True,tickformat='%',range=[-valmax,valmax],autorange=False,zeroline=True ,zerolinecolor=colors['grey']),
+        yaxis2=dict(showline=True,mirror=True,linecolor=colors['grey'],showticklabels=True,tickformat='%',range=[-valmax,valmax],autorange=False
                     ,zeroline=True ,zerolinecolor=colors['grey'] ),
         #coloraxis=dict(cmin=-0.5,cmax=0.5,colorscale=colorscale,colorbar=colorbar,),
         #coloraxis2=dict(cmin=-0.5,cmax=0.5,colorscale=colorscale,colorbar=colorbar,),
         #margin=dict(l=115)
+        annotations=annotations,
         hovermode=False,
-        margin=dict(l=2,r=2,b=2,t=2,pad=0),
+        margin=dict(l=2,r=2,b=20,t=2,pad=0),
         height=300,
 
     )
@@ -869,7 +880,7 @@ def drillgraph_table(df_table,tableid):
     tbl=dash_table.DataTable(
         id=tableid,
         data=df_table.to_dict('records'),
-        columns=[ {'id': c, 'name': c,"selectable": True} for c in df_table.columns ],
+        columns=[ {'id': c, 'name': c,"selectable": True,'type': 'numeric',"format":FormatTemplate.money(0)} for c in df_table.columns ],
         column_selectable="single",
         selected_columns=[],
         style_data={
@@ -910,10 +921,9 @@ def drillgraph_table(df_table,tableid):
 
 def drillgraph_lv1(df,tableid):
 
-    df=df.reindex(range(len(df)-1,-1,-1))
-    df_table=df[['YTD Avg Episode Cost',df.columns[0]]]
-    df_table1=pd.DataFrame(df_table.apply(lambda x: "{:,.1f}".format(x['YTD Avg Episode Cost']), axis=1)).T
-    df_table1.columns=df_table[df_table.columns[1]]
+    df=df.merge(df_dim_order[df_dim_order['dimension']==df.columns[0]],how='left',left_on=df.columns[0],right_on='value').sort_values(by='ordering')
+    df_table=df[['YTD Avg Episode Cost']].T
+    df_table.columns=df[df.columns[0]]
     
     drillgraph= [
             dbc.Row(
@@ -932,9 +942,9 @@ def drillgraph_lv1(df,tableid):
                         [
                             html.Div(
                                 [
-                                    drillgraph_table(df_table1,tableid)
+                                    drillgraph_table(df_table,tableid)
                                 ],
-                                style={"padding-left":"1rem","padding-right":"7rem"}
+                                style={"padding-left":"3.6rem","padding-right":"7.4rem"}
                             ),
                             html.Div(
                                 [
@@ -1162,7 +1172,7 @@ def gaugegraph(df,row):
     showCurrentValue=True,
     scale={'start': -20, 'interval': 5, 'labelInterval': 1},
     units="%",
-    color={"gradient":True,"ranges":{"red":[-20,8],"yellow":[8,12],"green":[12,20]}}, #
+    color={"gradient":True,"ranges":{"green":[-20,8],"yellow":[8,12],"red":[12,20]}}, #
     value=df['%'][row]*100,
     label=df['Name'][row],
     labelPosition='top',    

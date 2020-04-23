@@ -25,6 +25,7 @@ df_drilldown=pd.read_csv("data/drilldown_sample_5.csv")
 dimensions=df_drilldown.columns[0:12]
 df_drill_waterfall=pd.read_csv("data/drilldown waterfall graph.csv")
 df_driver=pd.read_csv("data/Drilldown Odometer.csv")
+df_dim_order=pd.read_csv("data/dimvalue_ordering.csv")
 
 all_dimension=[]
 for i in list(df_drilldown.columns[0:14]):
