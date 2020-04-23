@@ -18,6 +18,7 @@ import dash_core_components as dcc
 import dash_bootstrap_components as dbc
 from dash_table.Format import Format, Scheme
 import dash_table.FormatTemplate as FormatTemplate
+import dash_daq as daq
 
 colors={'blue':'rgba(18,85,222,100)','yellow':'rgba(246,177,17,100)','transparent':'rgba(255,255,255,0)','grey':'rgba(191,191,191,100)',
        'lightblue':'rgba(143,170,220,100)'}
@@ -1055,7 +1056,85 @@ def drilldata_process(df_drilldown,dimension,dim1='All',f1='All',dim2='All',f2='
     
     return df
 
-
+def drill_waterfall(df):
+    bar1_y=df['base'][0:3].values.tolist()
+    bar2_base=df[['base']][3:4].values[0,0]
+    bar2_adjust=df[['adjusted']][4:5].values[0,0]
     
+    fig = make_subplots(
+        rows=2, cols=2,
+        specs=[[ {"rowspan": 2},{}],
+           [None,{} ]],
+        shared_yaxes=True,
+        column_widths=[0.6, 0.4],
+        row_heights=[0.6, 0.4]
+        #vertical_spacing=0.02,   
+    )
+    fig.add_trace(
+       go.Bar(        
+            x=['YTD','Annualized','Target Adj'], 
+            y=bar1_y,
+            text=bar1_y,
+            textposition='inside',
+            texttemplate='%{y:.2s}',
+            textangle=0,
+            width=0.5,
+            marker=dict(
+                color=[colors['blue'],colors['blue'],colors['grey']],
+                opacity=[1,0.7,0.7]
+                       )
+     
+        ),
+        row=1, col=1
+    )
+                       
+    fig.add_trace(
+       go.Waterfall(        
+            x=['Target','Adj','Target Adj'],
+            measure = ["absolute", "relative", "total"],
+            y=[bar2_base,bar2_adjust,None],
+            text=[bar2_base,bar2_adjust,bar2_base+bar2_adjust],
+            textposition='inside',
+            texttemplate='%{text:.2s}',
+            textangle=0,
+            width=0.5,
+            decreasing = {"marker":{"color":colors['yellow']}},
+            increasing = {"marker":{"color":colors['yellow']}},
+            totals = {"marker":{"color":colors['grey']}},
+            opacity=0.7
+        ),
+        row=1, col=2
+    )
+    
+    fig.update_layout(
+        paper_bgcolor=colors['transparent'],
+        plot_bgcolor=colors['transparent'],
+        showlegend=False,
+        modebar=dict( bgcolor=colors['transparent'] ),
+        xaxis=dict(showline=True,linecolor=colors['grey'],zeroline=True ,zerolinecolor=colors['grey']),
+        xaxis2=dict(showline=True,linecolor=colors['grey'],zeroline=True ,zerolinecolor=colors['grey']),
+        yaxis=dict(showline=True,linecolor=colors['grey'],gridcolor=colors['grey'],zeroline=True ,zerolinecolor=colors['grey']),
+        yaxis2=dict(showline=True,linecolor=colors['grey'],gridcolor=colors['grey'],zeroline=True ,zerolinecolor=colors['grey']),
+        annotations=[
+            dict(text = '', x = 0.62, y = 0.8,ax=-60,ay=120
+                 , ayref = 'pixel', axref = 'pixel', xref = 'paper', yref = 'paper'
+                 ,showarrow = True,arrowcolor=colors['grey'],arrowhead=1,arrowwidth=1.5),
+    
+                    ],
+        hovermode=False
+    )    
+    return fig
 
-
+def gaugegraph(df,row):
+    fig=daq.Gauge(
+    showCurrentValue=True,
+    scale={'start': -20, 'interval': 5, 'labelInterval': 1},
+    units="%",
+    color={"gradient":True,"ranges":{"red":[-20,8],"yellow":[8,12],"green":[12,20]}}, #
+    value=df['%'][row]*100,
+    label=df['Name'][row],
+    labelPosition='top',    
+    max=20,
+    min=-20,
+)  
+    return fig

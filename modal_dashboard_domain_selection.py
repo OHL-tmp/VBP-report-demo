@@ -267,8 +267,8 @@ def checklist_domain_measures_lv1(d):
                     dbc.Collapse(
                            dbc.FormGroup([
                                dbc.Checklist(
-                                   options = [{"label" : k, "value": k} for k in measures_lv1[key[i]]],
-                                   value=default,
+                                   options = [{"label" : k, "value": k} for k in measures_lv1[key[i]] if k not in default],
+                                   value=[],
                                    id=u"checklist-domain-measures-lv2-{}-{}".format(d+1,i+1),
                                    inline=True,
                                    persistence = True,
