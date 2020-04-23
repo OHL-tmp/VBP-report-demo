@@ -1,7 +1,5 @@
 ﻿Name,%
-Low Risk Patient,-0.059338619
-Provider Group C,-0.045863619
-Inpatient Surgeries,-0.1
-Outpatient Radiology,-0.1
-Outpatient Lab/Pathology,-0.1
-HF Hospitalization,0.04
+Provider Group C,0.053723831
+Non Compliant Patient,0.043665198
+Low Risk Patient,0.025166975
+Compliant Patient,-0.010057868
