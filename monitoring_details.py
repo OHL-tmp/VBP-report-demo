@@ -496,13 +496,13 @@ def update_table2(dim,val):
      Input("filter2_3_value","value"),
    ] 
 )
-def update_table2(dim1,val1,dim2,val2):       
+def update_table3(dim1,val1,dim2,val2):       
     
     return [dashtable_lv3(drilldata_process(df_drilldown,'Service Category',dim1,val1,dim2,val2),'Service Category','dashtable_lv3')]
 
 #update lv4 on filter1,filter2,filter3
 
-'''@app.callback(
+@app.callback(
    [ Output("drill_lv4","children"),    
    ],
    [ Input("filter1_4_name","children"),
@@ -513,9 +513,9 @@ def update_table2(dim1,val1,dim2,val2):
      Input("filter3_4_value","value"),
    ] 
 )
-def update_table2(dim1,val1,dim2,val2,dim3,val3):       
+def update_table4(dim1,val1,dim2,val2,dim3,val3):       
     
-    return [dashtable_lv3(drilldata_process(df_drilldown,'Sub Category',dim1,val1,dim2,val2,dim3,val3))],'Sub Category','dashtable_lv4')'''
+    return [dashtable_lv3(drilldata_process(df_drilldown,'Sub Category',dim1,val1,dim2,val2,dim3,val3),'Sub Category','dashtable_lv4')]
 
 #drillgraph_lv2=drillgraph_lv1(drilldata_process(df_drilldown,'Managing Physician (Group)',dim1=dim,f1=col_1),'dashtable_lv2')
 #drillgraph_lv3=dashtable_lv3(df,tableid)
