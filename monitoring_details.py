@@ -21,7 +21,7 @@ from figure import *
 from modal_drilldown_tableview import *
 
 
-df_drilldown=pd.read_csv("data/drilldown_sample_5.csv")
+df_drilldown=pd.read_csv("data/drilldown_sample_6.csv")
 dimensions=df_drilldown.columns[0:12]
 df_drill_waterfall=pd.read_csv("data/drilldown waterfall graph.csv")
 df_driver=pd.read_csv("data/Drilldown Odometer.csv")
@@ -663,29 +663,50 @@ def toggle_modal_dashboard_domain_selection(n1, n2, is_open):
 
 
 @app.callback(
-    [Output('sub_cate_filter', 'options'),
-    Output('sub_cate_filter', 'value'),
-    Output('sub_cate_filter', 'disabled'),],
-    [Input('srvc_cate_filter', 'value')]
-    )
-def sub_filter(v):
-    if v:
-        sub_filter = filter_list[v]
-        if v == 'All':
-            return [{"label": k, "value": k} for k in sub_filter], 'All', True
-        return [{"label": k, "value": k} for k in sub_filter], 'All', False
-    return [],'',True
-
-
-@app.callback(
     [Output('dimension_filter_1', 'options'),
-    Output('dimension_filter_1', 'value')],
+    Output('dimension_filter_1', 'value'),
+    Output('dimension_filter_1', 'multi')],
     [Input('dimension_filter_selection_1', 'value')]
     )
 def filter_dimension_1(v):
     if v:
-        return [{"label": k, "value": k} for k in dimension[v]], dimension[v]
-    return [],[]
+        if v == 'Service Category':
+            return [{"label": 'All', "value": 'All'}]+[{"label": k, "value": k} for k in list(filter_list.keys())], 'All', False
+        else:
+            return [{"label": k, "value": k} for k in dimension[v]], dimension[v], True
+    return [], [], True
+
+
+@app.callback(
+    [Output('dimension_filter_2', 'options'),
+    Output('dimension_filter_2', 'value'),
+    Output('dimension_filter_2', 'multi')],
+    [Input('dimension_filter_selection_1', 'value'),
+    Input('dimension_filter_selection_2', 'value'),
+    Input('dimension_filter_1', 'value')]
+    )
+def filter_dimension_1(v1, v2, v3):
+    if v2:
+        if v2 == 'Service Category':
+            return [{"label": 'All', "value": 'All'}]+[{"label": k, "value": k} for k in list(filter_list.keys())], 'All', False
+        elif v1 == 'Service Category' and v2 == 'Sub Category':
+            sub_filter = filter_list[v3]
+            if v3 == 'All':
+                return [], 'All', False
+            return [{"label": k, "value": k} for k in sub_filter], sub_filter, True
+        else:
+            return [{"label": k, "value": k} for k in dimension[v2]], dimension[v2], True
+    return [], [], True
+
+    
+@app.callback(
+    Output('dropdown-dimension-2','clearable'),
+    [Input('dropdown-dimension-3','value')]
+    )
+def dropdown_clear(v):
+    if v:
+        return False
+    return True
 
 @app.callback(
     [Output('dropdown-dimension-2','options'),
@@ -695,10 +716,18 @@ def filter_dimension_1(v):
 def dropdown_menu_2(v):
     if v is None:
         return [], True
-    else:
-        dropdown_option = []
+    elif v == 'Service Category':
+        dropdown_option = [{"label": 'Service Category', "value": 'Service Category', 'disabled' : True}, {"label": 'Sub Category', "value": 'Sub Category'}]
         for k in list(dimension.keys()):
-            if k in v:
+            if len(dimension[k]) == 0:
+                dropdown_option.append({"label": k, "value": k, 'disabled' : True})
+            else: 
+                dropdown_option.append({'label' : k, 'value' : k, 'disabled' : False})
+        return dropdown_option, False
+    else:
+        dropdown_option = [{"label": 'Service Category', "value": 'Service Category'}, {"label": 'Sub Category', "value": 'Sub Category', 'disabled' : True}]   
+        for k in list(dimension.keys()):
+            if k == v or len(dimension[k]) == 0:
                 dropdown_option.append({'label' : k, 'value' : k, 'disabled' : True})
             else:
                 dropdown_option.append({'label' : k, 'value' : k, 'disabled' : False})
@@ -714,15 +743,65 @@ def dropdown_menu_3(v1, v2):
     v = [v1, v2]
     if v2 is None:
         return [], True
-    else:
-        dropdown_option = []
+    elif 'Service Category' in v and 'Sub Category' not in v:
+        dropdown_option = [{"label": 'Service Category', "value": 'Service Category', 'disabled' : True}, {"label": 'Sub Category', "value": 'Sub Category'}]
         for k in list(dimension.keys()):
-            if k in v:
+            if len(dimension[k]) == 0:
+                dropdown_option.append({"label": k, "value": k, 'disabled' : True})
+            else: 
+                dropdown_option.append({'label' : k, 'value' : k, 'disabled' : False})
+        return dropdown_option, False
+    elif 'Service Category' in v and 'Sub Category' in v:
+        dropdown_option = [{"label": 'Service Category', "value": 'Service Category', 'disabled' : True}, {"label": 'Sub Category', "value": 'Sub Category', 'disabled' : True}]
+        for k in list(dimension.keys()):
+            if len(dimension[k]) == 0:
+                dropdown_option.append({"label": k, "value": k, 'disabled' : True})
+            else: 
+                dropdown_option.append({'label' : k, 'value' : k, 'disabled' : False})
+        return dropdown_option, False
+    else:
+        dropdown_option = [{"label": 'Service Category', "value": 'Service Category'}, {"label": 'Sub Category', "value": 'Sub Category', 'disabled' : True}]   
+        for k in list(dimension.keys()):
+            if k in v or len(dimension[k]) == 0:
                 dropdown_option.append({'label' : k, 'value' : k, 'disabled' : True})
             else:
                 dropdown_option.append({'label' : k, 'value' : k, 'disabled' : False})
         return dropdown_option, False
 
+@app.callback(
+    [Output('dimension_filter_selection_2', 'options'),
+    Output('dimension_filter_selection_2', 'disabled')],
+    [Input('dimension_filter_selection_1', 'value'),
+    Input('dimension_filter_1', 'value')]
+    )
+def filter_menu_2(v, f):
+    if v is None:
+        return [], True
+    elif v == 'Service Category':
+        if f =='All':
+            dropdown_option = [{"label": 'Service Category', "value": 'Service Category', 'disabled' : True}, {"label": 'Sub Category', "value": 'Sub Category', 'disabled' : True}]
+            for k in list(dimension.keys()):
+                if len(dimension[k]) == 0:
+                    dropdown_option.append({"label": k, "value": k, 'disabled' : True})
+                else: 
+                    dropdown_option.append({'label' : k, 'value' : k, 'disabled' : False})
+            return dropdown_option, False
+        else:
+            dropdown_option = [{"label": 'Service Category', "value": 'Service Category', 'disabled' : True}, {"label": 'Sub Category', "value": 'Sub Category'}]
+            for k in list(dimension.keys()):
+                if len(dimension[k]) == 0:
+                    dropdown_option.append({"label": k, "value": k, 'disabled' : True})
+                else: 
+                    dropdown_option.append({'label' : k, 'value' : k, 'disabled' : False})
+            return dropdown_option, False
+    else:
+        dropdown_option = [{"label": 'Service Category', "value": 'Service Category'}, {"label": 'Sub Category', "value": 'Sub Category', 'disabled' : True}]   
+        for k in list(dimension.keys()):
+            if k == v or len(dimension[k]) == 0:
+                dropdown_option.append({'label' : k, 'value' : k, 'disabled' : True})
+            else:
+                dropdown_option.append({'label' : k, 'value' : k, 'disabled' : False})
+        return dropdown_option, False
 
 @app.callback(
     [Output('datatable-tableview', "columns"),
@@ -730,39 +809,49 @@ def dropdown_menu_3(v1, v2):
     [Input('dropdown-dimension-1','value'),
     Input('dropdown-dimension-2','value'),
     Input('dropdown-dimension-3','value'),
-    Input('srvc_cate_filter','value'),
-    Input('sub_cate_filter','value'),
-    Input('dimension_filter_1','value'),
     Input('dimension_filter_selection_1','value'),
+    Input('dimension_filter_selection_2','value'),
+    Input('dimension_filter_1','value'),
+    Input('dimension_filter_2','value'),
     Input('dropdown-measure-1', 'value')]
     )
-def datatable_data_selection(v1, v2, v3, f1, f2, f3, d, m):
-    if f1 == 'All':
-        cate_cnt = 45
-        if f2 == 'All':
-            if f3:
-                df_drilldown_filtered = df_drilldown[df_drilldown[d].isin(f3)]
+def datatable_data_selection(v1, v2, v3, d1, d2, f1, f2, m):
+    if d1:
+        if d1 == 'Service Category':
+            if d2 is None:
+                if f1 == 'All':
+                    df_drilldown_filtered = df_drilldown
+                    cate_cnt = cate_mix_cnt
+                else:
+                    df_drilldown_filtered = df_drilldown[df_drilldown['Service Category'].isin([f1])]
+                    cate_cnt = len(filter_list[f1])
+            elif f1 != 'All' and d2 == 'Sub Category':
+                df_drilldown_filtered = df_drilldown[(df_drilldown['Service Category'].isin([f1])) & (df_drilldown['Sub Category'].isin(f2))]
+                cate_cnt = len(f2)
             else:
-                df_drilldown_filtered = df_drilldown
+                df_drilldown_filtered = df_drilldown[df_drilldown[d2].isin(f2)]
+                if f1 == 'All':
+                    cate_cnt = cate_mix_cnt
+                else:
+                    cate_cnt = len(filter_list[f1])
+        elif d2 == 'Service Category':
+            if f2 == 'All':
+                df_drilldown_filtered = df_drilldown[df_drilldown[d1].isin(f1)]
+                cate_cnt = cate_mix_cnt
+            else:
+                df_drilldown_filtered = df_drilldown[(df_drilldown['Service Category'].isin([f2])) & (df_drilldown[d1].isin(f1))]
+                cate_cnt = len(filter_list[f2])
         else:
-            if f3:
-                df_drilldown_filtered = df_drilldown[(df_drilldown['Sub Category'].isin([f2])) & (df_drilldown[d].isin(f3))]
+            if d2:
+                df_drilldown_filtered = df_drilldown[(df_drilldown[d1].isin(f1)) & (df_drilldown[d2].isin(f2))]
+                cate_cnt = cate_mix_cnt
             else: 
-                df_drilldown_filtered = df_drilldown[df_drilldown['Sub Category'].isin([f2])]
+                df_drilldown_filtered = df_drilldown[df_drilldown[d1].isin(f1)]
+                cate_cnt = cate_mix_cnt
     else:
-        if f2 == 'All':
-            cate_cnt = len(filter_list[f1])-1
-            if f3:
-                df_drilldown_filtered = df_drilldown[(df_drilldown['Service Category'].isin([f1])) & (df_drilldown[d].isin(f3))]
-            else:
-                df_drilldown_filtered = df_drilldown[df_drilldown['Service Category'].isin([f1])]
-        else: 
-            cate_cnt = 1
-            if f3:
-                df_drilldown_filtered = df_drilldown[(df_drilldown['Service Category'].isin([f1])) & (df_drilldown['Sub Category'].isin([f2])) & (df_drilldown[d].isin(f3))]
-            else: 
-                df_drilldown_filtered = df_drilldown[(df_drilldown['Service Category'].isin([f1])) & (df_drilldown['Sub Category'].isin([f2]))]
-        
+        df_drilldown_filtered = df_drilldown
+        cate_cnt = cate_mix_cnt
+
     table_column = []
     selected_dimension = []
     if v1 is not None:
@@ -772,14 +861,17 @@ def datatable_data_selection(v1, v2, v3, f1, f2, f3, d, m):
     if v3 is not None:
         selected_dimension.append(v3)
 
-    table_column.extend(selected_dimension)
+    table_column.extend(list(set(selected_dimension + ['Service Category', 'Sub Category'])))
     table_column.append("Pt Count")
     percent_list = ['Diff % from Target Utilization', 'Diff % from Target Total Cost', 'Diff % from Target Unit Cost', 'Patient %']
     dollar_list = ['YTD Total Cost', 'Annualized Total Cost', 'Target Total Cost', 'YTD Unit Cost', 'Annualized Unit Cost', 'Target Unit Cost']
     if len(selected_dimension) > 0:
+#        ptct_dimension = set(selected_dimension + ['Service Category', 'Sub Category'])
         table_column.extend(measure_ori) 
-        df_agg = df_drilldown_filtered[table_column].groupby(by = selected_dimension).sum()
-        df_agg['Pt Count'] = df_agg['Pt Count']/cate_cnt
+        df_agg_pre = df_drilldown_filtered[table_column].groupby(by = list(set(selected_dimension + ['Service Category', 'Sub Category']))).sum().reset_index()
+        df_agg = df_agg_pre[table_column].groupby(by = selected_dimension).agg({'Pt Count':'mean', 'YTD Utilization':'sum', 'Annualized Utilization':'sum', 'Target Utilization':'sum', 
+            'YTD Total Cost':'sum', 'Annualized Total Cost':'sum', 'Target Total Cost':'sum'}).reset_index()
+#        df_agg['Pt Count'] = df_agg['Pt Count']/cate_cnt
         df_agg['Patient %'] = df_agg['Pt Count']/895500
         df_agg['YTD Utilization'] = df_agg['YTD Utilization']/df_agg['Pt Count']
         df_agg['Annualized Utilization'] = df_agg['Annualized Utilization']/df_agg['Pt Count']
@@ -794,7 +886,7 @@ def datatable_data_selection(v1, v2, v3, f1, f2, f3, d, m):
         df_agg['Target Unit Cost'] = df_agg['Target Total Cost']/df_agg['Target Utilization']
         df_agg['Diff % from Target Unit Cost'] = (df_agg['Annualized Unit Cost'] - df_agg['Target Unit Cost'])/df_agg['Target Unit Cost']
 #        df_agg.style.format({'Diff % from Target Utilization' : "{:.2%}", 'Diff % from Target Total Cost': "{:.2%}", 'Diff % from Target Unit Cost' : "{:.2%}"})
-        df_agg.reset_index(inplace = True)
+#        df_agg.reset_index(inplace = True)
         show_column = selected_dimension + ['Patient %'] + m 
         if 'Diff % from Target Total Cost' in m:
             df_agg =  df_agg[show_column].sort_values(by =  'Diff % from Target Total Cost', ascending =False)
