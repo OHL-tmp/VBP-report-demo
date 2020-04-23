@@ -100,19 +100,22 @@ def tableview():
 							html.Div(
 								[
 									html.H4("Filters", style={"font-size":"1rem","padding-left":"0.5rem", "padding-top":"0.5rem"}),
+									html.H5("Filter 1", style={"font-size":"0.8rem","color":"#919191","padding-left":"0.5rem", "padding-top":"0.5rem"}),
 									dcc.Dropdown(
 										id = "dimension_filter_selection_1",
 										options = [{"label": 'Service Category', "value": 'Service Category'}, {"label": 'Sub Category', "value": 'Sub Category', 'disabled': True}] 
 										+ [{"label": k, "value": k, 'disabled' : True} if len(dimension[k]) == 0 else {"label": k, "value": k, 'disabled' : False} for k in list(dimension.keys())],
 										placeholder = "Add a Filter",
+										style = {"font-family":"NotoSans-Condensed"}
 										),
-			#						html.H6("Sub Category"),
+									html.H5("", style={"font-size":"0.8rem"}),
 									dcc.Dropdown(
 										id = "dimension_filter_1",
 										placeholder = "Select Filter Value",
+										style = {"font-family":"NotoSans-Condensed"},
 										multi = True,
 										),
-									html.H6("Filter 2"),
+									html.H5("Filter 2", style={"font-size":"0.8rem","color":"#919191","padding-left":"0.5rem", "padding-top":"0.5rem"}),
 									dcc.Dropdown(
 										id = "dimension_filter_selection_2",
 										options = [{"label": k, "value": k} for k in list(dimension.keys())],
@@ -126,7 +129,7 @@ def tableview():
 										multi = True,
 										style = {"font-family":"NotoSans-Condensed"}
 										),
-									html.H6("+ Add more Filter"),
+									html.H5("+ Add more Filter", style={"font-size":"1rem","color":"#1357DD","padding-left":"0.5rem", "padding-top":"0.5rem"}),
 								]
 							)
 						],
