@@ -20,6 +20,8 @@ from dash_table.Format import Format, Scheme
 import dash_table.FormatTemplate as FormatTemplate
 import dash_daq as daq
 
+df_dim_order=pd.read_csv("data/dimvalue_ordering.csv")
+
 colors={'blue':'rgba(18,85,222,100)','yellow':'rgba(246,177,17,100)','transparent':'rgba(255,255,255,0)','grey':'rgba(191,191,191,100)',
        'lightblue':'rgba(143,170,220,100)'}
 
@@ -1126,6 +1128,7 @@ def drill_waterfall(df):
             size=12,
             color="#38160f"
         ),
+        margin=dict(l=30,r=30,b=0,t=40,pad=0),
     )
     return fig_waterfall 
 
@@ -1162,6 +1165,7 @@ def drill_bar(df):
             size=12,
             color="#38160f"
         ),
+        margin=dict(l=30,r=30,b=80,t=40,pad=0),
     )
     return fig_bar
 

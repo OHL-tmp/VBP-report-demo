@@ -25,7 +25,7 @@ df_drilldown=pd.read_csv("data/drilldown_sample_5.csv")
 dimensions=df_drilldown.columns[0:12]
 df_drill_waterfall=pd.read_csv("data/drilldown waterfall graph.csv")
 df_driver=pd.read_csv("data/Drilldown Odometer.csv")
-df_dim_order=pd.read_csv("data/dimvalue_ordering.csv")
+
 
 all_dimension=[]
 for i in list(df_drilldown.columns[0:14]):
@@ -183,7 +183,30 @@ def card_overview_drilldown(percentage):
                 html.P("As of June 30th.", style={"color":"#000", "font-size":"0.8rem","padding-left":"1rem"}),
                 dbc.Row(
                     [
-                        dcc.Graph(figure=drill_waterfall(df_drill_waterfall)),
+                        dbc.Col(
+                            [
+                                html.Div(
+                                    [
+                                        dcc.Graph(figure=drill_bar(df_drill_waterfall)),
+                                    ]
+                                )
+                            ],
+                            width=6,
+                            style={"height":"10rem"}
+                        ),
+                        dbc.Col(
+                            [
+                                html.Div(
+                                    [
+                                        html.H3("Target Adj Details", style={"font-size":"1rem","margin-top":"-1.8rem","color":"#919191","background-color":"#f5f5f5","width":"9rem","padding-left":"1rem","padding-right":"1rem","text-align":"center"}),
+                                        html.Div([dcc.Graph(figure=drill_waterfall(df_drill_waterfall),style={"height":"24rem","padding-bottom":"1rem"})]),
+                                    ],
+                                    style={"border-radius":"0.5rem","border":"2px solid #d2d2d2","padding":"1rem","height":"25.5rem"}
+                                )
+                            ],
+                            width=5,
+                            
+                        )
                     ],
                 ),
             ],
