@@ -28,7 +28,7 @@ BASE_PATH = pathlib.Path(__file__).parent.resolve()
 DATA_PATH = BASE_PATH.joinpath("Data").resolve()
 
 
-app = dash.Dash(__name__, url_base_pathname='/vbc-demo/dashboard/')
+app = dash.Dash(__name__, url_base_pathname='/vbc-demo/contract-manager-dashboard/')
 
 server = app.server
 
