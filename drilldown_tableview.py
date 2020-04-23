@@ -30,22 +30,26 @@ server = app.server'''
 dimension = {'Age Band' : ['<65', '65-74', '75-85', '>=85'], 'Gender' : ['F', 'M'], 
 'Comorbidity Type' : ['Coronary heart disease ', 'Chronic pulmonary disease', 'Renal disease', 'Atrial fibrillation', 'Cerebrovascular disease', 'Diabetes'], 
 'Risk Score Band' : ['Low', 'Mid', 'High'], 'NYHA Class' : ['I', 'II', 'III', 'IV'], 
-       'Medication Adherence' : ['Compliant', 'Non-compliant'], 'Managing Physician (Group)': ['Group A', 'Group B', 'Group C', 'Group D']}
+       'Medication Adherence' : ['Compliant', 'Non-compliant'], 'Managing Physician (Group)': ['Group A', 'Group B', 'Group C', 'Group D'], 
+       'Weight Band' : [], 'Comorbidity Score' : [], 'Ejection Fraction' : [], 'Years Since HF Diagnosis' : [], 'Prior Use of ACE/ARB' : []}
 measure = ['YTD Utilization', 'Annualized Utilization', 'Target Utilization', 'Diff % from Target Utilization',
 		'YTD Total Cost', 'Annualized Total Cost', 'Target Total Cost', 'Diff % from Target Total Cost',
 		'YTD Unit Cost', 'Annualized Unit Cost', 'Target Unit Cost', 'Diff % from Target Unit Cost']
 measure_ori = ['YTD Utilization', 'Annualized Utilization', 'Target Utilization',
 		'YTD Total Cost', 'Annualized Total Cost', 'Target Total Cost']
-filter_list = {'All' : ['All', 'Heart Failure', 'Renal Failure', 'Pleural effusion', 'Acute myocardial infarction', 'Cardiac Arrhythmia', 'Cardiac arrest and ventricular fibrillation', 'Hypertension',
-       'CABG', 'CEA', 'PCI', 'ICD', 'Others', 'Cardiac dysrhythmias', 'Respiratory system and chest symptoms', 'COPD', 'Diabetes', 'AMI', 'Aftercare following surgery', 'Durable Medical Equipment (DME)',
-       'Lab/Pathology', 'Radiology', 'Ambulance', 'Observation', 'Outpatient Surgery', 'Administered Drugs', 'Anesthesia', 'Office Visits', 'Surgical', 'Other Services', 'ACE /ARB',
-       'Beta Blocker', 'Aldosterone receptor antagonists', 'Vasodilators', 'Diuretics', 'Other Rx', 'Entresto', 'Home Health', 'SNF', 'Hospice'], 
-       'IP' : ['All', 'Acute myocardial infarction', 'CABG', 'CEA', 'Cardiac Arrhythmia', 'Cardiac arrest and ventricular fibrillation', 'Heart Failure', 'Hypertension', 'ICD', 'Others', 'PCI', 'Pleural effusion', 'Renal Failure'],
- 		'OP ER' : ['All', 'AMI', 'Aftercare following surgery', 'COPD', 'Cardiac dysrhythmias', 'Diabetes', 'Heart Failure', 'Hypertension', 'Others', 'Respiratory system and chest symptoms'], 
- 		'OP Others' : ['All', 'Ambulance', 'Durable Medical Equipment (DME)', 'Lab/Pathology', 'Observation', 'Others', 'Outpatient Surgery', 'Radiology'], 
- 		'PH' : ['All', 'Administered Drugs', 'Anesthesia', 'Lab/Pathology', 'Office Visits', 'Other Services', 'Radiology', 'Surgical'], 
- 		'Drug - Others' : ['All', 'ACE /ARB', 'Aldosterone receptor antagonists', 'Beta Blocker', 'Diuretics', 'Other Rx', 'Vasodilators'], 
- 		'Drug - Entresto': ['All', 'Entresto'], 'Home Health' : ['All', 'Home Health'], 'SNF' : ['All', 'SNF'], 'Hospice' : ['All', 'Hospice']}
+filter_list = {
+       'IP' : ['Acute myocardial infarction', 'CABG', 'Cardiac Arrhythmia', 'Cardiac arrest and ventricular fibrillation', 'Heart Failure', 'Hypertension', 'ICD', 'Others', 'PCI', 'Pacemaker Implant', 'Pleural effusion', 'Renal Failure'],
+ 		'OP ER' : ['AMI', 'Aftercare following surgery', 'COPD', 'Cardiac dysrhythmias', 'Diabetes', 'Heart Failure', 'Hypertension', 'Others', 'Respiratory system and chest symptoms'], 
+ 		'OP Others' : ['Ambulance', 'Durable Medical Equipment (DME)', 'Lab/Pathology', 'Observation', 'Others', 'Outpatient Surgery', 'Radiology'], 
+ 		'PH' : [ 'Administered Drugs', 'Anesthesia', 'Lab/Pathology', 'Office Visits', 'Other Services', 'Radiology', 'Surgical'], 
+ 		'Drug Others' : ['ACE /ARB', 'Aldosterone receptor antagonists', 'Beta Blocker', 'Diuretics', 'Other Rx', 'Vasodilators'], 
+ 		'Drug Entresto': ['Entresto'], 'Home Health' : ['Home Health'], 'SNF' : ['SNF'], 'Hospice' : ['Hospice']}
+
+
+cate_mix_cnt = 0
+for k in list(filter_list.keys()):
+	cate_mix_cnt = cate_mix_cnt + len(filter_list[k])
+
 
 def tableview():
 	return html.Div(
@@ -60,8 +64,9 @@ def tableview():
 									html.H5("First Dimension", style={"font-size":"0.8rem","color":"#919191","padding-left":"0.5rem", "padding-top":"0.5rem"}),
 									dcc.Dropdown(
 										id = "dropdown-dimension-1",
-										options = [{"label": k, "value": k} for k in list(dimension.keys())],
 										placeholder ="...",
+										options = [{"label": 'Service Category', "value": 'Service Category'}, {"label": 'Sub Category', "value": 'Sub Category', 'disabled': True}] 
+										+ [{"label": k, "value": k, 'disabled' : True} if len(dimension[k]) == 0 else {"label": k, "value": k, 'disabled' : False} for k in list(dimension.keys())],
 										value = 'Risk Score Band',
 										clearable = False,
 										style = {"font-family":"NotoSans-Condensed"}
@@ -84,7 +89,7 @@ def tableview():
 									dcc.Dropdown(
 										id = "dropdown-measure-1",
 										options = [{"label": k, "value": k} for k in measure],
-										value = ['YTD Total Cost', 'Annualized Total Cost', 'Target Total Cost', 'Diff % from Target Total Cost'],
+										value = ['Diff % from Target Total Cost', 'YTD Total Cost', 'Annualized Total Cost', 'Target Total Cost'],
 										placeholder ="Select measures",
 										multi = True,
 										style = {"font-family":"NotoSans-Condensed"}
@@ -95,37 +100,33 @@ def tableview():
 							html.Div(
 								[
 									html.H4("Filters", style={"font-size":"1rem","padding-left":"0.5rem", "padding-top":"0.5rem"}),
-									html.H5("Service Category", style={"font-size":"0.8rem","color":"#919191","padding-left":"0.5rem", "padding-top":"0.5rem"}),
-									dcc.Dropdown(
-										id = "srvc_cate_filter",
-										options = [{"label": k, "value": k} for k in list(filter_list.keys())],
-										placeholder = "Select Service Category",
-										value = 'All',
-										clearable = False,
-										style = {"font-family":"NotoSans-Condensed"}
-										),
-									html.H5("Sub Category", style={"font-size":"0.8rem","color":"#919191","padding-left":"0.5rem", "padding-top":"0.5rem"}),
-									dcc.Dropdown(
-										id = "sub_cate_filter",
-										placeholder = "Select Sub Category",
-										value = 'All',
-										clearable = False,
-										style = {"font-family":"NotoSans-Condensed"}
-										),
-									html.H5("Filter for Dimensions", style={"font-size":"0.8rem","color":"#919191","padding-left":"0.5rem", "padding-top":"0.5rem"}),
 									dcc.Dropdown(
 										id = "dimension_filter_selection_1",
+										options = [{"label": 'Service Category', "value": 'Service Category'}, {"label": 'Sub Category', "value": 'Sub Category', 'disabled': True}] 
+										+ [{"label": k, "value": k, 'disabled' : True} if len(dimension[k]) == 0 else {"label": k, "value": k, 'disabled' : False} for k in list(dimension.keys())],
+										placeholder = "Add a Filter",
+										),
+			#						html.H6("Sub Category"),
+									dcc.Dropdown(
+										id = "dimension_filter_1",
+										placeholder = "Select Filter Value",
+										multi = True,
+										),
+									html.H6("Filter 2"),
+									dcc.Dropdown(
+										id = "dimension_filter_selection_2",
 										options = [{"label": k, "value": k} for k in list(dimension.keys())],
 										placeholder = "Add a Filter",
 										style = {"font-family":"NotoSans-Condensed"}
 										),
 									html.H5("", style={"font-size":"0.8rem"}),
 									dcc.Dropdown(
-										id = "dimension_filter_1",
-										placeholder = "Select Sub Category",
+										id = "dimension_filter_2",
+										placeholder = "Select Filter Value",
 										multi = True,
 										style = {"font-family":"NotoSans-Condensed"}
 										),
+									html.H6("+ Add more Filter"),
 								]
 							)
 						],
@@ -137,6 +138,7 @@ def tableview():
 						[
 							html.Div(
 								[
+									html.Div("Default sorted by Diff % from Target Total Cost"),
 									dash_table.DataTable(
 										id = 'datatable-tableview',
 										style_header = {'height': 'auto', 'width':'auto','whiteSpace':'normal','font-family':'NotoSans-Condensed','font-size':'auto','backgroundColor': '#dce7fc','color':'#1357DD'},
