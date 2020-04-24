@@ -25,7 +25,8 @@ df_drilldown=pd.read_csv("data/drilldown_sample_6.csv")
 dimensions=df_drilldown.columns[0:12]
 df_drill_waterfall=pd.read_csv("data/drilldown waterfall graph.csv")
 df_driver=pd.read_csv("data/Drilldown Odometer.csv")
-
+data_lv3=drilldata_process(df_drilldown,'Service Category')
+data_lv4=drilldata_process(df_drilldown,'Sub Category')
 
 all_dimension=[]
 for i in list(df_drilldown.columns[0:14]):
@@ -42,6 +43,9 @@ DATA_PATH = BASE_PATH.joinpath("Data").resolve()
 app = dash.Dash(__name__, url_base_pathname='/vbc-demo/contract-manager-drilldown/')
 
 server = app.server
+
+
+
 
 def create_layout():
 #    load_data()
@@ -422,7 +426,8 @@ def filter_template(dim,idname,default_val='All'):
     return(dcc.Dropdown(
                                 id=idname,
                                 options=[{'label': i, 'value': i} for i in all_dimension[all_dimension['dimension']==dim].loc[:,'value']],
-                                value=default_val
+                                value=default_val,
+                                clearable=False,
                             ))
 
 def card_table1_performance_drilldown():
@@ -432,7 +437,7 @@ def card_table1_performance_drilldown():
                         dbc.Row(
                             [
                                 dbc.Col(html.Img(src=app.get_asset_url("bullet-round-blue.png"), width="10px"), width="auto", align="start", style={"margin-top":"-4px"}),
-                                dbc.Col(html.H4("Performance rilldown by Service Categories", style={"font-size":"1rem", "margin-left":"10px"}), width=8),
+                                dbc.Col(html.H4("Performance Drilldown by Service Categories", style={"font-size":"1rem", "margin-left":"10px"}), width=8),
                             ],
                             no_gutters=True,
                         ),
@@ -465,7 +470,7 @@ def card_table1_performance_drilldown():
                                     ],
                                     style={"padding-left":"2rem","padding-right":"1rem","border-radius":"5rem","background-color":"#f7f7f7","margin-top":"2rem"}
                                 ), 
-                                html.Div([dashtable_lv3(drilldata_process(df_drilldown,'Service Category'),'Service Category','dashtable_lv3',1)],id="drill_lv3",style={"padding":"1rem"}),
+                                html.Div([dashtable_lv3(data_lv3,'Service Category','dashtable_lv3',1)],id="drill_lv3",style={"padding":"1rem"}),
                             ], 
                             style={"max-height":"80rem"}
                         ),
@@ -527,7 +532,7 @@ def card_table2_performance_drilldown():
                                     ],
                                     style={"padding-left":"2rem","padding-right":"1rem","border-radius":"5rem","background-color":"#f7f7f7","margin-top":"2rem"}
                                 ), 
-                                html.Div([dashtable_lv3(drilldata_process(df_drilldown,'Sub Category'),'Sub Category','dashtable_lv4',0)],id="drill_lv4",style={"padding":"1rem"})
+                                html.Div([dashtable_lv3(data_lv4,'Sub Category','dashtable_lv4',0)],id="drill_lv4",style={"padding":"1rem"})
                             ], 
                             style={"max-height":"80rem"}
                         ),
@@ -540,6 +545,8 @@ def card_table2_performance_drilldown():
             )
 
 app.layout = create_layout()
+
+
 
 # modify lv1 criteria
 @app.callback(
@@ -614,11 +621,11 @@ def update_filter2value(col):
    ] 
 )
 def update_filter3value(row,data):
-    if row is None:
+    
+    if row is None or row==[]:
         row_1='All'
     else:
-        row_1=row[0]
-    print(row_1)    
+        row_1=row[0]  
     return row_1
     
 #update lv2 on filter1
@@ -644,9 +651,11 @@ def update_table2(dim,val):
      Input("filter2_3_value","value"),
    ] 
 )
-def update_table3(dim1,val1,dim2,val2):       
+def update_table3(dim1,val1,dim2,val2):
     
-    return [dashtable_lv3(drilldata_process(df_drilldown,'Service Category',dim1,val1,dim2,val2),'Service Category','dashtable_lv3',1)]
+    data_lv3=drilldata_process(df_drilldown,'Service Category',dim1,val1,dim2,val2)       
+    #data_lv3.to_csv('data/overall_performance.csv')
+    return [dashtable_lv3(data_lv3,'Service Category','dashtable_lv3',1)]
 
 #update lv4 on filter1,filter2,filter3
 
@@ -665,9 +674,37 @@ def update_table4(dim1,val1,dim2,val2,dim3,val3):
     return [dashtable_lv3(drilldata_process(df_drilldown,'Sub Category',dim1,val1,dim2,val2,dim3,val3),'Sub Category','dashtable_lv4',0)]
 
 
+#sort lv3 on selected dimension
+@app.callback(
+    Output('dashtable_lv3', "data"),
+    [ Input('dashtable_lv3', 'sort_by'),],
+)
+def sort_table3(sort_dim):
+    if sort_dim==[]:
+        df1=data_lv3
+    else:    
+        df1=data_lv3[0:len(data_lv3)-1].sort_values(by=sort_dim[0]['column_id'],ascending= sort_dim[0]['direction']=='asc')
+        df1=pd.concat([df1,data_lv3[len(data_lv3)-1:len(data_lv3)]])
+        df1['id']=df1[df1.columns[0]]
+        df1.set_index('id', inplace=True, drop=False)
+    
+    return df1.to_dict('records')
 
-
-
+#sort lv4 on selected dimension
+@app.callback(
+    Output('dashtable_lv4', "data"),
+    [ Input('dashtable_lv4', 'sort_by'),],
+)
+def sort_table4(sort_dim):
+    if sort_dim==[]:
+        df1=data_lv4
+    else:    
+        df1=data_lv4[0:len(data_lv4)-1].sort_values(by=sort_dim[0]['column_id'],ascending= sort_dim[0]['direction']=='asc')
+        df1=pd.concat([df1,data_lv4[len(data_lv4)-1:len(data_lv4)]])
+        df1['id']=df1[df1.columns[0]]
+        df1.set_index('id', inplace=True, drop=False)
+    
+    return df1.to_dict('records')
 
 #### callback ####
 
@@ -918,7 +955,7 @@ def datatable_data_selection(v1, v2, v3, d1, d2, f1, f2, m):
         df_agg = df_drilldown_filtered[show_column]
     
     
-    return [{"name": i, "id": i, "selectable":True,"type":"numeric", "format": FormatTemplate.percentage(1)} if i in percent_list else {"name": i, "id": i, "selectable":True, "type":"numeric","format": FormatTemplate.money(1)} if i in dollar_list else {"name": i, "id": i, "selectable":True, "type":"numeric","format": Format(precision=1, scheme = Scheme.fixed)} for i in show_column], df_agg.to_dict('records')
+    return [{"name": i, "id": i, "selectable":True,"type":"numeric", "format": FormatTemplate.percentage(1)} if i in percent_list else {"name": i, "id": i, "selectable":True, "type":"numeric","format": FormatTemplate.money(0)} if i in dollar_list else {"name": i, "id": i, "selectable":True, "type":"numeric","format": Format(precision=1, scheme = Scheme.fixed)} for i in show_column], df_agg.to_dict('records')
 
 
 
