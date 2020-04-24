@@ -3,105 +3,139 @@ import dash_core_components as dcc
 import dash_bootstrap_components as dbc
 
 
-def Header_mgmt(app):
-    return html.Div([get_header_mgmt(app)])
+def Header_mgmt(app, dashboard_active, drilldown_active, report_active, Homepage_active):
+    return html.Div([get_header_mgmt(app, dashboard_active, drilldown_active, report_active, Homepage_active)])
 
-def Header_contract(app):
-    return html.Div([get_header_contract(app)])
+def Header_contract(app, simulation_active, library_active, contract_active, Homepage_active):
+    return html.Div([get_header_contract(app, simulation_active, library_active, contract_active, Homepage_active)])
 
 
-def get_header_mgmt(app):
-    header = html.Div(
+def get_header_mgmt(app, dashboard_active, drilldown_active, report_active, Homepage_active):
+    menu = dbc.Nav([
+            dbc.NavItem(dbc.NavLink(
+                        "Dashboard",
+                        href="/vbc-demo/contract-manager/",
+                        className="nav-link",
+                        active = dashboard_active,
+                        ),
+                className="tab  first",
+                ),
+            dbc.NavItem(dbc.NavLink(
+                        "Drilldown",
+                        href="/vbc-demo/contract-manager-drilldown/",
+                        className="nav-link",
+                        active = drilldown_active,
+                        ),
+                className="tab",
+                ),
+            dbc.NavItem(dbc.NavLink(
+                        "Report Generator",
+                        href="/vbc-demo/contract-manager/report-generator/",
+                        className="nav-link",
+                        active = report_active,
+                        ),
+                className="tab",
+                ),
+            dbc.NavItem(dbc.NavLink(
+                        "Back to Homepage", 
+                        href="/vbc-demo/launch/", 
+                        className="nav-link",
+                        active = Homepage_active,
+                        ),
+                className="tab",
+                ),
+        ],
+        pills = True, 
+        navbar = True,
+        className="ml-auto flex-nowrap mt-3 mt-md-0",)
+
+    header = dbc.Navbar(
             [
-                dbc.Row(
-                    [
-                        dbc.Col(
-                            html.Div(
-                                [
-                                    html.Img(src=app.get_asset_url("logo-demo.png"), style={"height":"4rem", "padding-top":"1px"})
-                                ]
-                            )
-                        ),
-                        dbc.Col(
-                            html.Div(
-                                [
-                                    dcc.Link(
-                                        "Dashboard",
-                                        href="/vbc-demo/dashboard/",
-                                        className="tab first",
-                                    ),
-                                    dcc.Link(
-                                        "Drilldown",
-                                        href="/vbc-demo/drilldown/",
-                                        className="tab",
-                                    ),
-                                    dcc.Link(
-                                        "Report Generator",
-                                        href="/vbc-demo/report-generator/",
-                                        className="tab",
-                                    ),
-                                    dcc.Link(
-                                        "Back to Homepage", 
-                                        href="/vbc-demo/launch/", 
-                                        className="tab"
-                                    ),
-                                ],
-                                style={"margin-top":"8px", "text-align":"end"}
-                            )
-                        ),
-                    ]    
-                )
-            ],
-            style={"padding-top":"1rem"},
+                html.A(
+                    # Use row and col to control vertical alignment of logo / brand
+                    dbc.Row(
+                        [
+                            dbc.Col(html.Img(src=app.get_asset_url("logo-demo.png"), style={"height":"4rem", "padding-top":"1px"})),
+                            dbc.Col(dbc.NavbarBrand("ValueGen Solution", className="ml-2")),
+                        ],
+                        align="center",
+                        no_gutters=True,
+                    ),
+                ),
+                dbc.NavbarToggler(id="navbar-toggler"),
+                dbc.Collapse(menu, id="navbar-collapse", navbar=True),
+                ],
+            color="light",
+            sticky = "top",
+            expand = True,
+            className="sticky-top",
+#            dark=True,
         )
-            
     return header
 
-def get_header_contract(app):
-    header = html.Div(
+def get_header_contract(app, simulation_active, library_active, contract_active, Homepage_active):
+
+    menu = dbc.Nav([
+            dbc.NavItem(dbc.NavLink(
+                        "Contract Simulation",
+                        href="/vbc-demo/contract-optimizer/",
+                        className="nav-link",
+                        active = simulation_active,
+                        ),
+                className="tab first",
+                ),
+            dbc.NavItem(dbc.NavLink(
+                        "Measures Library",
+                        href="/vbc-demo/contract-optimizer/measures-library/",
+                        className="nav-link",
+                        active = library_active,
+                        ),
+                className="tab",
+                ),
+            dbc.NavItem(dbc.NavLink(
+                        "Contract Generator",
+                        href="/vbc-demo/contract-optimizer/contract-generator/",
+                        className="nav-link",
+                        active = contract_active,
+                        ),
+                className="tab",
+                ),
+            dbc.NavItem(dbc.NavLink(
+                        "Back to Homepage", 
+                        href="/vbc-demo/launch/", 
+                        className="nav-link",
+                        active = Homepage_active
+                        ),
+                className="tab",
+                ),
+        ],
+        pills = True, 
+        navbar = True,
+        className="ml-auto flex-nowrap mt-3 mt-md-0",)
+
+    header = dbc.Navbar(
             [
-                dbc.Row(
-                    [
-                        dbc.Col(
-                            html.Div(
-                                [
-                                    html.Img(src=app.get_asset_url("logo-demo.png"), style={"height":"4rem", "padding-top":"1px"})
-                                ]
-                            )
-                        ),
-                        dbc.Col(
-                            html.Div(
-                                [
-                                    dcc.Link(
-                                        "Contract Simulation",
-                                        href="/vbc-demo/contract-simulation/",
-                                        className="tab first",
-                                    ),
-                                    dcc.Link(
-                                        "Metrics Library",
-                                        href="/vbc-demo/metrics-library/",
-                                        className="tab",
-                                    ),
-                                    dcc.Link(
-                                        "Contract Generator",
-                                        href="/vbc-demo/contract-generator/",
-                                        className="tab",
-                                    ),
-                                    dcc.Link(
-                                        "Back to Homepage", 
-                                        href="/vbc-demo/launch/", 
-                                        className="tab"
-                                    ),
-                                ],
-                                style={"margin-top":"8px"}
-                            )
-                        ),
-                    ]    
-                )
-            ],
-            style={"padding-top":"1rem"},
-        )
-            
+                html.A(
+                    # Use row and col to control vertical alignment of logo / brand
+                    dbc.Row(
+                        [
+                            dbc.Col(html.Img(src=app.get_asset_url("logo-demo.png"), style={"height":"4rem", "padding-top":"1px"})),
+                            dbc.Col(dbc.NavbarBrand("ValueGen Solution", className="ml-2")),
+                            ],
+
+                        align="center",
+                        no_gutters=True,
+                    ),
+
+                ),
+                dbc.NavbarToggler(id="navbar-toggler"),
+                dbc.Collapse(menu, id="navbar-collapse", navbar=True),
+                ],
+            color="light",
+            sticky = "top",
+            expand = True,
+#            dark=True,
+        )      
     return header
 
 
