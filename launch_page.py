@@ -15,7 +15,7 @@ def launch_layout():
     return dbc.Col([
                     html.Div(
                         [
-                            html.H2("ValueGen Solution")
+                            html.H2("ValueGen Solution"),
                             html.Img(src=app.get_asset_url("logo-demo.png"), style={"height":"4rem", "padding-top":"1px"})
                         ]
                     ),
@@ -38,5 +38,5 @@ def launch_layout():
 app.layout = launch_layout()        
 
 if __name__ == "__main__":
-    app.run_server(host="127.0.0.1",debug=False)
+    app.run_server(host="127.0.0.1",debug=False, port = 8052)
                         

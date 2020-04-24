@@ -617,8 +617,7 @@ def update_filter3value(row,data):
     if row is None:
         row_1='All'
     else:
-        row_1=row[0]
-    print(row_1)    
+        row_1=row[0]   
     return row_1
     
 #update lv2 on filter1
@@ -738,20 +737,10 @@ def dropdown_menu_2(v):
     if v is None:
         return [], True
     elif v == 'Service Category':
-        dropdown_option = [{"label": 'Service Category', "value": 'Service Category', 'disabled' : True}, {"label": 'Sub Category', "value": 'Sub Category'}]
-        for k in list(dimension.keys()):
-            if len(dimension[k]) == 0:
-                dropdown_option.append({"label": k, "value": k, 'disabled' : True})
-            else: 
-                dropdown_option.append({'label' : k, 'value' : k, 'disabled' : False})
+        dropdown_option = [{"label": k, "value": k, 'disabled' : False} for k in list(dimension.keys()) if len(dimension[k]) != 0] + [{"label": 'Service Category', "value": 'Service Category', 'disabled' : True}, {"label": 'Sub Category', "value": 'Sub Category'}] + [{"label": k, "value": k, 'disabled' : True} for k in list(dimension.keys()) if len(dimension[k]) == 0]
         return dropdown_option, False
     else:
-        dropdown_option = [{"label": 'Service Category', "value": 'Service Category'}, {"label": 'Sub Category', "value": 'Sub Category', 'disabled' : True}]   
-        for k in list(dimension.keys()):
-            if k == v or len(dimension[k]) == 0:
-                dropdown_option.append({'label' : k, 'value' : k, 'disabled' : True})
-            else:
-                dropdown_option.append({'label' : k, 'value' : k, 'disabled' : False})
+        dropdown_option = [{"label": k, "value": k, 'disabled' : False} for k in list(dimension.keys()) if len(dimension[k]) != 0 and k != v] + [{"label": 'Service Category', "value": 'Service Category'}, {"label": 'Sub Category', "value": 'Sub Category', 'disabled' : True}] + [{"label": k, "value": k, 'disabled' : True} for k in list(dimension.keys()) if len(dimension[k]) == 0 or k ==v]
         return dropdown_option, False
 
 @app.callback(
@@ -765,28 +754,13 @@ def dropdown_menu_3(v1, v2):
     if v2 is None:
         return [], True
     elif 'Service Category' in v and 'Sub Category' not in v:
-        dropdown_option = [{"label": 'Service Category', "value": 'Service Category', 'disabled' : True}, {"label": 'Sub Category', "value": 'Sub Category'}]
-        for k in list(dimension.keys()):
-            if len(dimension[k]) == 0:
-                dropdown_option.append({"label": k, "value": k, 'disabled' : True})
-            else: 
-                dropdown_option.append({'label' : k, 'value' : k, 'disabled' : False})
+        dropdown_option = [{"label": k, "value": k, 'disabled' : False} for k in list(dimension.keys()) if len(dimension[k]) != 0] + [{"label": 'Service Category', "value": 'Service Category', 'disabled' : True}, {"label": 'Sub Category', "value": 'Sub Category'}] + [{"label": k, "value": k, 'disabled' : True} for k in list(dimension.keys()) if len(dimension[k]) == 0]
         return dropdown_option, False
     elif 'Service Category' in v and 'Sub Category' in v:
-        dropdown_option = [{"label": 'Service Category', "value": 'Service Category', 'disabled' : True}, {"label": 'Sub Category', "value": 'Sub Category', 'disabled' : True}]
-        for k in list(dimension.keys()):
-            if len(dimension[k]) == 0:
-                dropdown_option.append({"label": k, "value": k, 'disabled' : True})
-            else: 
-                dropdown_option.append({'label' : k, 'value' : k, 'disabled' : False})
+        dropdown_option =  [{"label": k, "value": k, 'disabled' : False} for k in list(dimension.keys()) if len(dimension[k]) != 0] + [{"label": 'Service Category', "value": 'Service Category', 'disabled' : True}, {"label": 'Sub Category', "value": 'Sub Category', 'disabled' : True}] + [{"label": k, "value": k, 'disabled' : True} for k in list(dimension.keys()) if len(dimension[k]) == 0]
         return dropdown_option, False
     else:
-        dropdown_option = [{"label": 'Service Category', "value": 'Service Category'}, {"label": 'Sub Category', "value": 'Sub Category', 'disabled' : True}]   
-        for k in list(dimension.keys()):
-            if k in v or len(dimension[k]) == 0:
-                dropdown_option.append({'label' : k, 'value' : k, 'disabled' : True})
-            else:
-                dropdown_option.append({'label' : k, 'value' : k, 'disabled' : False})
+        dropdown_option = [{"label": k, "value": k, 'disabled' : False} for k in list(dimension.keys()) if len(dimension[k]) != 0 and k not in v] + [{"label": 'Service Category', "value": 'Service Category'}, {"label": 'Sub Category', "value": 'Sub Category', 'disabled' : True}] + [{"label": k, "value": k, 'disabled' : True} for k in list(dimension.keys()) if len(dimension[k]) == 0 or k in v]
         return dropdown_option, False
 
 @app.callback(
@@ -800,28 +774,13 @@ def filter_menu_2(v, f):
         return [], True
     elif v == 'Service Category':
         if f =='All':
-            dropdown_option = [{"label": 'Service Category', "value": 'Service Category', 'disabled' : True}, {"label": 'Sub Category', "value": 'Sub Category', 'disabled' : True}]
-            for k in list(dimension.keys()):
-                if len(dimension[k]) == 0:
-                    dropdown_option.append({"label": k, "value": k, 'disabled' : True})
-                else: 
-                    dropdown_option.append({'label' : k, 'value' : k, 'disabled' : False})
+            dropdown_option = [{"label": k, "value": k, 'disabled' : False} for k in list(dimension.keys()) if len(dimension[k]) != 0] + [{"label": 'Service Category', "value": 'Service Category', 'disabled' : True}, {"label": 'Sub Category', "value": 'Sub Category', 'disabled' : True}] + [{"label": k, "value": k, 'disabled' : True} for k in list(dimension.keys()) if len(dimension[k]) == 0]
             return dropdown_option, False
         else:
-            dropdown_option = [{"label": 'Service Category', "value": 'Service Category', 'disabled' : True}, {"label": 'Sub Category', "value": 'Sub Category'}]
-            for k in list(dimension.keys()):
-                if len(dimension[k]) == 0:
-                    dropdown_option.append({"label": k, "value": k, 'disabled' : True})
-                else: 
-                    dropdown_option.append({'label' : k, 'value' : k, 'disabled' : False})
+            dropdown_option = [{"label": k, "value": k, 'disabled' : False} for k in list(dimension.keys()) if len(dimension[k]) != 0] + [{"label": 'Service Category', "value": 'Service Category', 'disabled' : True}, {"label": 'Sub Category', "value": 'Sub Category'}] + [{"label": k, "value": k, 'disabled' : True} for k in list(dimension.keys()) if len(dimension[k]) == 0]
             return dropdown_option, False
     else:
-        dropdown_option = [{"label": 'Service Category', "value": 'Service Category'}, {"label": 'Sub Category', "value": 'Sub Category', 'disabled' : True}]   
-        for k in list(dimension.keys()):
-            if k == v or len(dimension[k]) == 0:
-                dropdown_option.append({'label' : k, 'value' : k, 'disabled' : True})
-            else:
-                dropdown_option.append({'label' : k, 'value' : k, 'disabled' : False})
+        dropdown_option = [{"label": k, "value": k, 'disabled' : False} for k in list(dimension.keys()) if len(dimension[k]) != 0 and k != v] + [{"label": 'Service Category', "value": 'Service Category'}, {"label": 'Sub Category', "value": 'Sub Category', 'disabled' : True}] + [{"label": k, "value": k, 'disabled' : True} for k in list(dimension.keys()) if len(dimension[k]) == 0 or k ==v]
         return dropdown_option, False
 
 @app.callback(
@@ -924,7 +883,7 @@ def datatable_data_selection(v1, v2, v3, d1, d2, f1, f2, m):
 
 
 if __name__ == "__main__":
-    app.run_server(host="127.0.0.1",debug=True)
+    app.run_server(host="127.0.0.1",debug=True, port = 8052)
 
 
 
