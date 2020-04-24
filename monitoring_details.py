@@ -653,7 +653,7 @@ def update_table2(dim,val):
    ] 
 )
 def update_table3(dim1,val1,dim2,val2):
-    
+    global data_lv3
     data_lv3=drilldata_process(df_drilldown,'Service Category',dim1,val1,dim2,val2)       
     #data_lv3.to_csv('data/overall_performance.csv')
     return [dashtable_lv3(data_lv3,'Service Category','dashtable_lv3',1)]
@@ -670,9 +670,12 @@ def update_table3(dim1,val1,dim2,val2):
      Input("filter3_4_value","value"),
    ] 
 )
-def update_table4(dim1,val1,dim2,val2,dim3,val3):       
+def update_table4(dim1,val1,dim2,val2,dim3,val3):
     
-    return [dashtable_lv3(drilldata_process(df_drilldown,'Sub Category',dim1,val1,dim2,val2,dim3,val3),'Sub Category','dashtable_lv4',0)]
+    global data_lv4
+    data_lv4=drilldata_process(df_drilldown,'Sub Category',dim1,val1,dim2,val2,dim3,val3)   
+    
+    return [dashtable_lv3(data_lv4,'Sub Category','dashtable_lv4',0)]
 
 
 #sort lv3 on selected dimension

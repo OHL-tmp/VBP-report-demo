@@ -981,10 +981,12 @@ def drillgraph_lv1(df,tableid):
    
 def dashtable_lv3(df,dimension,tableid,row_select):#row_select: numeric 0 or 1
     
-    df1=df[0:len(df)-1].sort_values(by='Contribution to Overall Performance Difference',ascending=False)
-    df1.append(df[len(df)-1:len(df)])
-    df1['id']=df1[df1.columns[0]]
-    df1.set_index('id', inplace=True, drop=False)
+    #df1=df[0:len(df)-1].sort_values(by='Contribution to Overall Performance Difference',ascending=False)
+    #df1.append(df[len(df)-1:len(df)])
+    #df1['id']=df1[df1.columns[0]]
+    #df1.set_index('id', inplace=True, drop=False)
+    df['id']=df[df.columns[0]]
+    df.set_index('id', inplace=True, drop=False)
 
     if row_select==0:
         row_sel=False
@@ -992,7 +994,7 @@ def dashtable_lv3(df,dimension,tableid,row_select):#row_select: numeric 0 or 1
         row_sel='single'
         
     table_lv3=dash_table.DataTable(
-        data=df1.to_dict('records'),
+        data=df.to_dict('records'),
         id=tableid,
         columns=[
         {"name": ["", dimension], "id": dimension},
