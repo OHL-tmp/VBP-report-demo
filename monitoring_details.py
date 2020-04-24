@@ -47,17 +47,18 @@ def create_layout():
 #    load_data()
     return html.Div(
                 [ 
-                    html.Div([Header_mgmt(app)], style={"height":"6rem"}),
+                    html.Div([Header_mgmt(app, False, True, False, False)], style={"height":"6rem"}, className = "sticky-top navbar-expand-lg"),
                     
                     html.Div(
                         [
                             col_content_drilldown(),
                         ],
                         className="mb-3",
+                        style={"padding-left":"3rem", "padding-right":"3rem"},
                     ),
                     
                 ],
-                style={"padding-left":"3rem", "padding-right":"3rem", "background-color":"#f5f5f5"},
+                style={"background-color":"#f5f5f5"},
             )
 
 
@@ -883,7 +884,7 @@ def datatable_data_selection(v1, v2, v3, d1, d2, f1, f2, m):
 
 
 if __name__ == "__main__":
-    app.run_server(host="127.0.0.1",debug=True, port = 8052)
+    app.run_server(host="127.0.0.1",debug=True, port = 8051)
 
 
 
