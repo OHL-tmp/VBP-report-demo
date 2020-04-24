@@ -645,42 +645,59 @@ def update_table2(dim,val):
 #update lv3 on filter1,filter2
 
 @app.callback(
-   Output("drill_lv3","children"),    
+   Output("dashtable_lv3","data"),    
    [ Input("filter1_3_name","children"),
      Input("filter1_3_value","value"),
      Input("filter2_3_name","children"),
      Input("filter2_3_value","value"),
+     Input('dashtable_lv3', 'sort_by'),
    ] 
 )
-def update_table3(dim1,val1,dim2,val2):
-    global data_lv3
+def update_table3(dim1,val1,dim2,val2,sort_dim):
+    #global data_lv3
     data_lv3=drilldata_process(df_drilldown,'Service Category',dim1,val1,dim2,val2)       
     #data_lv3.to_csv('data/overall_performance.csv')
-    return [dashtable_lv3(data_lv3,'Service Category','dashtable_lv3',1)]
+    if sort_dim==[]:
+        sort_dim=[{"column_id":"Contribution to Overall Performance Difference","direction":"desc"}]
+  
+    df1=data_lv3[0:len(data_lv3)-1].sort_values(by=sort_dim[0]['column_id'],ascending= sort_dim[0]['direction']=='asc')
+    df1=pd.concat([df1,data_lv3[len(data_lv3)-1:len(data_lv3)]])
+    df1['id']=df1[df1.columns[0]]
+    df1.set_index('id', inplace=True, drop=False)
+    return df1.to_dict('records')
 
 #update lv4 on filter1,filter2,filter3
 
 @app.callback(
-    Output("drill_lv4","children"),    
+    Output("dashtable_lv4","data"),    
    [ Input("filter1_4_name","children"),
      Input("filter1_4_value","value"),
      Input("filter2_4_name","children"),
      Input("filter2_4_value","value"),
      Input("filter3_4_name","children"),
      Input("filter3_4_value","value"),
+     Input('dashtable_lv4', 'sort_by'),
    ] 
 )
-def update_table4(dim1,val1,dim2,val2,dim3,val3):
+def update_table4(dim1,val1,dim2,val2,dim3,val3,sort_dim):
     
-    global data_lv4
+    #global data_lv4
     data_lv4=drilldata_process(df_drilldown,'Sub Category',dim1,val1,dim2,val2,dim3,val3)   
     
-    return [dashtable_lv3(data_lv4,'Sub Category','dashtable_lv4',0)]
+    if sort_dim==[]:
+        sort_dim=[{"column_id":"Contribution to Overall Performance Difference","direction":"desc"}]
+  
+    df1=data_lv4[0:len(data_lv4)-1].sort_values(by=sort_dim[0]['column_id'],ascending= sort_dim[0]['direction']=='asc')
+    df1=pd.concat([df1,data_lv4[len(data_lv4)-1:len(data_lv4)]])
+    df1['id']=df1[df1.columns[0]]
+    df1.set_index('id', inplace=True, drop=False)
+    
+    return df1.to_dict('records')
 
 
 #sort lv3 on selected dimension
-@app.callback(
-    Output('dashtable_lv3', "data"),
+'''@app.callback(
+    Output('drill_lv3', "children"),
     [ Input('dashtable_lv3', 'sort_by'),],
 )
 def sort_table3(sort_dim):
@@ -689,26 +706,11 @@ def sort_table3(sort_dim):
     else:    
         df1=data_lv3[0:len(data_lv3)-1].sort_values(by=sort_dim[0]['column_id'],ascending= sort_dim[0]['direction']=='asc')
         df1=pd.concat([df1,data_lv3[len(data_lv3)-1:len(data_lv3)]])
-        df1['id']=df1[df1.columns[0]]
-        df1.set_index('id', inplace=True, drop=False)
+        #df1['id']=df1[df1.columns[0]]
+        #df1.set_index('id', inplace=True, drop=False)
     
-    return df1.to_dict('records')
+    return [dashtable_lv3(df1,'Service Category','dashtable_lv3',0)]'''
 
-#sort lv4 on selected dimension
-@app.callback(
-    Output('dashtable_lv4', "data"),
-    [ Input('dashtable_lv4', 'sort_by'),],
-)
-def sort_table4(sort_dim):
-    if sort_dim==[]:
-        df1=data_lv4
-    else:    
-        df1=data_lv4[0:len(data_lv4)-1].sort_values(by=sort_dim[0]['column_id'],ascending= sort_dim[0]['direction']=='asc')
-        df1=pd.concat([df1,data_lv4[len(data_lv4)-1:len(data_lv4)]])
-        df1['id']=df1[df1.columns[0]]
-        df1.set_index('id', inplace=True, drop=False)
-    
-    return df1.to_dict('records')
 
 #### callback ####
 
@@ -925,7 +927,7 @@ def datatable_data_selection(v1, v2, v3, d1, d2, f1, f2, m):
 
 
 if __name__ == "__main__":
-    app.run_server(host="127.0.0.1",debug=True, port = 8051)
+    app.run_server(host="127.0.0.1",debug=True)
 
 
 
