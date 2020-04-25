@@ -28,7 +28,7 @@ BASE_PATH = pathlib.Path(__file__).parent.resolve()
 DATA_PATH = BASE_PATH.joinpath("Data").resolve()
 
 
-app = dash.Dash(__name__, url_base_pathname='/vbc-demo/dashboard/')
+app = dash.Dash(__name__, url_base_pathname='/vbc-demo/contract-manager/')
 
 server = app.server
 
@@ -97,7 +97,7 @@ def create_layout():
     load_data()
     return html.Div(
                 [ 
-                    html.Div([Header_mgmt(app)], style={"height":"6rem"}),
+                    html.Div([Header_mgmt(app, True, False, False, False)], style={"height":"6rem"}, , className = "sticky-top navbar-expand-lg"),
                     
                     html.Div(
                         [
@@ -109,6 +109,7 @@ def create_layout():
                             ),
                         ],
                         className="mb-3",
+                        style={"padding-left":"3rem", "padding-right":"3rem"},
                     ),
                     
                     html.Div(
@@ -121,10 +122,10 @@ def create_layout():
                             ),
                         ],
                         className="mb-3",
-                        style={"padding-top":"5rem"},
+                        style={"padding-top":"5rem", "padding-left":"3rem", "padding-right":"3rem"},
                     )
                 ],
-                style={"padding-left":"3rem", "padding-right":"3rem", "background-color":"#f5f5f5"},
+                style={"background-color":"#f5f5f5"},
             )
 
 def div_year_to_date_metrics():

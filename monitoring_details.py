@@ -25,7 +25,8 @@ df_drilldown=pd.read_csv("data/drilldown_sample_6.csv")
 dimensions=df_drilldown.columns[0:12]
 df_drill_waterfall=pd.read_csv("data/drilldown waterfall graph.csv")
 df_driver=pd.read_csv("data/Drilldown Odometer.csv")
-
+data_lv3=drilldata_process(df_drilldown,'Service Category')
+data_lv4=drilldata_process(df_drilldown,'Sub Category')
 
 all_dimension=[]
 for i in list(df_drilldown.columns[0:14]):
@@ -39,25 +40,29 @@ BASE_PATH = pathlib.Path(__file__).parent.resolve()
 DATA_PATH = BASE_PATH.joinpath("Data").resolve()
 
 
-app = dash.Dash(__name__, url_base_pathname='/vbc-demo/drilldown/')
+app = dash.Dash(__name__, url_base_pathname='/vbc-demo/contract-manager-drilldown/')
 
 server = app.server
+
+
+
 
 def create_layout():
 #    load_data()
     return html.Div(
                 [ 
-                    html.Div([Header_mgmt(app)], style={"height":"6rem"}),
+                    html.Div([Header_mgmt(app, False, True, False, False)], style={"height":"6rem"}, className = "sticky-top navbar-expand-lg"),
                     
                     html.Div(
                         [
                             col_content_drilldown(),
                         ],
                         className="mb-3",
+                        style={"padding-left":"3rem", "padding-right":"3rem"},
                     ),
                     
                 ],
-                style={"padding-left":"3rem", "padding-right":"3rem", "background-color":"#f5f5f5"},
+                style={"background-color":"#f5f5f5"},
             )
 
 
@@ -317,7 +322,7 @@ def card_graph1_performance_drilldown():
                                     [
                                         dbc.Row(
                                             [
-                                                dbc.Col(html.H1("By Comorbidity Type", style={"color":"#f0a800", "font-size":"1.5rem","padding-top":"0.8rem"}), width=9),
+                                                dbc.Col(html.H1("By Comorbidity Type",id='dimname_on_lv1', style={"color":"#f0a800", "font-size":"1.5rem","padding-top":"0.8rem"}), width=9),
                                                 dbc.Col(mod_criteria_button(), style={"padding-top":"0.8rem"}),
                                             ]
                                         )
@@ -343,7 +348,7 @@ def mod_criteria_button():
                                     style={"background-color":"#38160f", "border":"none", "border-radius":"10rem", "font-family":"NotoSans-Regular", "font-size":"0.8rem"},
                                 ),
                                 dbc.Popover([
-                                    dbc.PopoverHeader("Mdify criteria"),
+                                    dbc.PopoverHeader("Modify criteria"),
                                     dbc.PopoverBody([
                                         html.Div(
                                             [
@@ -422,7 +427,8 @@ def filter_template(dim,idname,default_val='All'):
     return(dcc.Dropdown(
                                 id=idname,
                                 options=[{'label': i, 'value': i} for i in all_dimension[all_dimension['dimension']==dim].loc[:,'value']],
-                                value=default_val
+                                value=default_val,
+                                clearable=False,
                             ))
 
 def card_table1_performance_drilldown():
@@ -432,7 +438,7 @@ def card_table1_performance_drilldown():
                         dbc.Row(
                             [
                                 dbc.Col(html.Img(src=app.get_asset_url("bullet-round-blue.png"), width="10px"), width="auto", align="start", style={"margin-top":"-4px"}),
-                                dbc.Col(html.H4("Performance rilldown by Service Categories", style={"font-size":"1rem", "margin-left":"10px"}), width=8),
+                                dbc.Col(html.H4("Performance Drilldown by Service Categories", style={"font-size":"1rem", "margin-left":"10px"}), width=8),
                             ],
                             no_gutters=True,
                         ),
@@ -465,7 +471,7 @@ def card_table1_performance_drilldown():
                                     ],
                                     style={"padding-left":"2rem","padding-right":"1rem","border-radius":"5rem","background-color":"#f7f7f7","margin-top":"2rem"}
                                 ), 
-                                html.Div(dashtable_lv3(drilldata_process(df_drilldown,'Service Category'),'Service Category','dashtable_lv3'),id="drill_lv3",style={"padding":"1rem"}),
+                                html.Div([dashtable_lv3(data_lv3,'Service Category','dashtable_lv3',1)],id="drill_lv3",style={"padding":"1rem"}),
                             ], 
                             style={"max-height":"80rem"}
                         ),
@@ -527,7 +533,7 @@ def card_table2_performance_drilldown():
                                     ],
                                     style={"padding-left":"2rem","padding-right":"1rem","border-radius":"5rem","background-color":"#f7f7f7","margin-top":"2rem"}
                                 ), 
-                                html.Div(dashtable_lv3(drilldata_process(df_drilldown,'Sub Category'),'Sub Category','dashtable_lv4'),id="drill_lv4",style={"padding":"1rem"})
+                                html.Div([dashtable_lv3(data_lv4,'Sub Category','dashtable_lv4',0)],id="drill_lv4",style={"padding":"1rem"})
                             ], 
                             style={"max-height":"80rem"}
                         ),
@@ -540,6 +546,8 @@ def card_table2_performance_drilldown():
             )
 
 app.layout = create_layout()
+
+
 
 # modify lv1 criteria
 @app.callback(
@@ -561,7 +569,8 @@ def toggle_popover_mod_criteria(n1, is_open):
      Output("filter1_3_name","children"),
      Output("filter1_3_value","options"),
      Output("filter1_4_name","children"),
-     Output("filter1_4_value","options"),     
+     Output("filter1_4_value","options"), 
+     Output("dimname_on_lv1","children"),
    ],
    [Input("list-dim-lv1","value")] 
 )
@@ -569,7 +578,7 @@ def update_table_dimension(dim):
     f1_name=dim
     filter1_value_list=[{'label': i, 'value': i} for i in all_dimension[all_dimension['dimension']==dim].loc[:,'value']]
     
-    return drillgraph_lv1(drilldata_process(df_drilldown,dim),'dashtable_lv1'),f1_name,filter1_value_list,f1_name,filter1_value_list,f1_name,filter1_value_list
+    return drillgraph_lv1(drilldata_process(df_drilldown,dim),'dashtable_lv1'),f1_name,filter1_value_list,f1_name,filter1_value_list,f1_name,filter1_value_list,'By '+f1_name
 
 #update filter1 on following page based on selected columns
 
@@ -606,23 +615,24 @@ def update_filter2value(col):
 
 #update filter3 on following page based on selected rows
 
-'''@app.callback(
-   [ Output("filter3_4_value","value"),    
-   ],
-   [Input("dashtable_lv3","selected_rows"),
+@app.callback(
+   Output("filter3_4_value","value"),   
+   [Input("dashtable_lv3","selected_row_ids"),
     Input("dashtable_lv3","data"),
    ] 
 )
 def update_filter3value(row,data):
-    row_1=row[0]        
-    print(data)
-    return row_1'''
-
+    
+    if row is None or row==[]:
+        row_1='All'
+    else:
+        row_1=row[0]  
+    return row_1
+    
 #update lv2 on filter1
 
 @app.callback(
-   [ Output("drill_lv2","children"),    
-   ],
+    Output("drill_lv2","children"),    
    [ Input("filter1_2_name","children"),
      Input("filter1_2_value","value"),
    ] 
@@ -635,40 +645,71 @@ def update_table2(dim,val):
 #update lv3 on filter1,filter2
 
 @app.callback(
-   [ Output("drill_lv3","children"),    
-   ],
+   Output("dashtable_lv3","data"),    
    [ Input("filter1_3_name","children"),
      Input("filter1_3_value","value"),
      Input("filter2_3_name","children"),
      Input("filter2_3_value","value"),
+     Input('dashtable_lv3', 'sort_by'),
    ] 
 )
-def update_table3(dim1,val1,dim2,val2):       
-    
-    return [dashtable_lv3(drilldata_process(df_drilldown,'Service Category',dim1,val1,dim2,val2),'Service Category','dashtable_lv3')]
+def update_table3(dim1,val1,dim2,val2,sort_dim):
+    #global data_lv3
+    data_lv3=drilldata_process(df_drilldown,'Service Category',dim1,val1,dim2,val2)       
+    #data_lv3.to_csv('data/overall_performance.csv')
+    if sort_dim==[]:
+        sort_dim=[{"column_id":"Contribution to Overall Performance Difference","direction":"desc"}]
+  
+    df1=data_lv3[0:len(data_lv3)-1].sort_values(by=sort_dim[0]['column_id'],ascending= sort_dim[0]['direction']=='asc')
+    df1=pd.concat([df1,data_lv3[len(data_lv3)-1:len(data_lv3)]])
+    df1['id']=df1[df1.columns[0]]
+    df1.set_index('id', inplace=True, drop=False)
+    return df1.to_dict('records')
 
 #update lv4 on filter1,filter2,filter3
 
 @app.callback(
-   [ Output("drill_lv4","children"),    
-   ],
+    Output("dashtable_lv4","data"),    
    [ Input("filter1_4_name","children"),
      Input("filter1_4_value","value"),
      Input("filter2_4_name","children"),
      Input("filter2_4_value","value"),
      Input("filter3_4_name","children"),
      Input("filter3_4_value","value"),
+     Input('dashtable_lv4', 'sort_by'),
    ] 
 )
-def update_table4(dim1,val1,dim2,val2,dim3,val3):       
+def update_table4(dim1,val1,dim2,val2,dim3,val3,sort_dim):
     
-    return [dashtable_lv3(drilldata_process(df_drilldown,'Sub Category',dim1,val1,dim2,val2,dim3,val3),'Sub Category','dashtable_lv4')]
+    #global data_lv4
+    data_lv4=drilldata_process(df_drilldown,'Sub Category',dim1,val1,dim2,val2,dim3,val3)   
+    
+    if sort_dim==[]:
+        sort_dim=[{"column_id":"Contribution to Overall Performance Difference","direction":"desc"}]
+  
+    df1=data_lv4[0:len(data_lv4)-1].sort_values(by=sort_dim[0]['column_id'],ascending= sort_dim[0]['direction']=='asc')
+    df1=pd.concat([df1,data_lv4[len(data_lv4)-1:len(data_lv4)]])
+    df1['id']=df1[df1.columns[0]]
+    df1.set_index('id', inplace=True, drop=False)
+    
+    return df1.to_dict('records')
 
-#drillgraph_lv2=drillgraph_lv1(drilldata_process(df_drilldown,'Managing Physician (Group)',dim1=dim,f1=col_1),'dashtable_lv2')
-#drillgraph_lv3=dashtable_lv3(df,tableid)
 
-
-
+#sort lv3 on selected dimension
+'''@app.callback(
+    Output('drill_lv3', "children"),
+    [ Input('dashtable_lv3', 'sort_by'),],
+)
+def sort_table3(sort_dim):
+    if sort_dim==[]:
+        df1=data_lv3
+    else:    
+        df1=data_lv3[0:len(data_lv3)-1].sort_values(by=sort_dim[0]['column_id'],ascending= sort_dim[0]['direction']=='asc')
+        df1=pd.concat([df1,data_lv3[len(data_lv3)-1:len(data_lv3)]])
+        #df1['id']=df1[df1.columns[0]]
+        #df1.set_index('id', inplace=True, drop=False)
+    
+    return [dashtable_lv3(df1,'Service Category','dashtable_lv3',0)]'''
 
 
 #### callback ####
@@ -740,20 +781,10 @@ def dropdown_menu_2(v):
     if v is None:
         return [], True
     elif v == 'Service Category':
-        dropdown_option = [{"label": 'Service Category', "value": 'Service Category', 'disabled' : True}, {"label": 'Sub Category', "value": 'Sub Category'}]
-        for k in list(dimension.keys()):
-            if len(dimension[k]) == 0:
-                dropdown_option.append({"label": k, "value": k, 'disabled' : True})
-            else: 
-                dropdown_option.append({'label' : k, 'value' : k, 'disabled' : False})
+        dropdown_option = [{"label": k, "value": k, 'disabled' : False} for k in list(dimension.keys()) if len(dimension[k]) != 0] + [{"label": 'Service Category', "value": 'Service Category', 'disabled' : True}, {"label": 'Sub Category', "value": 'Sub Category'}] + [{"label": k, "value": k, 'disabled' : True} for k in list(dimension.keys()) if len(dimension[k]) == 0]
         return dropdown_option, False
     else:
-        dropdown_option = [{"label": 'Service Category', "value": 'Service Category'}, {"label": 'Sub Category', "value": 'Sub Category', 'disabled' : True}]   
-        for k in list(dimension.keys()):
-            if k == v or len(dimension[k]) == 0:
-                dropdown_option.append({'label' : k, 'value' : k, 'disabled' : True})
-            else:
-                dropdown_option.append({'label' : k, 'value' : k, 'disabled' : False})
+        dropdown_option = [{"label": k, "value": k, 'disabled' : False} for k in list(dimension.keys()) if len(dimension[k]) != 0 and k != v] + [{"label": 'Service Category', "value": 'Service Category'}, {"label": 'Sub Category', "value": 'Sub Category', 'disabled' : True}] + [{"label": k, "value": k, 'disabled' : True} for k in list(dimension.keys()) if len(dimension[k]) == 0 or k ==v]
         return dropdown_option, False
 
 @app.callback(
@@ -767,28 +798,13 @@ def dropdown_menu_3(v1, v2):
     if v2 is None:
         return [], True
     elif 'Service Category' in v and 'Sub Category' not in v:
-        dropdown_option = [{"label": 'Service Category', "value": 'Service Category', 'disabled' : True}, {"label": 'Sub Category', "value": 'Sub Category'}]
-        for k in list(dimension.keys()):
-            if len(dimension[k]) == 0:
-                dropdown_option.append({"label": k, "value": k, 'disabled' : True})
-            else: 
-                dropdown_option.append({'label' : k, 'value' : k, 'disabled' : False})
+        dropdown_option = [{"label": k, "value": k, 'disabled' : False} for k in list(dimension.keys()) if len(dimension[k]) != 0] + [{"label": 'Service Category', "value": 'Service Category', 'disabled' : True}, {"label": 'Sub Category', "value": 'Sub Category'}] + [{"label": k, "value": k, 'disabled' : True} for k in list(dimension.keys()) if len(dimension[k]) == 0]
         return dropdown_option, False
     elif 'Service Category' in v and 'Sub Category' in v:
-        dropdown_option = [{"label": 'Service Category', "value": 'Service Category', 'disabled' : True}, {"label": 'Sub Category', "value": 'Sub Category', 'disabled' : True}]
-        for k in list(dimension.keys()):
-            if len(dimension[k]) == 0:
-                dropdown_option.append({"label": k, "value": k, 'disabled' : True})
-            else: 
-                dropdown_option.append({'label' : k, 'value' : k, 'disabled' : False})
+        dropdown_option =  [{"label": k, "value": k, 'disabled' : False} for k in list(dimension.keys()) if len(dimension[k]) != 0] + [{"label": 'Service Category', "value": 'Service Category', 'disabled' : True}, {"label": 'Sub Category', "value": 'Sub Category', 'disabled' : True}] + [{"label": k, "value": k, 'disabled' : True} for k in list(dimension.keys()) if len(dimension[k]) == 0]
         return dropdown_option, False
     else:
-        dropdown_option = [{"label": 'Service Category', "value": 'Service Category'}, {"label": 'Sub Category', "value": 'Sub Category', 'disabled' : True}]   
-        for k in list(dimension.keys()):
-            if k in v or len(dimension[k]) == 0:
-                dropdown_option.append({'label' : k, 'value' : k, 'disabled' : True})
-            else:
-                dropdown_option.append({'label' : k, 'value' : k, 'disabled' : False})
+        dropdown_option = [{"label": k, "value": k, 'disabled' : False} for k in list(dimension.keys()) if len(dimension[k]) != 0 and k not in v] + [{"label": 'Service Category', "value": 'Service Category'}, {"label": 'Sub Category', "value": 'Sub Category', 'disabled' : True}] + [{"label": k, "value": k, 'disabled' : True} for k in list(dimension.keys()) if len(dimension[k]) == 0 or k in v]
         return dropdown_option, False
 
 @app.callback(
@@ -802,28 +818,13 @@ def filter_menu_2(v, f):
         return [], True
     elif v == 'Service Category':
         if f =='All':
-            dropdown_option = [{"label": 'Service Category', "value": 'Service Category', 'disabled' : True}, {"label": 'Sub Category', "value": 'Sub Category', 'disabled' : True}]
-            for k in list(dimension.keys()):
-                if len(dimension[k]) == 0:
-                    dropdown_option.append({"label": k, "value": k, 'disabled' : True})
-                else: 
-                    dropdown_option.append({'label' : k, 'value' : k, 'disabled' : False})
+            dropdown_option = [{"label": k, "value": k, 'disabled' : False} for k in list(dimension.keys()) if len(dimension[k]) != 0] + [{"label": 'Service Category', "value": 'Service Category', 'disabled' : True}, {"label": 'Sub Category', "value": 'Sub Category', 'disabled' : True}] + [{"label": k, "value": k, 'disabled' : True} for k in list(dimension.keys()) if len(dimension[k]) == 0]
             return dropdown_option, False
         else:
-            dropdown_option = [{"label": 'Service Category', "value": 'Service Category', 'disabled' : True}, {"label": 'Sub Category', "value": 'Sub Category'}]
-            for k in list(dimension.keys()):
-                if len(dimension[k]) == 0:
-                    dropdown_option.append({"label": k, "value": k, 'disabled' : True})
-                else: 
-                    dropdown_option.append({'label' : k, 'value' : k, 'disabled' : False})
+            dropdown_option = [{"label": k, "value": k, 'disabled' : False} for k in list(dimension.keys()) if len(dimension[k]) != 0] + [{"label": 'Service Category', "value": 'Service Category', 'disabled' : True}, {"label": 'Sub Category', "value": 'Sub Category'}] + [{"label": k, "value": k, 'disabled' : True} for k in list(dimension.keys()) if len(dimension[k]) == 0]
             return dropdown_option, False
     else:
-        dropdown_option = [{"label": 'Service Category', "value": 'Service Category'}, {"label": 'Sub Category', "value": 'Sub Category', 'disabled' : True}]   
-        for k in list(dimension.keys()):
-            if k == v or len(dimension[k]) == 0:
-                dropdown_option.append({'label' : k, 'value' : k, 'disabled' : True})
-            else:
-                dropdown_option.append({'label' : k, 'value' : k, 'disabled' : False})
+        dropdown_option = [{"label": k, "value": k, 'disabled' : False} for k in list(dimension.keys()) if len(dimension[k]) != 0 and k != v] + [{"label": 'Service Category', "value": 'Service Category'}, {"label": 'Sub Category', "value": 'Sub Category', 'disabled' : True}] + [{"label": k, "value": k, 'disabled' : True} for k in list(dimension.keys()) if len(dimension[k]) == 0 or k ==v]
         return dropdown_option, False
 
 @app.callback(
@@ -920,7 +921,7 @@ def datatable_data_selection(v1, v2, v3, d1, d2, f1, f2, m):
         df_agg = df_drilldown_filtered[show_column]
     
     
-    return [{"name": i, "id": i, "selectable":True,"type":"numeric", "format": FormatTemplate.percentage(1)} if i in percent_list else {"name": i, "id": i, "selectable":True, "type":"numeric","format": FormatTemplate.money(1)} if i in dollar_list else {"name": i, "id": i, "selectable":True, "type":"numeric","format": Format(precision=1, scheme = Scheme.fixed)} for i in show_column], df_agg.to_dict('records')
+    return [{"name": i, "id": i, "selectable":True,"type":"numeric", "format": FormatTemplate.percentage(1)} if i in percent_list else {"name": i, "id": i, "selectable":True, "type":"numeric","format": FormatTemplate.money(0)} if i in dollar_list else {"name": i, "id": i, "selectable":True, "type":"numeric","format": Format(precision=1, scheme = Scheme.fixed)} for i in show_column], df_agg.to_dict('records')
 
 
 

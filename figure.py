@@ -740,11 +740,13 @@ def tbl_measure(df_measure_perform,d):
 def tbl_non_contract(df,measures):
     df=df[df['Measure'].isin(measures)]
     
+    percent_list=['Performance Diff from Target','Weight']
+    
     measure_tbl=dash_table.DataTable(
         data=df.to_dict('records'),
-        columns=[ {'id': c, 'name': c} for c in df.columns ],
+        columns=[ {'id': c, 'name': c,'type': 'numeric',"format":FormatTemplate.percentage(1)} if c in percent_list else {'id': c, 'name': c} for c in df.columns ],
         sort_action="native",
-        sort_mode='multi',
+        sort_mode='single',
         style_data={
             'whiteSpace': 'normal',
             'height': 'auto',
@@ -782,20 +784,29 @@ def tbl_non_contract(df,measures):
 ################Drilldown###################################  
 ############################################################ 
 def drill_bubble(df):
-    df['Weight']=df['Pt_Count']/df.values[len(df)-1,7]
+    df['Weight']=df['Pt_Count']/df.values[0,7]
     n=len(df)
-    valmax=((df['% Cost Diff from Target']/0.05).apply(np.ceil)*0.05).max()
+    valmax=((df['% Cost Diff from Target']/0.01).apply(np.ceil)*0.01).max()+0.05
+    divide=valmax/2
     
-    colorbar=dict(
-        len=1,
+    colorbar1=dict(
+        len=0.5,
        tickmode='array',
-       tickvals=[-valmax,valmax],
+       tickvals=[-valmax+0.05,valmax-0.05],
        ticktext=['Low risk','High risk'],
        thickness=5,
-       #x=1,y=0.7
+       x=1,y=0.78
+    )
+    colorbar2=dict(
+        len=0.5,
+       tickmode='array',
+       tickvals=[-valmax+0.05,valmax-0.05],
+       ticktext=['Low risk','High risk'],
+       thickness=5,
+       x=1,y=0.22
     )
     colorscale=[[0, 'rgba(0,255,0,1)'],[0.5, 'rgba(0,255,0,0.2)'],[0.5, 'rgba(255,0,0,0.2)'], [1, 'rgba(255,0,0,1)']]
-    color_axis=dict(cmin=-valmax,cmax=valmax,colorscale=colorscale,colorbar=colorbar,)
+    #color_axis=dict(cmin=-valmax,cmax=valmax,colorscale=colorscale,colorbar=colorbar,)
 
     fig = make_subplots(
         rows=2, cols=1,
@@ -815,14 +826,15 @@ def drill_bubble(df):
             texttemplate='%{y:.1%}',
             mode="markers+text",
             marker=dict(
-                size=df['Weight']*400,
+                size=df['Weight']*1500,
                 sizemode='area',
                 color=df['% Cost Diff from Target'],#df['performance'].apply(lambda x: 'red' if x>0 else 'green'),
-                cmin=-valmax,
-                cmax=valmax,
+                cmin=-valmax+0.05,
+                cmax=valmax-0.05,
                 #opacity=0.8,
-                colorbar=colorbar,
+                colorbar=colorbar1,
                 colorscale=colorscale,
+                showscale=True,
 
                 #coloraxis=coloraxis1
             )
@@ -841,14 +853,15 @@ def drill_bubble(df):
             texttemplate='%{y:.1%}',
             mode="markers+text",
             marker=dict(
-                size=df['Weight']*400,
+                size=df['Weight']*1500,
                 sizemode='area',
                 color=df['Contribution to Overall Performance Difference'],#df['Contribution'].apply(lambda x: 'red' if x>0 else 'green'),
-                cmin=-valmax,
-                cmax=valmax,
+                cmin=-valmax+0.05,
+                cmax=valmax-0.05,
                 #opacity=0.8,
-                colorbar=colorbar,
+                colorbar=colorbar2,
                 colorscale=colorscale,
+                showscale=True,
                 #coloraxis=coloraxis2
             )
 
@@ -858,9 +871,9 @@ def drill_bubble(df):
     
     annotations = []
     annotations.append(dict(xref='paper', yref='paper',
-                            x=0, y=-0.02,yanchor='top',
+                            x=0, y=-0.01,yanchor='top',
                             text='*Bubble size proportional to patient count',
-                            font=dict(family='NotoSans-CondensedLight', size=10, color='#38160f'),
+                            font=dict(family='NotoSans-CondensedLight', size=12, color='#38160f'),
                             showarrow=False))
     
     fig.update_layout(
@@ -870,8 +883,8 @@ def drill_bubble(df):
         modebar=dict( bgcolor=colors['transparent']),
         xaxis=dict(showline=True,mirror=True,linecolor=colors['grey'],showticklabels=False,range=[0,n],dtick=1,autorange=False,gridcolor=colors['grey'],zeroline=True ,zerolinecolor=colors['grey']),
         xaxis2=dict(showline=True,mirror=True,linecolor=colors['grey'],showticklabels=False,range=[0,n],dtick=1,autorange=False,gridcolor=colors['grey'],zeroline=True ,zerolinecolor=colors['grey']),
-        yaxis=dict(showline=True,mirror=True,linecolor=colors['grey'],showticklabels=True,tickformat='%',range=[-valmax,valmax],autorange=False,zeroline=True ,zerolinecolor=colors['grey']),
-        yaxis2=dict(showline=True,mirror=True,linecolor=colors['grey'],showticklabels=True,tickformat='%',range=[-valmax,valmax],autorange=False
+        yaxis=dict(showline=True,mirror=True,linecolor=colors['grey'],showticklabels=True,tickformat='%',range=[-valmax,valmax],dtick=divide,autorange=False,zeroline=True ,zerolinecolor=colors['grey']),
+        yaxis2=dict(showline=True,mirror=True,linecolor=colors['grey'],showticklabels=True,tickformat='%',range=[-valmax,valmax],dtick=divide,autorange=False
                     ,zeroline=True ,zerolinecolor=colors['grey'] ),
         #coloraxis=dict(cmin=-0.5,cmax=0.5,colorscale=colorscale,colorbar=colorbar,),
         #coloraxis2=dict(cmin=-0.5,cmax=0.5,colorscale=colorscale,colorbar=colorbar,),
@@ -883,6 +896,7 @@ def drill_bubble(df):
 
     )
     return fig
+
 
 def drillgraph_table(df_table,tableid):
     tbl=dash_table.DataTable(
@@ -971,8 +985,20 @@ def drillgraph_lv1(df,tableid):
     return drillgraph
        
    
-def dashtable_lv3(df,dimension,tableid):
-     
+def dashtable_lv3(df,dimension,tableid,row_select):#row_select: numeric 0 or 1
+    
+    #df1=df[0:len(df)-1].sort_values(by='Contribution to Overall Performance Difference',ascending=False)
+    #df1.append(df[len(df)-1:len(df)])
+    #df1['id']=df1[df1.columns[0]]
+    #df1.set_index('id', inplace=True, drop=False)
+    df['id']=df[df.columns[0]]
+    df.set_index('id', inplace=True, drop=False)
+
+    if row_select==0:
+        row_sel=False
+    else:
+        row_sel='single'
+        
     table_lv3=dash_table.DataTable(
         data=df.to_dict('records'),
         id=tableid,
@@ -981,17 +1007,17 @@ def dashtable_lv3(df,dimension,tableid):
         {"name": ["Total Episode Cost", "YTD Avg Episode Cost"], "id": "YTD Avg Episode Cost",'type': 'numeric',"format":FormatTemplate.money(0)},
         {"name": ["Total Episode Cost", "% Cost Diff from Target"], "id": "% Cost Diff from Target",'type': 'numeric',"format":FormatTemplate.percentage(1)},
         {"name": ["Total Episode Cost", "Contribution to Overall Performance Difference"], "id": "Contribution to Overall Performance Difference",'type': 'numeric',"format":FormatTemplate.percentage(1)},
-        {"name": ["Utilization Rate", "YTD Avg Utilization Rate"], "id": "YTD Avg Utilization Rate",'type': 'numeric',"format":Format( precision=2, scheme=Scheme.fixed,),},
+        {"name": ["Utilization Rate", "YTD Avg Utilization Rate"], "id": "YTD Avg Utilization Rate",'type': 'numeric',"format":Format( precision=1, scheme=Scheme.fixed,),},
         {"name": ["Utilization Rate", "% Util Diff from Target"], "id": "% Util Diff from Target",'type': 'numeric',"format":FormatTemplate.percentage(1)},
         {"name": ["Unit Cost", "YTD Avg Cost per Unit"], "id": "YTD Avg Cost per Unit",'type': 'numeric',"format":FormatTemplate.money(0)},
         {"name": ["Unit Cost", "% Unit Cost Diff from Target"], "id": "% Unit Cost Diff from Target",'type': 'numeric',"format":FormatTemplate.percentage(1)},
     ],
         merge_duplicate_headers=True,
-        sort_action="native",
+        sort_action="custom",
         sort_mode='single',
-        #sort_by={"column_id":"Contribution to Overall Performance Difference","direction":"desc"},
-        row_selectable='single',
-        selected_rows=[],
+        sort_by=[{"column_id":"Contribution to Overall Performance Difference","direction":"desc"},],
+        row_selectable=row_sel,
+        #selected_rows=[],
         style_data={
             'whiteSpace': 'normal',
             'height': 'auto'
@@ -1028,14 +1054,17 @@ def dashtable_lv3(df,dimension,tableid):
     return table_lv3
 
 def drilldata_process(df_drilldown,dimension,dim1='All',f1='All',dim2='All',f2='All',dim3='All',f3='All'):#dimension='Sub Category'    
+    
+    df_pre=df_drilldown
+    
     if f1!='All':
-        df_pre=df_drilldown[df_drilldown[dim1]==f1]
-        if f2!='All':
-            df_pre=df_pre[df_pre[dim2]==f2]
-            if  f3!='All':
-                df_pre=df_pre[df_pre[dim3]==f3]
-    else :
-        df_pre=df_drilldown
+        df_pre=df_pre[df_pre[dim1]==f1]
+        
+    if f2!='All':
+        df_pre=df_pre[df_pre[dim2]==f2]
+        
+    if  f3!='All':
+        df_pre=df_pre[df_pre[dim3]==f3]
 
     df_pre2=df_pre.groupby(list(np.unique([dimension,'Service Category', 'Sub Category'])))[df_pre.columns[14:]].agg(np.sum).reset_index()
     
@@ -1087,9 +1116,13 @@ def drill_waterfall(df):
             x=x_waterfall, 
             y=[y_base,y_base,y_base+y_adjust],
             text=[y_base,y_base,y_base+y_adjust],
-            textposition='auto',
-            textfont=dict(color=['white',colors['transparent'],'white']),
-            texttemplate='%{y:.2s}',
+            textposition='inside',
+            width=0.5,
+            textfont=dict(color=['black',colors['transparent'],'black'],
+                          family="NotoSans-Condensed",
+                          size=14,
+                          ),
+            texttemplate='%{y:$,.0f}',
             marker=dict(
                     color=[colors['grey'],colors['transparent'],colors['grey']],
                     opacity=[0.5,0,0.7]
@@ -1100,10 +1133,14 @@ def drill_waterfall(df):
         go.Bar(     
             x=x_waterfall, 
             y=[0,y_adjust,0],
+            width=0.5,
             text=[0,y_adjust,0],
             textposition='outside',
-            textfont=dict(color=[colors['transparent'],'black',colors['transparent']]),
-            texttemplate='%{y:.2s}',
+            textfont=dict(color=[colors['transparent'],'black',colors['transparent']],
+                          family="NotoSans-Condensed",
+                          size=14,
+                          ),
+            texttemplate='%{y:$,.0f}',
             marker=dict(
                     color=colors['yellow'],
                     opacity=0.7
@@ -1115,8 +1152,13 @@ def drill_waterfall(df):
         barmode='stack',
         plot_bgcolor=colors['transparent'],
         paper_bgcolor=colors['transparent'],
+        xaxis=dict(
+                tickfont=dict(family="NotoSans-Condensed",
+                          size=14,)
+                ),
         yaxis = dict(
             showgrid = True, 
+            range=[0,y_base+y_base/5],
             gridcolor =colors['grey'],
             nticks=5,
             showticklabels=True,
@@ -1125,6 +1167,7 @@ def drill_waterfall(df):
             zerolinewidth=1,
         ),
         showlegend=False,
+        hovermode=False,
         modebar=dict(
             bgcolor=colors['transparent']
         ),
@@ -1134,7 +1177,9 @@ def drill_waterfall(df):
             size=12,
             color="#38160f"
         ),
-        margin=dict(l=30,r=30,b=0,t=40,pad=0),
+        margin=dict(l=30,r=30,b=0,t=40,pad=0,),
+        
+        
     )
     return fig_waterfall 
 
@@ -1147,7 +1192,9 @@ def drill_bar(df):
             y=bar1_y,
             text=bar1_y,
             textposition='inside',
-            texttemplate='%{y:.2s}',
+            texttemplate='%{y:$,.0f}',
+            textfont=dict(family="NotoSans-Condensed",
+                          size=14,),
             textangle=0,
             width=0.5,
             marker=dict(
@@ -1162,7 +1209,7 @@ def drill_bar(df):
         plot_bgcolor=colors['transparent'],
         showlegend=False,
         modebar=dict( bgcolor=colors['transparent'] ),
-        xaxis=dict(showline=True,linecolor=colors['grey'],zeroline=True ,zerolinecolor=colors['grey']), 
+        xaxis=dict(showline=True,linecolor=colors['grey'],zeroline=True ,zerolinecolor=colors['grey'], tickfont=dict(family="NotoSans-Condensed", size=14,) ), 
         yaxis=dict(showline=True,linecolor=colors['grey'],gridcolor=colors['grey'],zeroline=True ,zerolinecolor=colors['grey']),  
         hovermode=False,
         #margin=dict(l=10,r=10,b=100,t=40,pad=0),
