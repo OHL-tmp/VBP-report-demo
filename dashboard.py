@@ -344,45 +344,65 @@ def card_main_value_based_measures():
                 dbc.CardBody(
                     [
                         html.H1("Value Based Measures", className="mb-3", style={"font-size":"1.5rem"}),
-                        html.Div(
+                        
+                        dbc.Tabs(
                             [
-                                dbc.Button(id = "switch-contract-additional-view", className="ml-1", style={"background-color":"#38160f", "border":"none", "border-radius":"10rem", "font-family":"NotoSans-Regular", "font-size":"0.6rem"}),
-                            ],
-                            style={"text-align":"end"}
-                        ),
-                        html.Hr(className="my-2"),
-                        html.Div(
-                            [
-                                card_modify_value_based_measures(),
-                                card_overview_value_based_measures(),
-                                card_sub_value_based_measures(),
-                            ],
-                            className="mb-3",
-                            id = "contract_monitor_card",
-                            hidden = False,
-                        ),
-                        html.Div([
-                                card_additonal_monitor_measures(),
-                            ], 
-                            id = "additional_monitor_card",
-                            hidden = True,),
+                                dbc.Tab(tab_contract_measures(), label="Contract Measures"),
+                                dbc.Tab(tab_additional_measures(), label="Additional Measures"),
+                            ]
+                        )
+                        
+
                     ]
                 ),
                 style={"box-shadow":"0 4px 8px 0 rgba(0, 0, 0, 0.05), 0 6px 20px 0 rgba(0, 0, 0, 0.05)", "border":"none", "border-radius":"0.5rem"}
             )
 
+
+def tab_contract_measures():
+    return html.Div(
+                [
+                    card_overview_value_based_measures(),
+                    card_modify_value_based_measures(),
+                    card_sub_value_based_measures(),
+                ],
+                className="mb-3",
+                style={"padding-top":"2rem"}
+            )
+
+def tab_additional_measures():
+    return html.Div(
+                [
+                    card_additonal_monitor_measures(),
+                ]
+            )
+
 def card_additonal_monitor_measures():
     return dbc.Card(
-                dbc.CardBody([
-                    dbc.Row([
-                        dbc.Col(html.Img(src=app.get_asset_url("bullet-round-blue.png"), width="20%"), width=1, align="start", style={"margin-right":"-20px", "margin-top":"-4px"}),
-                        dbc.Col(html.H4("Title title title", style={"font-size":"1rem"}), width=8),
-                        dbc.Col(modal_dashboard_domain_selection(domain_ct), style={"text-align":"end"}, width=3),
-                        ]),
-                    dbc.Row([
-                        html.Div(id = "table_measure_watchlist"),
-                        ])
-                    ])
+                dbc.CardBody(
+                    [
+                        dbc.Row(
+                                [
+                                    dbc.Col(html.Img(src=app.get_asset_url("bullet-round-blue.png"), width="10px"), width="auto", align="start", style={"margin-top":"-4px"}),
+                                    dbc.Col(html.H4("Title", style={"font-size":"1rem", "margin-left":"10px"})),
+                                    dbc.Col(modal_dashboard_domain_selection(domain_ct), style={"text-align":"end"}, width=3),
+                                ],
+                                no_gutters=True,
+                            ),
+                        
+                        dbc.Row(
+                            [
+                                html.Div(
+                                    [
+                                        html.Div(id = "table_measure_watchlist"),
+                                    ],
+                                    style={"padding-left":"0.5rem","padding-right":"0.5rem"}
+                                )
+                            ]
+                        )
+                    ]
+                ),
+                style={"border":"none"}
         )
 
 def card_overview_value_based_measures():
@@ -471,13 +491,12 @@ def card_sub_value_based_measures():
                         dbc.Row(
                             [
                                 dbc.Col(html.H6(id = "card_domain_name"), width=8),
-                                dbc.Col(dbc.Col(dbc.Button("Change Measure", className="mb-3", color="primary", style={"background-color":"#38160f", "border":"none", "border-radius":"10rem", "font-family":"NotoSans-Regular", "font-size":"0.6rem", "text-align":"end"})), width=4),
                             ],
                         ),
                         html.Div(
                             [
                                 html.Div(id = "graph-container-domain-selected-1", style={"max-height":"20rem"}),
-                                dcc.Graph(id = "graph-container-domain-selected-2", style={"height":"20rem"}),
+                                dcc.Graph(id = "graph-container-domain-selected-2", style={"height":"15rem"}),
                             ],
                         ),
                     ]
@@ -561,7 +580,7 @@ for i in range(domain_ct):
     
 
 
-@app.callback(
+'''@app.callback(
     [Output("contract_monitor_card", "hidden"),
     Output("additional_monitor_card", "hidden"),
     Output("switch-contract-additional-view","children")],
@@ -572,7 +591,7 @@ def switch_monitor_view(n):
         return True, False, "Switch to Contract Monitor" 
         
     return False, True, "Switch to Additional Watchlist"
-    
+    '''
         
 
     
@@ -813,13 +832,13 @@ def toggle_collapse_domain_selection_measures_6(v1):
 # submit measure selection
 @app.callback(
     Output("table_measure_watchlist", "children"),
-    [Input("close-centered","n_clicks")]+[Input("switch-contract-additional-view", "n_clicks")]+[Input(f"checklist-domain-measures-lv2-{d+1}-{i+1}", "value") for d in range(domain_ct) for i in range(len(list(Domain_options[list(Domain_options.keys())[d]].keys())))],
+    [Input("close-centered","n_clicks")]+[Input(f"checklist-domain-measures-lv2-{d+1}-{i+1}", "value") for d in range(domain_ct) for i in range(len(list(Domain_options[list(Domain_options.keys())[d]].keys())))],
     )
-def generate_measure_watchlist(n, sw, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19, v20, v21, v22, v23, v24):
+def generate_measure_watchlist(n, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19, v20, v21, v22, v23, v24):
     triggered = [t["prop_id"] for t in dash.callback_context.triggered]
     submit = len([1 for i in triggered if i == "close-centered.n_clicks"])
-    switch = len([1 for i in triggered if i == "switch-contract-additional-view.n_clicks"])
-    if switch or submit:
+    #switch = len([1 for i in triggered if i == "switch-contract-additional-view.n_clicks"])
+    if submit:
         measure_to_watch = []
         for i in range(24):
             if eval("v"+str(i+1)) and len(eval("v"+str(i+1))) > 0:

@@ -33,6 +33,8 @@ domain_colordict={'Cost & Utilization  Reduction':'red','Improving Disease Outco
                   ,'Increasing Patient Safety':'yellow' ,'Enhancing Care Quality':'blue' ,'Better Patient Experience':'white'}
     
   
+table_header_bg_color = "#f1f6ff"
+
 def bargraph_overall(df):  #df_overall['month'] df_overall['base'] df_overall['adjusted']
     
     x_overall=df['month']
@@ -209,7 +211,7 @@ def tbl_utilizer(df_utilizer):
         },
         style_cell={
             'textAlign': 'center',
-            'font-family':'NotoSans-CondensedBlack',
+            'font-family':'NotoSans-Condensed',
             'fontSize':16,
             'backgroundColor':"#f7f7f7"
         },
@@ -224,11 +226,11 @@ def tbl_utilizer(df_utilizer):
         },
         style_header={
             'height': '4rem',
-            'backgroundColor': "#f5b111",
+            'backgroundColor': table_header_bg_color,
             'fontWeight': 'bold',
             'font-family':'NotoSans-CondensedLight',
             'fontSize':14,
-            'color': '#381610'
+            'color': '#1357DD'
         },
     )
     
@@ -641,7 +643,7 @@ def bargraph_perform(df_measure_perform,d): #df_measure_perform, 0 or 1 or 2....
         margin=dict(l=0,r=0,b=30,t=50,pad=0),
         font=dict(
             family="NotoSans-Condensed",
-            size=14,
+            size=12,
             color="#38160f"
         ),
     )
@@ -693,20 +695,21 @@ def tbl_measure(df_measure_perform,d):
         sort_action="native",
         sort_mode='multi',
         style_data={
+            'height': 'auto',
             'whiteSpace': 'normal',
-            'height': 'auto'
         },
         style_data_conditional=[
-        {
-            'if': {'column_id':c,
-                'filter_query': '{highlight} eq 1' },
-            'backgroundColor': 'rgba(255,0,0,0.6)',
-            'color': 'white',
-        }  for c in df.columns
+            {
+                'if': {'column_id':c,
+                    'filter_query': '{highlight} eq 1' },
+                'backgroundColor': '#ffe3e5',
+                'color': 'black',
+            }  for c in df.columns
         ],
         style_cell={
+            'width':'auto',
             'textAlign': 'center',
-            'font-family':'NotoSans-CondensedBlack',
+            'font-family':'NotoSans-Condensed',
             'fontSize':14
         },
         style_cell_conditional=[
@@ -721,12 +724,13 @@ def tbl_measure(df_measure_perform,d):
             'back':  colors['blue']
         },
         style_header={
-            'height': '2rem',
-            'backgroundColor': '#F5B111',
+            'height': 'auto',
+            'whiteSpace': 'normal',
+            'backgroundColor': table_header_bg_color,
             'fontWeight': 'bold',
             'font-family':'NotoSans-Condensed',
-            'fontSize':12,
-            'color': '#381610'
+            'fontSize':11,
+            'color': '#1357DD'
         },
     )
     
@@ -745,16 +749,16 @@ def tbl_non_contract(df,measures):
         sort_mode='single',
         style_data={
             'whiteSpace': 'normal',
-            'height': 'auto'
+            'height': 'auto',
         },
         style_cell={
             'textAlign': 'center',
-            'font-family':'NotoSans-CondensedBlack',
+            'font-family':'NotoSans-Condensed',
             'fontSize':14
         },
         style_cell_conditional=[
             {'if': {'column_id': df.columns[0]},
-             'width': '2.5rem',
+             'maxWidth': '4rem',
              'font-family':'NotoSans-CondensedLight',
             },            
         ],
@@ -762,12 +766,14 @@ def tbl_non_contract(df,measures):
             'back':  colors['blue']
         },
         style_header={
-            'height': '2rem',
-            'backgroundColor': '#F5B111',
+            'height': 'auto',
+            'whiteSpace': 'normal',
+            'maxWidth': '2rem',
+            'backgroundColor': table_header_bg_color,
             'fontWeight': 'bold',
             'font-family':'NotoSans-Condensed',
             'fontSize':12,
-            'color': '#381610'
+            'color': '#1357DD'
         },
     )
     
