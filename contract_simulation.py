@@ -36,14 +36,14 @@ def create_layout():
 #    load_data()
     return html.Div(
                 [ 
-                    html.Div([Header_mgmt(app)], style={"height":"6rem"}),
+                    html.Div([Header_mgmt(app, False, False, True, False)], style={"height":"6rem"}),
                     
                     html.Div(
                         [
                             dbc.Tabs(
 							    [
-							        dbc.Tab(tab_setup(), label="Tab 1"),
-							        #dbc.Tab(tab2_content, label="Tab 2"),
+							        dbc.Tab(tab_setup(), label="Contract Simulation Setup"),
+							        dbc.Tab(tab_result(), label="Result"),
 							        
 							    ]
 							)
@@ -445,13 +445,206 @@ def card_contract_adjust_sub():
             )
 
 
+def tab_result():
+	return html.Div(
+				[
+					dbc.Row(
+						[
+							dbc.Col(html.H1("Contract Simulation Result"))
+						]
+					),
+					html.Div(
+					    [
+					        dbc.Button(
+					            "Result 1",
+					            id="collapse_button_result_1",
+					            className="mb-3",
+					            color="primary",
+					            block=True,
+					        ),
+					        dbc.Collapse(
+					            collapse_result_1(),
+					            id="collapse_result_1",
+					        ),
+					    ]
+					),
+					html.Div(
+					    [
+					        dbc.Button(
+					            "Result 2",
+					            id="collapse_button_result_2",
+					            className="mb-3",
+					            color="primary",
+					            block=True,
+					        ),
+					        dbc.Collapse(
+					            collapse_result_2(),
+					            id="collapse_result_2",
+					        ),
+					    ]
+					),
+					html.Div(
+					    [
+					        dbc.Button(
+					            "Result 3",
+					            id="collapse_button_result_3",
+					            className="mb-3",
+					            color="primary",
+					            block=True,
+					        ),
+					        dbc.Collapse(
+					            collapse_result_3(),
+					            id="collapse_result_3",
+					        ),
+					    ]
+					),
+					html.Div(
+					    [
+					        dbc.Button(
+					            "Confounding Factors Needed to be Accounted for in the Contract",
+					            id="collapse_button_confounding_factors",
+					            className="mb-3",
+					            color="primary",
+					            block=True,
+					        ),
+					        dbc.Collapse(
+					            collapse_result_3(),
+					            id="collapse_confounding_factors",
+					        ),
+					    ]
+					),
+					html.Div(
+						[
+							"",
+						],
+						style={"height":"2rem"}
+					)
+				]
+			)
 
+
+
+def collapse_result_1():
+	return dbc.Card(
+            	dbc.CardBody(
+            		[
+            			dbc.Row(
+            				[
+            					dbc.Col(html.Img(src=app.get_asset_url("logo-demo.png")), width=6),
+            					dbc.Col(html.Img(src=app.get_asset_url("logo-demo.png")), width=6)
+            				]
+            			)
+            		]
+            	)
+           	)
+
+
+
+def collapse_result_2():
+	return dbc.Card(
+            	dbc.CardBody(
+            		[
+            			dbc.Row(
+            				[
+            					dbc.Col(html.Img(src=app.get_asset_url("logo-demo.png")), width=6),
+            					dbc.Col(html.Img(src=app.get_asset_url("logo-demo.png")), width=6)
+            				]
+            			)
+            		]
+            	)
+           	)
+
+
+
+def collapse_result_3():
+	return dbc.Card(
+            	dbc.CardBody(
+            		[
+            			dbc.Row(
+            				[
+            					dbc.Col(html.Img(src=app.get_asset_url("logo-demo.png")), width=6),
+            					dbc.Col(html.Img(src=app.get_asset_url("logo-demo.png")), width=6)
+            				]
+            			)
+            		]
+            	)
+           	)
+
+
+
+def collapse_confounding_factors():
+	return dbc.Card(
+            	dbc.CardBody(
+            		[
+            			html.Div(
+            				[
+            					dbc.Row(
+                                    [
+                                        dbc.Col(html.H1("All Confounding Factors", style={"color":"#f0a800", "font-size":"1.5rem","padding-top":"1.2rem"}), width=6),
+                                        dbc.Col(html.H1("All Confounding Factors", style={"color":"#f0a800", "font-size":"1.5rem","padding-top":"1.2rem"}), width=6),
+                                    ]
+                                ),
+                                html.Img(src=app.get_asset_url("logo-demo.png")),
+            				]
+            			),
+            			dbc.Row(
+            				[
+            					dbc.Col(html.Img(src=app.get_asset_url("logo-demo.png")), width=6),
+            					dbc.Col(html.Img(src=app.get_asset_url("logo-demo.png")), width=6)
+            				]
+            			)
+            		]
+            	)
+           	)
 
 
 
 
 app.layout = create_layout()
 
+
+@app.callback(
+    Output("collapse_result_1", "is_open"),
+    [Input("collapse_button_result_1", "n_clicks")],
+    [State("collapse_result_1", "is_open")],
+)
+def toggle_collapse(n, is_open):
+    if n:
+        return not is_open
+    return is_open
+
+
+@app.callback(
+    Output("collapse_result_2", "is_open"),
+    [Input("collapse_button_result_2", "n_clicks")],
+    [State("collapse_result_2", "is_open")],
+)
+def toggle_collapse(n, is_open):
+    if n:
+        return not is_open
+    return is_open
+
+
+@app.callback(
+    Output("collapse_result_3", "is_open"),
+    [Input("collapse_button_result_3", "n_clicks")],
+    [State("collapse_result_3", "is_open")],
+)
+def toggle_collapse(n, is_open):
+    if n:
+        return not is_open
+    return is_open
+
+
+@app.callback(
+    Output("collapse_confounding_factors", "is_open"),
+    [Input("collapse_button_confounding_factors", "n_clicks")],
+    [State("collapse_confounding_factors", "is_open")],
+)
+def toggle_collapse(n, is_open):
+    if n:
+        return not is_open
+    return is_open
 
 
 if __name__ == "__main__":
