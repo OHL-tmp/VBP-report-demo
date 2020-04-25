@@ -20,6 +20,8 @@ from figure import *
 
 from modal_drilldown_tableview import *
 
+df_sim_result=pd.read_csv("data/simulate_result.csv")
+df_factor_doc=pd.read_csv("data/confounding_factors_doc.csv")
 
 
 # Path
@@ -508,7 +510,7 @@ def tab_result():
 					            block=True,
 					        ),
 					        dbc.Collapse(
-					            collapse_result_3(),
+					            collapse_confounding_factors(),
 					            id="collapse_confounding_factors",
 					        ),
 					    ]
@@ -530,8 +532,8 @@ def collapse_result_1():
             		[
             			dbc.Row(
             				[
-            					dbc.Col(html.Img(src=app.get_asset_url("logo-demo.png")), width=6),
-            					dbc.Col(html.Img(src=app.get_asset_url("logo-demo.png")), width=6)
+            					dbc.Col([dcc.Graph(figure=sim_result_box(df_sim_result))], width=6),
+            					dbc.Col([table_sim_result(df_sim_result)], width=6)
             				]
             			)
             		]
@@ -589,7 +591,7 @@ def collapse_confounding_factors():
             			),
             			dbc.Row(
             				[
-            					dbc.Col(html.Img(src=app.get_asset_url("logo-demo.png")), width=6),
+            					dbc.Col([table_factor_doc(df_factor_doc)], width=6),
             					dbc.Col(html.Img(src=app.get_asset_url("logo-demo.png")), width=6)
             				]
             			)

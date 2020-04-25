@@ -1276,7 +1276,6 @@ def sim_result_box(df_sim_result):
             q3=df['high_likelyrange'].to_list()[1:3],
             upperfence=df['high_range'].to_list()[1:3],
             fillcolor=colors['grey'],
-            width=0.3,
             marker=dict(
                 color=colors['blue'],
                 opacity=0.7,
@@ -1309,7 +1308,7 @@ def sim_result_box(df_sim_result):
                 color="#38160f"
             ),
         )
-    return fig_sum
+    return fig_sim
 
 def table_sim_result(df):        
     table=dash_table.DataTable(
@@ -1358,7 +1357,7 @@ def table_sim_result(df):
     )
     return table
 
-def table_factor_doc(df,tableid='foctor_doc'):        
+def table_factor_doc(df,tableid='factor_doc'):        
     table=dash_table.DataTable(
         data=df.to_dict('records'),
         id=tableid,
