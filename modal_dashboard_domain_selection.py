@@ -42,8 +42,8 @@ Domain_options ={
 },
 
 "checklist-domain-measures-lv1-2" : {
-    "Improvement in Clinical Measures" : ["NT-proBNP Improvement %", "LVEF Improvement %", "LAVi Improvement %",
-                                         "LVEDVi Improvement %", "LVESVi and E/e’ Improvement %"],
+    "Improvement in Clinical Measures" : ["NT-proBNP Change %", "LVEF LS Mean Change %", "LAVi LS Mean Change",
+                                         "LVEDVi LS Mean Change", "LVESVi LS Mean Change", "E/e' LS Mean Change"],
     "Functional Outcomes" : ["Change in Self-Care Score", "Change in Mobility Score"  ],
     "Life Expectancy" : ["CV Mortality Rate"],
     "Disease Progression" : ["Rate of CHF Progression for 24 months"],
