@@ -65,10 +65,11 @@ def get_header_mgmt(app, dashboard_active, drilldown_active, report_active, Home
                 dbc.NavbarToggler(id="navbar-toggler"),
                 dbc.Collapse(menu, id="navbar-collapse", navbar=True),
                 ],
-            color="light",
+            color="#fff",
             sticky = "top",
             expand = True,
             className="sticky-top",
+            style={"box-shadow":"0 4px 8px 0 rgba(0, 0, 0, 0.05), 0 6px 20px 0 rgba(0, 0, 0, 0.05)"}
 #            dark=True,
         )
     return header
