@@ -667,7 +667,7 @@ def collapse_result_1():
             		[
             			dbc.Row(
             				[
-            					dbc.Col(html.Div([dcc.Graph(figure=sim_result_box(df_sim_rev))],style={"height":"100%", "width":"100%"}),width=6 ),
+            					dbc.Col(html.Div([dcc.Graph(figure=sim_result_box(df_sim_rev),style={"height":"50vh", "width":"90vh"})]),width=6 ),
             					dbc.Col(html.Div([table_sim_result(df_sim_rev)]), width=6)
             				]
             			)

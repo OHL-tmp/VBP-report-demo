@@ -1441,7 +1441,8 @@ def table_sim_result(df):
         style_cell={
             'textAlign': 'center',
             'font-family':'NotoSans-Regular',
-            'fontSize':12
+            'fontSize':12,
+            'height': '4rem',
         },
         style_cell_conditional=[
             {'if': {'column_id': df.columns[0]},
@@ -1452,6 +1453,7 @@ def table_sim_result(df):
         ],
         style_table={
             'back':  colors['blue'],
+            'height': '4rem',
         },
         style_header={
             'height': '4rem',
