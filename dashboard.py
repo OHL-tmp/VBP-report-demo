@@ -24,8 +24,8 @@ from figure import *
 from modal_dashboard_domain_selection import *
 
 # Path
-BASE_PATH = pathlib.Path(__file__).parent.resolve()
-DATA_PATH = BASE_PATH.joinpath("Data").resolve()
+BASE_PATH = pathlib.Path(__file__).parent.resolve(app)
+DATA_PATH = BASE_PATH.joinpath("Data").resolve(app)
 
 
 app = dash.Dash(__name__, url_base_pathname='/vbc-demo/contract-manager/')
@@ -33,7 +33,7 @@ app = dash.Dash(__name__, url_base_pathname='/vbc-demo/contract-manager/')
 server = app.server
 
 ## load data
-def load_data():
+def load_data(app):
     global waterfall_domain1, waterfall_domain2, waterfall_domain3, waterfall_domain4, waterfall_domain5, waterfall_domain6, waterfall_domain7
     global domain1_perform,domain2_perform,domain3_perform,domain4_perform,domain5_perform,domain6_perform,domain7_perform
     global bargraph_overall1, waterfall_overall1
@@ -93,18 +93,18 @@ def load_data():
     
 
 
-def create_layout():
-    load_data()
+def create_layout(app):
+    load_data(app)
     return html.Div(
                 [ 
-                    html.Div([Header_mgmt(app, True, False, False, False)], style={"height":"6rem"}, , className = "sticky-top navbar-expand-lg"),
+                    html.Div([Header_mgmt(app, True, False, False, False)], style={"height":"6rem"}, className = "sticky-top navbar-expand-lg"),
                     
                     html.Div(
                         [
                             dbc.Row(
                                 [
-                                    dbc.Col(div_year_to_date_metrics(), width=3),
-                                    dbc.Col(div_overall_performance()),
+                                    dbc.Col(div_year_to_date_metrics(app), width=3),
+                                    dbc.Col(div_overall_performance(app)),
                                 ]
                             ),
                         ],
@@ -116,8 +116,8 @@ def create_layout():
                         [
                             dbc.Row(
                                 [
-                                    dbc.Col(card_main_volumn_based_measures(), width=6),
-                                    dbc.Col(card_main_value_based_measures(), width=6),
+                                    dbc.Col(card_main_volumn_based_measures(app), width=6),
+                                    dbc.Col(card_main_value_based_measures(app), width=6),
                                 ]
                             ),
                         ],
@@ -128,7 +128,7 @@ def create_layout():
                 style={"background-color":"#f5f5f5"},
             )
 
-def div_year_to_date_metrics():
+def div_year_to_date_metrics(app):
     return html.Div(
                 [
                     html.H2("Year to Date Metrics", style={"padding-top":"2rem", "font-weight":"lighter", "font-size":"1rem"}),
@@ -157,7 +157,7 @@ def card_year_to_date_metrics(title, value):
                 style={"background-color":"#dfdfdf", "border":"none", "border-radius":"0.5rem"}
             )
 
-def div_overall_performance():
+def div_overall_performance(app):
 
     return html.Div(
                 [
@@ -187,7 +187,7 @@ def div_overall_performance():
                 style={"padding-bottom":"30rem", "padding-right":"2rem", "max-height":"5rem"},
             )
 
-def card_main_volumn_based_measures():
+def card_main_volumn_based_measures(app):
 
     return dbc.Card(
                 dbc.CardBody(
@@ -259,7 +259,7 @@ def card_main_volumn_based_measures():
                 style={"box-shadow":"0 4px 8px 0 rgba(0, 0, 0, 0.05), 0 6px 20px 0 rgba(0, 0, 0, 0.05)", "border":"none", "border-radius":"0.5rem"}
             )
 
-def card_sub1_volumn_based_measures(volumn_measure, fig, tab,size):
+def card_sub1_volumn_based_measures(app,volumn_measure, fig, tab,size):
     size = str(int(size*22)) + "rem"
     style={"height" : size}
     if tab=='dash':
@@ -296,7 +296,7 @@ def card_sub1_volumn_based_measures(volumn_measure, fig, tab,size):
             )
 
 
-def card_sub2_volumn_based_measures(volumn_measure,fig1,fig2,tab1,tab2,height1,height2):
+def card_sub2_volumn_based_measures(app,volumn_measure,fig1,fig2,tab1,tab2,height1,height2):
     size1 = str(int(height1*14))+"rem"
     size2 = str(int(height2*14))+"rem"
     style1={"height" : size1}
@@ -339,7 +339,7 @@ def card_sub2_volumn_based_measures(volumn_measure,fig1,fig2,tab1,tab2,height1,h
             )
 
 
-def card_main_value_based_measures():
+def card_main_value_based_measures(app):
     return dbc.Card(
                 dbc.CardBody(
                     [
@@ -347,8 +347,8 @@ def card_main_value_based_measures():
                         
                         dbc.Tabs(
                             [
-                                dbc.Tab(tab_contract_measures(), label="Contract Measures"),
-                                dbc.Tab(tab_additional_measures(), label="Additional Measures"),
+                                dbc.Tab(tab_contract_measures(app), label="Contract Measures"),
+                                dbc.Tab(tab_additional_measures(app), label="Additional Measures"),
                             ]
                         )
                         
@@ -359,25 +359,25 @@ def card_main_value_based_measures():
             )
 
 
-def tab_contract_measures():
+def tab_contract_measures(app):
     return html.Div(
                 [
-                    card_overview_value_based_measures(),
-                    card_modify_value_based_measures(),
-                    card_sub_value_based_measures(),
+                    card_overview_value_based_measures(app),
+                    card_modify_value_based_measures(app),
+                    card_sub_value_based_measures(app),
                 ],
                 className="mb-3",
                 style={"padding-top":"2rem"}
             )
 
-def tab_additional_measures():
+def tab_additional_measures(app):
     return html.Div(
                 [
-                    card_additonal_monitor_measures(),
+                    card_additonal_monitor_measures(app),
                 ]
             )
 
-def card_additonal_monitor_measures():
+def card_additonal_monitor_measures(app):
     return dbc.Card(
                 dbc.CardBody(
                     [
@@ -405,7 +405,7 @@ def card_additonal_monitor_measures():
                 style={"border":"none"}
         )
 
-def card_overview_value_based_measures():
+def card_overview_value_based_measures(app):
 
     return dbc.Card(
                 dbc.CardBody(
@@ -426,7 +426,7 @@ def card_overview_value_based_measures():
                 style={"background-color":"#f7f7f7", "border":"none", "border-radius":"0.5rem", "max-height":"28rem"}
             )
 
-def card_modify_value_based_measures():
+def card_modify_value_based_measures(app):
     return dbc.Card(
                 dbc.CardBody(
                     [
@@ -440,7 +440,7 @@ def card_modify_value_based_measures():
                         ),
                         html.Div(
                             [
-                                card_buttonGroup_domain_selected(),
+                                card_buttonGroup_domain_selected(app),
                             ],
                             style = {"border":"none", "border-radius":"0.5rem"},
                         ),
@@ -450,7 +450,7 @@ def card_modify_value_based_measures():
                 style = {"border":"none", "border-radius":"0.5rem"},
             )
 
-def card_buttonGroup_domain_selected():
+def card_buttonGroup_domain_selected(app):
     return dbc.Card(
                 dbc.CardBody([
                     html.Div([dbc.Button("Cost & Utilization Reduction", 
@@ -483,7 +483,7 @@ def card_buttonGroup_domain_selected():
             )
 
 
-def card_sub_value_based_measures():
+def card_sub_value_based_measures(app):
 
     return dbc.Card(
                 dbc.CardBody(
@@ -508,7 +508,7 @@ def card_sub_value_based_measures():
 
 
 
-app.layout = create_layout()
+app.layout = create_layout(app)
 
 # add measure popover
 @app.callback(
