@@ -47,8 +47,8 @@ def create_layout():
                         [
                             dbc.Tabs(
 							    [
-							        dbc.Tab(tab_setup(), label="Contract Simulation Setup"),
-							        dbc.Tab(tab_result(), label="Result"),
+							        dbc.Tab(tab_setup(), label="Contract Simulation Setup", style={"background-color":"#fff"}, tab_style={"font-family":"NotoSans-Condensed"}),
+							        dbc.Tab(tab_result(), label="Result", style={"background-color":"#fff"}, tab_style={"font-family":"NotoSans-Condensed"}),
 							        
 							    ]
 							)
@@ -67,9 +67,9 @@ def tab_setup():
 				[
 					dbc.Row(
 						[
-							dbc.Col(html.H1("VBC Contract Simulation Setup")),
+							dbc.Col(html.H1("VBC Contract Simulation Setup", style={"padding-left":"2rem","font-size":"3"}), width=9),
 							dbc.Col([
-                                dbc.Button("Edit Assumption", id = 'button-edit-assumption'),
+                                dbc.Button("Edit Assumption", id = 'button-edit-assumption', style={"border-radius":"5rem"}),
                                 dbc.Modal([
                                     dbc.ModalHeader("Edit Assumption"),
                                     dbc.ModalBody("会有一张图"),
@@ -77,8 +77,11 @@ def tab_setup():
                                         dbc.Button("SUBMIT", id = 'close-edit-assumption')
                                         )
                                     ], id = 'modal-edit-assumption'),
-                                ]),
-						]
+                                ], 
+                                width=3,
+                                style={"padding-top":"1rem"}),
+						],
+                        style={"padding-top":"2rem"}
 					),
 					html.Div(
                         [
@@ -89,7 +92,7 @@ def tab_setup():
                                 ]
                             )
                         ],
-                        style={"padding-left":"2rem","padding-right":"1rem","border-radius":"5rem","background-color":"#f7f7f7","margin-top":"2rem"}
+                        style={"padding-left":"2rem","padding-right":"1rem","border-radius":"5rem","background-color":"#fff","margin-top":"2rem"}
                     ),
                     html.Div(
                         [
@@ -100,12 +103,12 @@ def tab_setup():
                         [
                             dbc.Row(
                                 [
-                                    dbc.Col(html.H1("Performance Measure Setup", style={"color":"#f0a800", "font-size":"1rem","padding-top":"0.8rem"}), width=9),
+                                    dbc.Col(html.H1("Contractual Arrangement Setup", style={"color":"#f0a800", "font-size":"1rem","padding-top":"0.8rem"}), width=9),
                                     
                                 ]
                             )
                         ],
-                        style={"padding-left":"2rem","padding-right":"1rem","border-radius":"5rem","background-color":"#f7f7f7","margin-top":"2rem"}
+                        style={"padding-left":"2rem","padding-right":"1rem","border-radius":"5rem","background-color":"#fff","margin-top":"2rem"}
                     ),
                     html.Div(
                         [
@@ -130,7 +133,7 @@ def card_performance_measure_setup():
                     ]
                 ),
                 className="mb-3",
-                style={"box-shadow":"0 4px 8px 0 rgba(0, 0, 0, 0.05), 0 6px 20px 0 rgba(0, 0, 0, 0.05)", "border":"none", "border-radius":"0.5rem"}
+                style={"background-color":"#fff", "border":"none", "border-radius":"0.5rem"}
             )
 
 def card_target_patient():
@@ -148,24 +151,25 @@ def card_target_patient():
                             [
                                 dbc.Col(
                                     [
-                                        html.H3("Recommended", style={"font-size":"0.6rem"}),
-                                        html.H5("Class III & IV CHF Patients"),
+                                        html.H3("Recommended", style={"font-size":"0.8rem"}),
+                                        html.H5("Class III & IV CHF Patients", style={"font-size":"1rem"}),
                                     ], 
                                     style={"padding":"0.8rem"},
-                                    width=2,
+                                    width=4,
                                 ),
                                 dbc.Col(
                                     [
-                                        html.H3("User Defined", style={"font-size":"0.6rem"}),
+                                        html.H3("User Defined", style={"font-size":"0.8rem"}),
                                         html.Div([
                                             dcc.Dropdown(id = 'target-patient-input',
                                                 options = [{'label':'All Classes', 'value':'All Classes'},
                                                 {'label':'Class III & IV CHF Patients', 'value':'Class III & IV CHF Patients'}],
                                                 value = 'All Classes'),
+                                                style={"font-family":"NotoSans-Regular"}
                                             ]),
                                     ], 
                                     style={"padding":"0.8rem"},
-                                    width=2,
+                                    width=4,
                                 ),
                             ],
                         ),
@@ -173,7 +177,7 @@ def card_target_patient():
                     ]
                 ),
                 className="mb-3",
-                style={"box-shadow":"0 4px 8px 0 rgba(0, 0, 0, 0.05), 0 6px 20px 0 rgba(0, 0, 0, 0.05)", "border":"none", "border-radius":"0.5rem"}
+                style={"background-color":"#f7f7f7", "border":"none", "border-radius":"0.5rem"}
             )
 
 
@@ -667,8 +671,8 @@ def collapse_result_1():
             		[
             			dbc.Row(
             				[
-            					dbc.Col(html.Div([dcc.Graph(figure=sim_result_box(df_sim_rev),style={"height":"50vh", "width":"90vh"})]),width=6 ),
-            					dbc.Col(html.Div([table_sim_result(df_sim_rev)]), width=6)
+            					#dbc.Col(html.Div([dcc.Graph(figure=sim_result_box(df_sim_rev),style={"height":"50rem"})]),width=6 ),
+            					#dbc.Col(html.Div([table_sim_result(df_sim_rev)]), width=6)
             				]
             			)
             		]
@@ -683,7 +687,7 @@ def collapse_result_2():
             		[
             			dbc.Row(
             				[
-            					dbc.Col(html.Div([dcc.Graph(figure=sim_result_box(df_sim_rev))]),width=6 ),
+            					#dbc.Col(html.Div([dcc.Graph(figure=sim_result_box(df_sim_rev))]),width=6 ),
             					dbc.Col(html.Img(src=app.get_asset_url("logo-demo.png")), width=6)
             				]
             			)
