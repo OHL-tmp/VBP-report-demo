@@ -35,7 +35,11 @@ app = dash.Dash(__name__, url_base_pathname='/vbc-demo/contract-optimizer/')
 server = app.server
 
 #df_recom_measure = pd.read_csv("data/recom_measure.csv")
+df_payor_contract_baseline = pd.read_csv("data/payor_contract_baseline.csv")
+df_performance_assumption = pd.read_csv("data/performance_assumption.csv")
 
+
+positive_measure = ["LVEF LS Mean Change %", "Change in Self-Care Score", "Change in Mobility Score", "DOT", "PDC", "MPR" ]
 
 def create_layout():
 #    load_data()
@@ -72,7 +76,7 @@ def tab_setup():
                                 dbc.Button("Edit Assumption", id = 'button-edit-assumption'),
                                 dbc.Modal([
                                     dbc.ModalHeader("Edit Assumption"),
-                                    dbc.ModalBody("会有一张图"),
+                                    dbc.ModalBody("模型需要的其他assumptions"),
                                     dbc.ModalFooter(
                                         dbc.Button("SUBMIT", id = 'close-edit-assumption')
                                         )
@@ -100,7 +104,7 @@ def tab_setup():
                         [
                             dbc.Row(
                                 [
-                                    dbc.Col(html.H1("Performance Measure Setup", style={"color":"#f0a800", "font-size":"1rem","padding-top":"0.8rem"}), width=9),
+                                    dbc.Col(html.H1("Contractual Arrangement Setup", style={"color":"#f0a800", "font-size":"1rem","padding-top":"0.8rem"}), width=9),
                                     
                                 ]
                             )
@@ -156,7 +160,7 @@ def card_target_patient():
                                 ),
                                 dbc.Col(
                                     [
-                                        html.H3("User Defined", style={"font-size":"0.6rem"}),
+                                        html.H3("Payer Contract", style={"font-size":"0.6rem"}),
                                         html.Div([
                                             dcc.Dropdown(id = 'target-patient-input',
                                                 options = [{'label':'All Classes', 'value':'All Classes'},
@@ -204,7 +208,7 @@ def card_outcome_measure():
                                 				dbc.Row(
                                 					[
                                 						dbc.Col("Recommended", width=6),
-                                						dbc.Col("User Defined", width=6),
+                                						dbc.Col("Payer Contract", width=6),
                                 					]
                                 				)
                                 			]
@@ -220,7 +224,7 @@ def card_outcome_measure():
                                 				dbc.Row(
                                 					[
                                 						dbc.Col("Recommended", width=6),
-                                						dbc.Col("User Defined", width=6),
+                                						dbc.Col("Payer Contract", width=6),
                                 					]
                                 				)
                                 			]
@@ -236,7 +240,7 @@ def card_outcome_measure():
                                 				dbc.Row(
                                 					[
                                 						dbc.Col("Recommended", width=6),
-                                						dbc.Col("User Defined", width=6),
+                                						dbc.Col("Payer Contract", width=6),
                                 					]
                                 				)
                                 			]
@@ -252,7 +256,7 @@ def card_outcome_measure():
                                 				dbc.Row(
                                 					[
                                 						dbc.Col("Recommended", width=6),
-                                						dbc.Col("User Defined", width=6),
+                                						dbc.Col("Payer Contract", width=6),
                                 					]
                                 				)
                                 			]
@@ -324,14 +328,14 @@ def row_measure_modifier_combine(n):
                     [
                         dbc.Col(html.Div(measures_lv2[m]), width=4),
                         dbc.Col(html.Div(df_recom_measure[df_recom_measure['Measure'] == measures_lv2[m]]['Baseline'], id = u'measure-base-recom-{}-{}'.format(n+1, m+1)), width=1),
-                        dbc.Col(html.Div("4000", id = u'measure-base-user-{}-{}'.format(n+1, m+1)), width=1),
+                        dbc.Col(html.Div(df_payor_contract_baseline[df_payor_contract_baseline['Measure'] == measures_lv2[m]]['Baseline'], id = u'measure-base-user-{}-{}'.format(n+1, m+1)), width=1),
                         dbc.Col(html.Div(df_recom_measure[df_recom_measure['Measure'] == measures_lv2[m]]['Target'], id = u'measure-target-recom-{}-{}'.format(n+1, m+1)), width=1),
                         dbc.Col(
                             dcc.Input(id = u'measure-target-user-{}-{}'.format(n+1, m+1), 
                                 type = 'number', debounce = True, persistence = True, persistence_type = 'session'), 
                             width=1),
                         dbc.Col(html.Div(df_recom_measure[df_recom_measure['Measure'] == measures_lv2[m]]['Likelihood'], id = u'measure-like-recom-{}-{}'.format(n+1, m+1)), width=1),
-                        dbc.Col(html.Div("Low", id = u'measure-like-user-{}-{}'.format(n+1, m+1)), width=1),
+                        dbc.Col(html.Div(id = u'measure-like-user-{}-{}'.format(n+1, m+1),style = {"background-color": '#ffffff'}), width=1),
                         dbc.Col(html.Div(recom_weight_pct, id = u'measure-weight-recom-{}-{}'.format(n+1, m+1)), width=1),
                         dbc.Col(
                             dcc.Input(id = u'measure-weight-user-{}-{}'.format(n+1, m+1),
@@ -347,7 +351,7 @@ def row_measure_modifier_combine(n):
                     [
                         dbc.Col(html.Div(measures_lv2[m]), width=4),
                         dbc.Col(html.Div(df_recom_measure[df_recom_measure['Measure'] == measures_lv2[m]]['Baseline'], id = u'measure-base-recom-{}-{}'.format(n+1, m+1)), width=1),
-                        dbc.Col(html.Div("4000", id = u'measure-base-user-{}-{}'.format(n+1, m+1)), width=1),
+                        dbc.Col(html.Div(df_payor_contract_baseline[df_payor_contract_baseline['Measure'] == measures_lv2[m]]['Baseline'], id = u'measure-base-user-{}-{}'.format(n+1, m+1)), width=1),
                         dbc.Col(html.Div(df_recom_measure[df_recom_measure['Measure'] == measures_lv2[m]]['Target'], id = u'measure-target-recom-{}-{}'.format(n+1, m+1)), width=1),
                         dbc.Col(
                             dcc.Input(id = u'measure-target-user-{}-{}'.format(n+1, m+1), 
@@ -355,7 +359,7 @@ def row_measure_modifier_combine(n):
                                 min = 0, max = 100), 
                             width=1),
                         dbc.Col(html.Div(df_recom_measure[df_recom_measure['Measure'] == measures_lv2[m]]['Likelihood'], id = u'measure-like-recom-{}-{}'.format(n+1, m+1)), width=1),
-                        dbc.Col(html.Div("Low", id = u'measure-like-user-{}-{}'.format(n+1, m+1)), width=1),
+                        dbc.Col(html.Div(id = u'measure-like-user-{}-{}'.format(n+1, m+1),style = {"background-color": '#ffffff'}), width=1),
                         dbc.Col(html.Div(recom_weight_pct, id = u'measure-weight-recom-{}-{}'.format(n+1, m+1)), width=1),
                         dbc.Col(
                             dcc.Input(id = u'measure-weight-user-{}-{}'.format(n+1, m+1),
@@ -372,14 +376,14 @@ def row_measure_modifier_combine(n):
                     [
                         dbc.Col(html.Div(measures_lv2[m], id = 'measure-name-{}-{}'.format(n+1, m+1)), width=4),
                         dbc.Col(html.Div(df_recom_measure[df_recom_measure['Measure'] == measures_lv2[m]]['Baseline'], id = u'measure-base-recom-{}-{}'.format(n+1, m+1)), width=1),
-                        dbc.Col(html.Div("4000", id = u'measure-base-user-{}-{}'.format(n+1, m+1)), width=1),
+                        dbc.Col(html.Div(df_payor_contract_baseline[df_payor_contract_baseline['Measure'] == measures_lv2[m]]['Baseline'], id = u'measure-base-user-{}-{}'.format(n+1, m+1)), width=1),
                         dbc.Col(html.Div(df_recom_measure[df_recom_measure['Measure'] == measures_lv2[m]]['Target'], id = u'measure-target-recom-{}-{}'.format(n+1, m+1)), width=1),
                         dbc.Col(
                             dcc.Input(id = u'measure-target-user-{}-{}'.format(n+1, m+1), 
                                 type = 'number', debounce = True, persistence = True, persistence_type = 'session'), 
                             width=1),
                         dbc.Col(html.Div(df_recom_measure[df_recom_measure['Measure'] == measures_lv2[m]]['Likelihood'], id = u'measure-like-recom-{}-{}'.format(n+1, m+1)), width=1),
-                        dbc.Col(html.Div("Low", id = u'measure-like-user-{}-{}'.format(n+1, m+1)), width=1),
+                        dbc.Col(html.Div(id = u'measure-like-user-{}-{}'.format(n+1, m+1),style = {"background-color": '#ffffff'}), width=1),
                         dbc.Col(html.Div(recom_weight_pct, id = u'measure-weight-recom-{}-{}'.format(n+1, m+1)), width=1),
                         dbc.Col(
                             dcc.Input(id = u'measure-weight-user-{}-{}'.format(n+1, m+1),
@@ -403,8 +407,8 @@ def card_overall_likelihood_to_achieve():
                             [
                                 dbc.Col(html.Img(src=app.get_asset_url("bullet-round-blue.png"), width="10px"), width="auto", align="start", style={"margin-top":"-4px"}),
                                 dbc.Col(html.H4("Overall likelihood to achieve", style={"font-size":"1rem", "margin-left":"10px"}), width=8),
-                                dbc.Col(html.Div("High", id = 'overall-like-recom'), width=1),
-								dbc.Col(html.Div("Mid", id = 'overall-like-user'), width=1),
+                                dbc.Col(html.Div(id = 'overall-like-recom'), width=1),
+								dbc.Col(html.Div(id = 'overall-like-user', style = {'background-color' : '#ffffff'}), width=1),
 								dbc.Col(html.Div(""), width=2),
                             ],
                             no_gutters=True,
@@ -469,12 +473,26 @@ def card_vbc_contract():
                                         type = 'number', debounce = True, persistence = True, persistence_type = 'session',
                                         min = 0, max = 100), 
                                     width=1),
-								dbc.Col(html.Div("Revenue at Risk"), width=1),
+								dbc.Col(html.Div("Maximum Positive Adjustment"), width=1),
 								dbc.Col(
-                                    dcc.Input(id = 'input-rev-at-risk',
+                                    dcc.Input(id = 'input-max-pos-adj',
                                         type = 'number', debounce = True, persistence = True, persistence_type = 'session',
-                                        min = 0, max = 100), 
+                                        min = 0, max = 100, placeholder = 'input a positive number'), 
                                     width=1),
+                                dbc.Col(html.Div("Maximum Negative Adjustment"), width=1),
+                                dbc.Col(
+                                    dcc.Input(id = 'input-max-neg-adj',
+                                        type = 'number', debounce = True, persistence = True, persistence_type = 'session',
+                                        min = -100, max = 0, placeholder = 'input a negative number'), 
+                                    width=1),
+                                dbc.Col(html.Div("Risk Share Method"), width=1),
+                                dbc.Col(dcc.Dropdown(options = [
+                                        {'label':'Rebate adjustment', 'value':'Rebate adjustment'},
+                                        {'label':'Shared savings/loses', 'value':'Shared savings/loses'},
+                                        {'label':'Money back', 'value':'Money back'},
+                                        {'label':'Formulary upgrade', 'value':'Formulary upgrade'}
+                                    ],
+                                    value = 'Rebate adjustment'), width=1),
                             ],
                             no_gutters=True,
                         ),
@@ -511,7 +529,7 @@ def card_contract_adjust_sub():
                             [
                                 dbc.Col(html.Div(""), width=6),
 								dbc.Col(html.Div("Recommended"), width=3),
-								dbc.Col(html.Div("User Defined"), width=3),
+								dbc.Col(html.Div("Payer Contract"), width=3),
                             ],
                             no_gutters=True,
                         ),
@@ -530,7 +548,7 @@ def card_contract_adjust_sub():
                         dbc.Row(
                             [
                                 dbc.Col(html.Div("Maximum Positive Adjustment"), width=6),
-								dbc.Col(html.Div("10%"), width=3),
+								dbc.Col(html.Div(id = 'recom-max-pos-adj'), width=3),
 								dbc.Col(
                                     dcc.Input(id = 'input-pos-adj',
                                         type = 'number', debounce = True, persistence = True, persistence_type = 'session',
@@ -547,7 +565,7 @@ def card_contract_adjust_sub():
                             [
                                 dbc.Col(html.Div(""), width=6),
 								dbc.Col(html.Div("Recommended"), width=3),
-								dbc.Col(html.Div("User Defined"), width=3),
+								dbc.Col(html.Div("Payer Contract"), width=3),
                             ],
                             no_gutters=True,
                         ),
@@ -566,7 +584,7 @@ def card_contract_adjust_sub():
                         dbc.Row(
                             [
                                 dbc.Col(html.Div("Maximum Negative Adjustment"), width=6),
-								dbc.Col(html.Div("-10%"), width=3),
+								dbc.Col(html.Div(id = 'recom-max-neg-adj'), width=3),
 								dbc.Col(
                                     dcc.Input(id = 'input-neg-adj',
                                         type = 'number', debounce = True, persistence = True, persistence_type = 'session',
@@ -749,6 +767,117 @@ def toggle_modal_simulation_measure_selection(n1, n2, is_open):
     if n1 or n2:
         return not is_open
     return is_open
+
+##input likelihood
+
+def cal_measure_likelihood(recom_like, recom_target, user_target, measure, h):
+    if h == False:
+        if user_target:
+            if recom_like[0] == 'High':
+                rl = 3
+            elif recom_like[0] == 'Mid':
+                rl = 2
+            else:
+                rl = 1
+            
+            if measure in positive_measure:
+                if (user_target-recom_target[0])/recom_target[0] > 0.05:
+                    ul = rl -1
+                elif (user_target-recom_target[0])/recom_target[0] < -0.05:
+                    ul = rl +1
+                else:
+                    ul = rl
+            else:
+                if (user_target-recom_target[0])/recom_target[0] > 0.05:
+                    ul = rl +1
+                elif (user_target-recom_target[0])/recom_target[0] < -0.05:
+                    ul = rl -1
+                else:
+                    ul = rl
+
+            if ul <= 1:
+                return ['Low',{"background-color": '#C00000'}]
+            elif ul == 2:
+                return ['Mid',{"background-color": '#ffffff'}]
+            else:
+                return ['High',{"background-color": '#ffffff'}]
+        return ['',{"background-color": '#ffffff'}]
+    return ['',{"background-color": '#ffffff'}]
+
+for d in range(domain_ct):
+    for m in range(domain_measure[domain_set[d]]):
+        app.callback(
+            [Output(f'measure-like-user-{d+1}-{m+1}', 'children'),
+            Output(f'measure-like-user-{d+1}-{m+1}', 'style')],
+            [Input(f'measure-like-recom-{d+1}-{m+1}', 'children'),
+            Input(f'measure-target-recom-{d+1}-{m+1}', 'children'),
+            Input(f'measure-target-user-{d+1}-{m+1}', 'value'),
+            Input(f'measure-name-{d+1}-{m+1}', 'children'),
+            Input(f'outcome-measure-row-{d+1}-{m+1}', 'hidden')]
+            )(cal_measure_likelihood)
+
+@app.callback(
+    Output('overall-like-recom', 'children'),
+    [Input(f'measure-like-recom-1-{m+1}', 'children') for m in range(8)]
+    + [Input(f'measure-like-recom-2-{m+1}', 'children') for m in range(10)]
+    + [Input(f'measure-like-recom-4-{m+1}', 'children') for m in range(2)]
+    + [Input(f'measure-like-recom-5-{m+1}', 'children') for m in range(3)]
+    + [Input(f'measure-like-recom-6-{m+1}', 'children') for m in range(4)]
+    )
+def overall_like(l1,l2,l3,l4,l5,l6,l7,l8,l9,l10,l11,l12,l13,l14,l15,l16,l17,l18,l19,l20,l21,l22,l23,l24,l25,l26,l27):
+    ml_list = []
+    for i in range(27):
+        if eval('l'+str(i+1)):
+            if eval('l'+str(i+1) +'[0]') == 'High':
+                ml = 3
+            elif eval('l'+str(i+1) +'[0]') == 'Mid':
+                ml = 2
+            else:
+                ml = 1
+            ml_list.append(ml)
+    avg_ml = np.mean(ml_list)
+    if avg_ml <= 1.5:
+        return 'Low'
+    elif avg_ml <= 2.5:
+        return 'Mid'
+    elif avg_ml > 2.5:
+        return 'High'
+    else:
+        return ''
+
+@app.callback(
+    [Output('overall-like-user', 'children'),
+    Output('overall-like-user', 'style')],
+    [Input(f'measure-like-user-1-{m+1}', 'children') for m in range(8)]
+    + [Input(f'measure-like-user-2-{m+1}', 'children') for m in range(10)]
+    + [Input(f'measure-like-user-4-{m+1}', 'children') for m in range(2)]
+    + [Input(f'measure-like-user-5-{m+1}', 'children') for m in range(3)]
+    + [Input(f'measure-like-user-6-{m+1}', 'children') for m in range(4)]
+    )
+def overall_like(l1,l2,l3,l4,l5,l6,l7,l8,l9,l10,l11,l12,l13,l14,l15,l16,l17,l18,l19,l20,l21,l22,l23,l24,l25,l26,l27):
+    ml_list = []
+    for i in range(27):
+        if eval('l'+str(i+1)):
+            if eval('l'+str(i+1) ) == 'High':
+                ml = 3
+            elif eval('l'+str(i+1)) == 'Mid':
+                ml = 2
+            elif eval('l'+str(i+1) ) == 'Low':
+                ml = 1
+            ml_list.append(ml)
+    if len(ml_list) > 0:
+        avg_ml = np.mean(ml_list)
+        if avg_ml <= 1.5:
+            return 'Low', {"background-color": '#C00000'}
+        elif avg_ml <= 2.5 and avg_ml > 1.5:
+            return 'Mid',{"background-color": '#ffffff'}
+        elif avg_ml > 2.5:
+            return 'High',{"background-color": '#ffffff'}
+        else:
+            return '',{"background-color": '#ffffff'}
+    else:
+        return '',{"background-color": '#ffffff'}
+
 
 #input modal measure
 @app.callback(
@@ -1053,9 +1182,9 @@ def show_measure_row_1(v1, v2, v3, v4, m1, m2, m3, m4, m5 ,m6, m7, m8):
 ###domain 2
 @app.callback(
     Output('outcome-domain-weight-user-2', 'children'),
-    [Input(f'measure-weight-user-2-{m+1}', 'value') for m in range(9)]
+    [Input(f'measure-weight-user-2-{m+1}', 'value') for m in range(10)]
     )
-def cal_domain_weight(v1, v2, v3, v4, v5, v6, v7, v8, v9):
+def cal_domain_weight(v1, v2, v3, v4, v5, v6, v7, v8, v9, v10):
     if v1:
         n1 = v1
     else:
@@ -1092,14 +1221,18 @@ def cal_domain_weight(v1, v2, v3, v4, v5, v6, v7, v8, v9):
         n9 = v9
     else:
         n9 = 0
-    w = sum([n1, n2, n3, n4, n5, n6, n7, n8, n9])
+    if v10:
+        n10 = v10
+    else:
+        n10 = 0
+    w = sum([n1, n2, n3, n4, n5, n6, n7, n8, n9, n10])
     return '{:.0%}'.format(w/100)
 
 @app.callback(
     Output('outcome-domain-weight-recom-2', 'children'),
-    [Input(f'measure-weight-recom-2-{m+1}', 'children') for m in range(9)]
+    [Input(f'measure-weight-recom-2-{m+1}', 'children') for m in range(10)]
     )
-def cal_domain_weight(v1, v2, v3, v4, v5, v6, v7, v8, v9):
+def cal_domain_weight(v1, v2, v3, v4, v5, v6, v7, v8, v9, v10):
     if v1:
         n1 = float(v1[:-1])
     else:
@@ -1136,15 +1269,19 @@ def cal_domain_weight(v1, v2, v3, v4, v5, v6, v7, v8, v9):
         n9 = float(v9[:-1])
     else:
         n9 = 0
-    w = sum([n1, n2, n3, n4, n5, n6, n7, n8, n9])
+    if v10:
+        n10 = float(v10[:-1])
+    else:
+        n10 = 0
+    w = sum([n1, n2, n3, n4, n5, n6, n7, n8, n9, n10])
     return '{:.0%}'.format(w/100)
 
 
 @app.callback(
-    [Output(f'outcome-measure-row-2-{m+1}', 'hidden') for m in range(9) ],
-    [Input(f'checklist-domain-measures-lv2-2-{n+1}', 'value') for n in range(4)] + [Input(f'measure-name-2-{m+1}','children') for m in range(9)]
+    [Output(f'outcome-measure-row-2-{m+1}', 'hidden') for m in range(10) ],
+    [Input(f'checklist-domain-measures-lv2-2-{n+1}', 'value') for n in range(4)] + [Input(f'measure-name-2-{m+1}','children') for m in range(10)]
     )
-def show_measure_row_2(v1, v2, v3, v4, m1, m2, m3, m4, m5 ,m6, m7, m8, m9):
+def show_measure_row_2(v1, v2, v3, v4, m1, m2, m3, m4, m5 ,m6, m7, m8, m9, m10):
     v = v1+v2+v3+v4
     if m1 in v:
         h1 = False
@@ -1182,8 +1319,12 @@ def show_measure_row_2(v1, v2, v3, v4, m1, m2, m3, m4, m5 ,m6, m7, m8, m9):
         h9 = False
     else:
         h9 = True
+    if m10 in v:
+        h10 = False
+    else:
+        h10 = True
 
-    return h1, h2, h3, h4, h5, h6, h7, h8, h9
+    return h1, h2, h3, h4, h5, h6, h7, h8, h9, h10
 
 ###domain 4
 @app.callback(
@@ -1378,14 +1519,24 @@ def show_measure_row_6(v1, m1, m2, m3, m4):
     return h1, h2, h3, h4
 
 
+# contratual
+@app.callback(
+    Output('recom-max-pos-adj', 'children'),
+    [Input('input-max-pos-adj', 'value')]
+    )
+def show_max_pos_adj(v):
+    if v:
+        return '{:.0%}'.format(v/100)
+    return ""
 
-'''app.callback(
-    [Output(f'measure-base-recom-{n+1}-{m+1}','children'),
-    Output(f'measure-target-recom-{n+1}-{m+1}','children'),
-    Output(f'measure-like-recom-{n+1}-{m+1}','children'),
-    Output(f'measure-weight-recom-{n+1}-{m+1}','children')],
-    [Input()]
-    ) '''
+@app.callback(
+    Output('recom-max-neg-adj', 'children'),
+    [Input('input-max-neg-adj', 'value')]
+    )
+def show_max_neg_adj(v):
+    if v:
+        return '{:.0%}'.format(v/100)
+    return ""
 
 
 # results

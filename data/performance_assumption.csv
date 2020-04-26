@@ -1,0 +1,9 @@
+﻿Cohort,Measure,Worse,Mid,Better,Scoring Method
+Cohort1 (Recommended),CHF Related Average Cost per Patient,37171,32716,28261,-1
+Cohort1 (Recommended),CHF Related Hospitalization Rate,0.4,0.35,0.3,-1
+Cohort1 (Recommended),NT-proBNP Change %,-0.2,-0.25,-0.3,1
+Cohort1 (Recommended),LVEF LS Mean Change %,0.02,0.03,0.04,1
+Cohort2,CHF Related Average Cost per Patient,37171,32716,28261,-1
+Cohort2,CHF Related Hospitalization Rate,0.4,0.35,0.3,-1
+Cohort2,NT-proBNP Change %,-0.2,-0.25,-0.3,1
+Cohort2,LVEF LS Mean Change %,0.02,0.03,0.04,1
