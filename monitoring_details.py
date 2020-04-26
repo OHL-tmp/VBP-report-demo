@@ -645,7 +645,7 @@ def update_table2(dim,val):
 #update lv3 on filter1,filter2
 
 @app.callback(
-   Output("dashtable_lv3","data"),    
+   Output("dashtable_lv3","data"), 
    [ Input("filter1_3_name","children"),
      Input("filter1_3_value","value"),
      Input("filter2_3_name","children"),
@@ -655,6 +655,7 @@ def update_table2(dim,val):
 )
 def update_table3(dim1,val1,dim2,val2,sort_dim):
     #global data_lv3
+    
     data_lv3=drilldata_process(df_drilldown,'Service Category',dim1,val1,dim2,val2)       
     #data_lv3.to_csv('data/overall_performance.csv')
     if sort_dim==[]:
@@ -665,6 +666,8 @@ def update_table3(dim1,val1,dim2,val2,sort_dim):
     df1['id']=df1[df1.columns[0]]
     df1.set_index('id', inplace=True, drop=False)
     return df1.to_dict('records')
+
+
 
 #update lv4 on filter1,filter2,filter3
 
@@ -689,8 +692,6 @@ def update_table4(dim1,val1,dim2,val2,dim3,val3,sort_dim):
   
     df1=data_lv4[0:len(data_lv4)-1].sort_values(by=sort_dim[0]['column_id'],ascending= sort_dim[0]['direction']=='asc')
     df1=pd.concat([df1,data_lv4[len(data_lv4)-1:len(data_lv4)]])
-    df1['id']=df1[df1.columns[0]]
-    df1.set_index('id', inplace=True, drop=False)
     
     return df1.to_dict('records')
 

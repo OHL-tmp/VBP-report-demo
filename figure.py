@@ -780,9 +780,9 @@ def tbl_non_contract(df,measures):
        
     return measure_tbl
 
-############################################################
-################Drilldown###################################  
-############################################################ 
+####################################################################################################################################################################################
+######################################################################       Drilldown         ##################################################################################### 
+#################################################################################################################################################################################### 
 def drill_bubble(df):
     df['Weight']=df['Pt_Count']/df.values[0,7]
     n=len(df)
@@ -1017,7 +1017,7 @@ def dashtable_lv3(df,dimension,tableid,row_select):#row_select: numeric 0 or 1
         sort_mode='single',
         sort_by=[{"column_id":"Contribution to Overall Performance Difference","direction":"desc"},],
         row_selectable=row_sel,
-        #selected_rows=[],
+        selected_rows=[],
         style_data={
             'whiteSpace': 'normal',
             'height': 'auto'
@@ -1238,3 +1238,162 @@ def gaugegraph(df,row):
             style={"font-family":"NotoSans-CondensedLight","font-size":"0.4rem"}
         )  
     return fig
+
+####################################################################################################################################################################################
+######################################################################       Simulation         ####################################################################################
+####################################################################################################################################################################################
+    
+def sim_result_box(df_sim_result):
+    
+    df=df_sim_result[df_sim_result['metrics']=='Net Revenue']
+    
+    fig_sim =go.Figure()
+
+    fig_sim.add_trace( 
+            go.Bar(
+            #name='Revenue before adj', 
+            x=df['scenario'].to_list()[1:3], 
+            y=[df.values[0,2],df.values[0,2]],
+            text=df.values[0,2],
+            textposition='none',
+            marker=dict(
+                color=colors['grey'],
+                #opacity=0.7,
+                line=dict(
+                    color=colors['grey'],
+
+                )
+                       ), 
+            ),
+
+    )
+    fig_sim.add_trace(
+        go.Box(
+            x=df['scenario'].to_list()[1:3],       
+            lowerfence=df['low_range'].to_list()[1:3],
+            q1=df['low_likelyrange'].to_list()[1:3],
+            median=df['best estimate'].to_list()[1:3],
+            q3=df['high_likelyrange'].to_list()[1:3],
+            upperfence=df['high_range'].to_list()[1:3],
+            fillcolor=colors['grey'],
+            marker=dict(
+                color=colors['blue'],
+                opacity=0.7,
+
+            )
+
+        ),  
+    )
+    fig_sim.update_layout(
+            plot_bgcolor=colors['transparent'],
+            paper_bgcolor=colors['transparent'],
+            bargap=0, 
+            yaxis = dict(
+                showgrid = True, 
+                gridcolor =colors['grey'],
+                nticks=5,
+                showticklabels=True,
+                zeroline=True,
+                zerolinecolor=colors['grey'],
+                zerolinewidth=1,
+            ),
+            showlegend=False,
+            modebar=dict(
+                bgcolor=colors['transparent']
+            ),
+            margin=dict(l=10,r=10,b=100,t=40,pad=0),
+            font=dict(
+                family="NotoSans-Condensed",
+                size=14,
+                color="#38160f"
+            ),
+        )
+    return fig_sim
+
+def table_sim_result(df):        
+    table=dash_table.DataTable(
+        data=df.to_dict('records'),
+        #id=tableid,
+        columns=[
+        {"name": ["","Best Estimate"], "id": "best estimate",'type': 'numeric',"format":Format( precision=1, scheme=Scheme.fixed,),},
+        {"name": [ "Full Range","Low"], "id": "low_range",'type': 'numeric',"format":Format( precision=1, scheme=Scheme.fixed,),},
+        {"name": [ "Full Range","High"], "id": "high_range",'type': 'numeric',"format":Format( precision=1, scheme=Scheme.fixed,),},
+        {"name": [ "Likely Range(90% Probability)","Low"], "id": "low_likelyrange",'type': 'numeric',"format":Format( precision=1, scheme=Scheme.fixed,),},
+        {"name": [ "Likely Range(90% Probability)","High"], "id": "high_likelyrange",'type': 'numeric',"format":Format( precision=1, scheme=Scheme.fixed,),},
+        ],  
+        merge_duplicate_headers=True,
+        style_data={
+            'whiteSpace': 'normal',
+            'height': 'auto'
+        },
+       
+        style_cell={
+            'textAlign': 'center',
+            'font-family':'NotoSans-Regular',
+            'fontSize':12
+        },
+        style_cell_conditional=[
+            {'if': {'column_id': df.columns[0]},
+             
+             'fontWeight': 'bold',
+            }, 
+            
+        ],
+        style_table={
+            'back':  colors['blue'],
+        },
+        style_header={
+            'height': '4rem',
+            'minWidth': '3rem',
+            'maxWidth':'3rem',
+            'whiteSpace': 'normal',
+            'backgroundColor': '#f1f6ff',
+            'fontWeight': 'bold',
+            'font-family':'NotoSans-CondensedLight',
+            'fontSize':14,
+            'color': '#1357DD',
+            'text-align':'center',
+        },
+    )
+    return table
+
+def table_factor_doc(df,tableid='factor_doc'):        
+    table=dash_table.DataTable(
+        data=df.to_dict('records'),
+        id=tableid,
+        columns=[{"name": c, "id": c} for c in df.columns  ],       
+        style_data={
+            'whiteSpace': 'normal',
+            'height': 'auto'
+        },
+       
+        style_cell={
+            'textAlign': 'center',
+            'font-family':'NotoSans-Regular',
+            'fontSize':12
+        },
+        style_cell_conditional=[
+            {'if': {'column_id': df.columns[0]},
+             
+             'fontWeight': 'bold',
+            }, 
+            
+        ],
+        style_table={
+            'back':  colors['blue'],
+        },
+        style_header={
+            'height': '4rem',
+            'minWidth': '3rem',
+            'maxWidth':'3rem',
+            'whiteSpace': 'normal',
+            'backgroundColor': '#f1f6ff',
+            'fontWeight': 'bold',
+            'font-family':'NotoSans-CondensedLight',
+            'fontSize':14,
+            'color': '#1357DD',
+            'text-align':'center',
+        },
+    )
+    return table
+

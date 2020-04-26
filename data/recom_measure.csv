@@ -1,0 +1,5 @@
+﻿Measure,Target,Weight,Baseline,Likelihood
+CHF Related Average Cost per Patient,33100,0.5,33100,Mid
+CHF Related Hospitalization Rate,0.35,0.2,0.4,High
+NT-proBNP Change %,-0.25,0.15,0,High
+LVEF LS Mean Change %,0.03,0.15,0,High
