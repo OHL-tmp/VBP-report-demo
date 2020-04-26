@@ -1421,16 +1421,18 @@ def sim_result_box(df_sim_result):
         )
     return fig_sim
 
-def table_sim_result(df):        
+def table_sim_result(df):
+    df=df[df.columns[2:]]
+   
     table=dash_table.DataTable(
         data=df.to_dict('records'),
         #id=tableid,
         columns=[
-        {"name": ["","Best Estimate"], "id": "best estimate",'type': 'numeric',"format":Format( precision=1, scheme=Scheme.fixed,),},
-        {"name": [ "Full Range","Low"], "id": "low_range",'type': 'numeric',"format":Format( precision=1, scheme=Scheme.fixed,),},
-        {"name": [ "Full Range","High"], "id": "high_range",'type': 'numeric',"format":Format( precision=1, scheme=Scheme.fixed,),},
-        {"name": [ "Likely Range(90% Probability)","Low"], "id": "low_likelyrange",'type': 'numeric',"format":Format( precision=1, scheme=Scheme.fixed,),},
-        {"name": [ "Likely Range(90% Probability)","High"], "id": "high_likelyrange",'type': 'numeric',"format":Format( precision=1, scheme=Scheme.fixed,),},
+        {"name": ["","Best Estimate"], "id": "Best Estimate",'type': 'numeric',"format":Format( precision=1, scheme=Scheme.fixed,),},
+        {"name": [ "Full Range","Low"], "id": "Worst",'type': 'numeric',"format":Format( precision=1, scheme=Scheme.fixed,),},
+        {"name": [ "Full Range","High"], "id": "Best",'type': 'numeric',"format":Format( precision=1, scheme=Scheme.fixed,),},
+        {"name": [ "Likely Range(90% Probability)","Low"], "id": "Lower End",'type': 'numeric',"format":Format( precision=1, scheme=Scheme.fixed,),},
+        {"name": [ "Likely Range(90% Probability)","High"], "id": "Higher End",'type': 'numeric',"format":Format( precision=1, scheme=Scheme.fixed,),},
         ],  
         merge_duplicate_headers=True,
         style_data={
@@ -1441,19 +1443,13 @@ def table_sim_result(df):
         style_cell={
             'textAlign': 'center',
             'font-family':'NotoSans-Regular',
-            'fontSize':12,
-            'height': '4rem',
+            'fontSize':12
         },
         style_cell_conditional=[
-            {'if': {'column_id': df.columns[0]},
-             
-             'fontWeight': 'bold',
-            }, 
             
         ],
         style_table={
             'back':  colors['blue'],
-            'height': '4rem',
         },
         style_header={
             'height': '4rem',
