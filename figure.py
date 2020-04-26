@@ -1239,6 +1239,49 @@ def gaugegraph(df,row):
         )  
     return fig
 
+def table_driver_all(df):        
+    table=dash_table.DataTable(
+        data=df.to_dict('records'),
+        #id=tableid,
+        columns=[{"name": c, "id": c,} for c in df.columns ],  
+        sort_action="native",
+        sort_mode='single',
+        sort_by=[{"column_id":"Impact to Overall Difference","direction":"desc"},],
+        style_data={
+            'whiteSpace': 'normal',
+            'height': 'auto'
+        },
+       
+        style_cell={
+            'textAlign': 'center',
+            'font-family':'NotoSans-Regular',
+            'fontSize':12
+        },
+        style_cell_conditional=[
+            {'if': {'column_id': df.columns[0]},
+             
+             'fontWeight': 'bold',
+            }, 
+            
+        ],
+        style_table={
+            'back':  colors['blue'],
+        },
+        style_header={
+            'height': '4rem',
+            'minWidth': '3rem',
+            'maxWidth':'3rem',
+            'whiteSpace': 'normal',
+            'backgroundColor': '#f1f6ff',
+            'fontWeight': 'bold',
+            'font-family':'NotoSans-CondensedLight',
+            'fontSize':14,
+            'color': '#1357DD',
+            'text-align':'center',
+        },
+    )
+    return table
+
 ####################################################################################################################################################################################
 ######################################################################       Simulation         ####################################################################################
 ####################################################################################################################################################################################
@@ -1249,8 +1292,8 @@ def sim_result_box(df_sim_result):
     
     x=df['Contract Type'].to_list()[1:3]
     median=df['Best Estimate'].to_list()[1:3]
-    fillcolor=['lightblue','pink']
-    markercolor=['lightgrey','lightgrey']
+    fillcolor=['rgba(18,85,222,0.5)','rgba(246,177,17,0.5)']
+    markercolor=[colors['blue'],colors['yellow']]
     base=df.values[0,2]
     
     annotations = []
@@ -1277,7 +1320,7 @@ def sim_result_box(df_sim_result):
             text=df.values[0,2],
             textposition='none',
             marker=dict(
-                color=colors['grey'],
+                color='rgba(191,191,191,0.5)',
                 #opacity=0.7,
                 line=dict(
                     color=colors['grey'],
@@ -1428,11 +1471,11 @@ def table_sim_result(df):
         data=df.to_dict('records'),
         #id=tableid,
         columns=[
-        {"name": ["","Best Estimate"], "id": "Best Estimate",'type': 'numeric',"format":Format( precision=1, scheme=Scheme.fixed,),},
-        {"name": [ "Full Range","Low"], "id": "Worst",'type': 'numeric',"format":Format( precision=1, scheme=Scheme.fixed,),},
-        {"name": [ "Full Range","High"], "id": "Best",'type': 'numeric',"format":Format( precision=1, scheme=Scheme.fixed,),},
-        {"name": [ "Likely Range(90% Probability)","Low"], "id": "Lower End",'type': 'numeric',"format":Format( precision=1, scheme=Scheme.fixed,),},
-        {"name": [ "Likely Range(90% Probability)","High"], "id": "Higher End",'type': 'numeric',"format":Format( precision=1, scheme=Scheme.fixed,),},
+        {"name": ["","Best Estimate(Mn)"], "id": "Best Estimate",'type': 'numeric',"format":Format( precision=1, scheme=Scheme.fixed,),},
+        {"name": [ "Full Range","Low(Mn)"], "id": "Worst",'type': 'numeric',"format":Format( precision=1, scheme=Scheme.fixed,),},
+        {"name": [ "Full Range","High(Mn)"], "id": "Best",'type': 'numeric',"format":Format( precision=1, scheme=Scheme.fixed,),},
+        {"name": [ "Likely Range(90% Probability)","Low(Mn)"], "id": "Lower End",'type': 'numeric',"format":Format( precision=1, scheme=Scheme.fixed,),},
+        {"name": [ "Likely Range(90% Probability)","High(Mn)"], "id": "Higher End",'type': 'numeric',"format":Format( precision=1, scheme=Scheme.fixed,),},
         ],  
         merge_duplicate_headers=True,
         style_data={
