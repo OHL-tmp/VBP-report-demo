@@ -245,11 +245,11 @@ def card_main_volumn_based_measures(app):
                         ),
                         html.Div(
                             [
-                                card_sub1_volumn_based_measures("Market Share",piechart_utilizer1,'fig',0.85),
-                                card_sub1_volumn_based_measures("Utilizer Count",tbl_utilizer1,'dash',0.6),
-                                card_sub1_volumn_based_measures("Avg Script (30-day adj) per Utilizer",bargraph_script_per_util,'fig',0.6),
-                                card_sub2_volumn_based_measures("Total Script Count (30-day adj) by Dosage (in thousand)",bargraph_tot_script,bargraph_tot_script_split,'fig','fig',1,1),
-                                card_sub2_volumn_based_measures("Total Units by Dosage (Mn)",bargraph_tot_unit,bargraph_tot_unit_split,'fig','fig',1,1),
+                                card_sub1_volumn_based_measures(app,"Market Share",piechart_utilizer1,'fig',0.85),
+                                card_sub1_volumn_based_measures(app,"Utilizer Count",tbl_utilizer1,'dash',0.6),
+                                card_sub1_volumn_based_measures(app,"Avg Script (30-day adj) per Utilizer",bargraph_script_per_util,'fig',0.6),
+                                card_sub2_volumn_based_measures(app,"Total Script Count (30-day adj) by Dosage (in thousand)",bargraph_tot_script,bargraph_tot_script_split,'fig','fig',1,1),
+                                card_sub2_volumn_based_measures(app,"Total Units by Dosage (Mn)",bargraph_tot_unit,bargraph_tot_unit_split,'fig','fig',1,1),
                             ],
                             className="mb-3",
                         ),
