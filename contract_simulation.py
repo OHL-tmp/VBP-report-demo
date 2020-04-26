@@ -20,7 +20,8 @@ from figure import *
 
 from modal_drilldown_tableview import *
 
-df_sim_result=pd.read_csv("data/simulate_result.csv")
+df_sim_rev=pd.read_csv("data/Output_Pharma_Net_Revenue.csv")
+df_sim_rebate=pd.read_csv("data/Output_Rebate.csv")
 df_factor_doc=pd.read_csv("data/confounding_factors_doc.csv")
 
 
@@ -532,8 +533,8 @@ def collapse_result_1():
             		[
             			dbc.Row(
             				[
-            					dbc.Col([dcc.Graph(figure=sim_result_box(df_sim_result))], width=6),
-            					dbc.Col([table_sim_result(df_sim_result)], width=6)
+            					dbc.Col(html.Div([dcc.Graph(figure=sim_result_box(df_sim_rev))],style={"height":"100%", "width":"100%"}),width=6 ),
+            					dbc.Col(html.Div([table_sim_result(df_sim_rev)]), width=6)
             				]
             			)
             		]
@@ -548,7 +549,7 @@ def collapse_result_2():
             		[
             			dbc.Row(
             				[
-            					dbc.Col(html.Img(src=app.get_asset_url("logo-demo.png")), width=6),
+            					dbc.Col(html.Div([dcc.Graph(figure=sim_result_box(df_sim_rev))]),width=6 ),
             					dbc.Col(html.Img(src=app.get_asset_url("logo-demo.png")), width=6)
             				]
             			)

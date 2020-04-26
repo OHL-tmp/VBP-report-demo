@@ -1244,16 +1244,36 @@ def gaugegraph(df,row):
 ####################################################################################################################################################################################
     
 def sim_result_box(df_sim_result):
+
+    df=df_sim_result.iloc[[2,5,8]]
     
-    df=df_sim_result[df_sim_result['metrics']=='Net Revenue']
+    x=df['Contract Type'].to_list()[1:3]
+    median=df['Best Estimate'].to_list()[1:3]
+    fillcolor=['lightblue','pink']
+    markercolor=['lightgrey','lightgrey']
+    base=df.values[0,2]
+    
+    annotations = []
+    
+    if df.values[1,3]<df.values[1,4]:
+        lowerfence=df['Worst'].to_list()[1:3]
+        q1=df['Lower End'].to_list()[1:3]
+        q3=df['Higher End'].to_list()[1:3]
+        upperfence=df['Best'].to_list()[1:3]
+    else:
+        lowerfence=df['Best'].to_list()[1:3]
+        q1=df['Higher End'].to_list()[1:3]
+        q3=df['Lower End'].to_list()[1:3]
+        upperfence=df['Worst'].to_list()[1:3]
+        
     
     fig_sim =go.Figure()
 
     fig_sim.add_trace( 
             go.Bar(
             #name='Revenue before adj', 
-            x=df['scenario'].to_list()[1:3], 
-            y=[df.values[0,2],df.values[0,2]],
+            x=x,
+            y=[base,base],
             text=df.values[0,2],
             textposition='none',
             marker=dict(
@@ -1267,32 +1287,121 @@ def sim_result_box(df_sim_result):
             ),
 
     )
-    fig_sim.add_trace(
-        go.Box(
-            x=df['scenario'].to_list()[1:3],       
-            lowerfence=df['low_range'].to_list()[1:3],
-            q1=df['low_likelyrange'].to_list()[1:3],
-            median=df['best estimate'].to_list()[1:3],
-            q3=df['high_likelyrange'].to_list()[1:3],
-            upperfence=df['high_range'].to_list()[1:3],
-            fillcolor=colors['grey'],
-            marker=dict(
-                color=colors['blue'],
-                opacity=0.7,
+    
+    for i in range(len(df)-1):
+        fig_sim.add_trace(
+            go.Box(
+                x=[x[i]],       
+                lowerfence=[lowerfence[i]],
+                q1=[q1[i]],
+                median=[median[i]],
+                q3=[q3[i]],
+                upperfence=[upperfence[i]],
+                fillcolor=fillcolor[i],
+                width=0.3,
+                marker=dict(
+                    color=markercolor[i],
+                    opacity=0.7,
 
-            )
+                )
 
-        ),  
+            ),  
+        )
+        annotations.append(dict(xref='x', yref='y',axref='x', ayref='y',
+                        x=0+i, y=df['Best'].to_list()[1:3][i],ax=0.3+i, ay=df['Best'].to_list()[1:3][i],
+                        startstandoff=10,
+                        text='Best: '+str(round(df['Best'].to_list()[1:3][i],1))+'Mn',
+                        font=dict(family='NotoSans-CondensedLight', size=12, color='green'),
+                        showarrow=True,
+                        arrowhead=2,
+                        arrowsize=2,
+                        arrowside='start',
+                        arrowcolor='green',
+                       )
+                  )
+        annotations.append(dict(xref='x', yref='y',axref='x', ayref='y',
+                        x=0+i, y=df['Worst'].to_list()[1:3][i],ax=0.3+i, ay=df['Worst'].to_list()[1:3][i],
+                        startstandoff=10,
+                        text='Worst: '+str(round(df['Worst'].to_list()[1:3][i],1))+'Mn',
+                        font=dict(family='NotoSans-CondensedLight', size=12, color='red'),
+                        showarrow=True,
+                        arrowhead=2,
+                        arrowsize=2,
+                        arrowside='start',
+                        arrowcolor='red',
+                       )
+                  )
+    
+    
+    annotations.append(dict(xref='paper', yref='y',axref='pixel', ayref='y',
+                            x=1.05, y=base,ax=1.05,ay=base/3*2,
+                            standoff=0,
+                            showarrow=True,
+                            arrowcolor=colors['grey'],
+                            arrowwidth=2,
+                            arrowhead=2,
+                           )
+                      )
+    annotations.append(dict(xref='paper', yref='y',axref='pixel', ayref='y',
+                            x=1.05, y=0,ax=1.05,ay=base/3,
+                            standoff=0,
+                            showarrow=True,
+                            arrowcolor=colors['grey'],
+                            arrowwidth=2,
+                            arrowhead=2,
+                           )
+                      )
+    annotations.append(dict(xref='paper', yref='y',
+                            x=1.1, y=base/2,
+                            text='Contract w/o<br>VBC Payout:<br><br>'+str(round(base,1))+'Mn',
+                            font=dict(family='NotoSans-CondensedLight', size=12, color='#38160f'),
+                            showarrow=False,
+                           )
+                      )
+    
+
+    
+    shapes=[]
+    shapes.append( dict(type='line',
+                        xref='paper',yref='y',x0=1,x1=1.1,y0=base,y1=base,
+                        line=dict(color=colors['grey'],width=1),
+                       )
+    
     )
+    
+    shapes.append( dict(type='line',
+                        xref='paper',yref='y',x0=1,x1=1.1,y0=0,y1=0,
+                        line=dict(color=colors['grey'],width=1),
+                       )
+    
+    )
+    
+    
     fig_sim.update_layout(
             plot_bgcolor=colors['transparent'],
             paper_bgcolor=colors['transparent'],
             bargap=0, 
             yaxis = dict(
+                side='left',
+                
                 showgrid = True, 
+                showline=True,
+                linecolor=colors['grey'],
                 gridcolor =colors['grey'],
+                tickcolor =colors['grey'],
+                ticks='inside',
+                ticksuffix='Mn',
                 nticks=5,
                 showticklabels=True,
+                tickfont=dict(
+                    color=colors['grey']
+                ),
+                zeroline=True,
+                zerolinecolor=colors['grey'],
+                zerolinewidth=1,
+            ),
+            xaxis = dict(   
+                showgrid = True,
                 zeroline=True,
                 zerolinecolor=colors['grey'],
                 zerolinewidth=1,
@@ -1301,12 +1410,14 @@ def sim_result_box(df_sim_result):
             modebar=dict(
                 bgcolor=colors['transparent']
             ),
-            margin=dict(l=10,r=10,b=100,t=40,pad=0),
+            margin=dict(l=10,r=100,b=10,t=40,pad=0),
             font=dict(
                 family="NotoSans-Condensed",
                 size=14,
                 color="#38160f"
             ),
+        annotations=annotations,
+        shapes=shapes,
         )
     return fig_sim
 
