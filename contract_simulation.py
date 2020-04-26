@@ -19,6 +19,7 @@ from utils import *
 from figure import *
 
 from modal_simulation_measure_selection import *
+from contract_calculation import *
 
 df_sim_rev=pd.read_csv("data/Output_Pharma_Net_Revenue.csv")
 df_sim_rebate=pd.read_csv("data/Output_Rebate.csv")
@@ -54,7 +55,7 @@ def create_layout():
 							        dbc.Tab(tab_setup(), label="Contract Simulation Setup"),
 							        dbc.Tab(tab_result(), label="Result"),
 							        
-							    ]
+							    ], id = 'tab_container'
 							)
                         ],
                         className="mb-3",
@@ -153,7 +154,7 @@ def card_target_patient():
                                 dbc.Col(
                                     [
                                         html.H3("Recommended", style={"font-size":"0.6rem"}),
-                                        html.H5("Class III & IV CHF Patients"),
+                                        html.H5("Class III & IV CHF Patients", id = 'target-patient-recom'),
                                     ], 
                                     style={"padding":"0.8rem"},
                                     width=2,
@@ -350,9 +351,9 @@ def row_measure_modifier_combine(n):
                 dbc.Row(
                     [
                         dbc.Col(html.Div(measures_lv2[m]), width=4),
-                        dbc.Col(html.Div(df_recom_measure[df_recom_measure['Measure'] == measures_lv2[m]]['Baseline'], id = u'measure-base-recom-{}-{}'.format(n+1, m+1)), width=1),
-                        dbc.Col(html.Div(df_payor_contract_baseline[df_payor_contract_baseline['Measure'] == measures_lv2[m]]['Baseline'], id = u'measure-base-user-{}-{}'.format(n+1, m+1)), width=1),
-                        dbc.Col(html.Div(df_recom_measure[df_recom_measure['Measure'] == measures_lv2[m]]['Target'], id = u'measure-target-recom-{}-{}'.format(n+1, m+1)), width=1),
+                        dbc.Col(html.Div(df_recom_measure[df_recom_measure['Measure'] == measures_lv2[m]]['Baseline']*100, id = u'measure-base-recom-{}-{}'.format(n+1, m+1)), width=1),
+                        dbc.Col(html.Div(df_payor_contract_baseline[df_payor_contract_baseline['Measure'] == measures_lv2[m]]['Baseline']*100, id = u'measure-base-user-{}-{}'.format(n+1, m+1)), width=1),
+                        dbc.Col(html.Div(df_recom_measure[df_recom_measure['Measure'] == measures_lv2[m]]['Target']*100, id = u'measure-target-recom-{}-{}'.format(n+1, m+1)), width=1),
                         dbc.Col(
                             dcc.Input(id = u'measure-target-user-{}-{}'.format(n+1, m+1), 
                                 type = 'number', debounce = True, persistence = True, persistence_type = 'session',
@@ -536,7 +537,7 @@ def card_contract_adjust_sub():
                         dbc.Row(
                             [
                                 dbc.Col(html.Div("Performance Level Threshold"), width=6),
-								dbc.Col(html.Div("110%"), width=3),
+								dbc.Col(html.Div("115%", id = 'recom-pos-perf'), width=3),
 								dbc.Col(
                                     dcc.Input(id = 'input-pos-perform',
                                         type = 'number', debounce = True, persistence = True, persistence_type = 'session',
@@ -572,7 +573,7 @@ def card_contract_adjust_sub():
                         dbc.Row(
                             [
                                 dbc.Col(html.Div("Performance Level Threshold"), width=6),
-								dbc.Col(html.Div("90%"), width=3),
+								dbc.Col(html.Div("85%", id = 'recom-neg-perf'), width=3),
 								dbc.Col(
                                     dcc.Input(id = 'input-neg-perform',
                                         type = 'number', debounce = True, persistence = True, persistence_type = 'session',
@@ -685,8 +686,8 @@ def collapse_result_1():
             		[
             			dbc.Row(
             				[
-            					dbc.Col(html.Div([dcc.Graph(figure=sim_result_box(df_sim_rev),style={"height":"50vh", "width":"90vh"})]),width=6 ),
-            					dbc.Col(html.Div([table_sim_result(df_sim_rev)]), width=6)
+            					dbc.Col(html.Div([dcc.Graph(id = 'sim_result_box_1',style={"height":"50vh", "width":"90vh"})]),width=6 ),
+            					dbc.Col(html.Div(id = 'sim_result_table_1'), width=6)
             				]
             			)
             		]
@@ -701,8 +702,8 @@ def collapse_result_2():
             		[
             			dbc.Row(
             				[
-            					dbc.Col(html.Div([dcc.Graph(figure=sim_result_box(df_sim_rebate),style={"height":"50vh", "width":"90vh"})]),width=6 ),
-            					dbc.Col(html.Div([table_sim_result(df_sim_rebate)]), width=6)
+            					dbc.Col(html.Div([dcc.Graph(id = 'sim_result_box_2',style={"height":"50vh", "width":"90vh"})]),width=6 ),
+            					dbc.Col(html.Div(id = 'sim_result_table_2'), width=6)
             				]
             			)
             		]
@@ -756,6 +757,119 @@ def collapse_confounding_factors():
 
 
 app.layout = create_layout()
+
+#link to model
+
+@app.callback(
+    [Output('tab_container', 'active_tab'),
+    Output('sim_result_box_1','figure'),
+    Output('sim_result_table_1','children'),
+    Output('sim_result_box_2','figure'),
+    Output('sim_result_table_2','children')],
+    [Input('button-simulation-submit', 'n_clicks'),
+    Input('recom-pos-perf','children'),
+    Input('recom-neg-perf','children'),
+    Input('recom-max-pos-adj','children'),
+    Input('recom-max-neg-adj','children'),
+    Input('input-pos-perform', 'value'),
+    Input('input-neg-perform', 'value'),
+    Input('input-pos-adj', 'value'),
+    Input('input-neg-adj', 'value'),
+    Input('target-patient-recom','children'),
+    Input('target-patient-input','value'),
+    Input('input-rebate','value'),
+    Input('input-base-rebate','value'),]
+    + [Input('measure-name-1-2', 'children'),
+    Input('measure-name-1-6', 'children'),
+    Input('measure-name-2-1', 'children'),
+    Input('measure-name-2-2', 'children'),]
+    +[Input('measure-target-user-1-2', 'value'),
+    Input('measure-target-user-1-6', 'value'),
+    Input('measure-target-user-2-1', 'value'),
+    Input('measure-target-user-2-2', 'value'),]
+    +[Input('measure-weight-user-1-2', 'value'),
+    Input('measure-weight-user-1-6', 'value'),
+    Input('measure-weight-user-2-1', 'value'),
+    Input('measure-weight-user-2-2', 'value'),]
+#    + [Input(f'outcome-measure-row-1-{m+1}', 'hidden') for m in range(8)]
+#    + [Input(f'outcome-measure-row-2-{m+1}', 'hidden') for m in range(10)]
+#    + [Input(f'outcome-measure-row-4-{m+1}', 'hidden') for m in range(2)]
+#    + [Input(f'outcome-measure-row-5-{m+1}', 'hidden') for m in range(3)]
+#    + [Input(f'outcome-measure-row-6-{m+1}', 'hidden') for m in range(4)]
+#    + [Input(f'measure-name-1-{m+1}', 'children') for m in range(8)]
+#    + [Input(f'measure-name-2-{m+1}', 'children') for m in range(10)]
+#    + [Input(f'measure-name-4-{m+1}', 'children') for m in range(2)]
+#    + [Input(f'measure-name-5-{m+1}', 'children') for m in range(3)]
+#    + [Input(f'measure-name-6-{m+1}', 'children') for m in range(4)]
+#    + [Input(f'measure-target-user-1-{m+1}', 'value') for m in range(8)]
+#    + [Input(f'measure-target-user-2-{m+1}', 'value') for m in range(10)]
+#    + [Input(f'measure-target-user-4-{m+1}', 'value') for m in range(2)]
+#    + [Input(f'measure-target-user-5-{m+1}', 'value') for m in range(3)]
+#    + [Input(f'measure-target-user-6-{m+1}', 'value') for m in range(4)]
+#    + [Input(f'measure-weight-user-1-{m+1}', 'value') for m in range(8)]
+#    + [Input(f'measure-weight-user-2-{m+1}', 'value') for m in range(10)]
+#    + [Input(f'measure-weight-user-4-{m+1}', 'value') for m in range(2)]
+#    + [Input(f'measure-weight-user-5-{m+1}', 'value') for m in range(3)]
+#    + [Input(f'measure-weight-user-6-{m+1}', 'value') for m in range(4)]
+    )
+#def simulation(submit_button, re_pos_perf, re_neg_perf, re_pos_adj, re_neg_adj, in_pos_perf, in_neg_perf, in_pos_adj, in_neg_adj, cohort_recom, cohort_selected, rebate_novbc, rebate_vbc,
+# h1,h2,h3,h4,h5,h6,h7,h8,h9,h10,h11,h12,h13,h14,h15,h16,h17,h18,h19,h20,h21,h22,h23,h24,h25,h26,h27,
+# m1,m2,m3,m4,m5,m6,m7,m8,m9,m10,m11,m12,m13,m14,m15,m16,m17,m18,m19,m20,m21,m22,m23,m24,m25,m26,m27,
+# t1,t2,t3,t4,t5,t6,t7,t8,t9,t10,t11,t12,t13,t14,t15,t16,t17,t18,t19,t20,t21,t22,t23,t24,t25,t26,t27,
+# w1,w2,w3,w4,w5,w6,w7,w8,w9,w10,w11,w12,w13,w14,w15,w16,w17,w18,w19,w20,w21,w22,w23,w24,w25,w26,w27):
+def simulation(submit_button, re_pos_perf, re_neg_perf, re_pos_adj, re_neg_adj, in_pos_perf, in_neg_perf, in_pos_adj, in_neg_adj, cohort_recom, cohort_selected, rebate_novbc, rebate_vbc,
+    m1,m2,m3,m4,t1,t2,t3,t4,w1,w2,w3,w4):
+    triggered = [t["prop_id"] for t in dash.callback_context.triggered]
+    submit = len([1 for i in triggered if i == "button-simulation-submit.n_clicks"])
+    if submit:
+        input1 = {'Perf_Range_U_Min': [1], 
+                    'Perf_Range_U_Max': [float(re_pos_perf[:-1])/100], 
+                    'Adj_Limit_U': [float(re_pos_adj[:-1])/100],
+                    'Perf_Range_L_Min': [1],
+                    'Perf_Range_L_Max': [float(re_neg_perf[:-1])/100],
+                    'Adj_Limit_L': [float(re_neg_adj[:-1])/100]} 
+        Recom_Contract = pd.DataFrame(input1, columns = ['Perf_Range_U_Min','Perf_Range_U_Max','Adj_Limit_U','Perf_Range_L_Min','Perf_Range_L_Max', 'Adj_Limit_L'])
+        
+#        selected_measure = []
+        measure_name = [m1,m2,m3,m4]
+        target_list = [t1,t2,t3,t4]
+        weight_list = [w1,w2,w3,w4]
+#        for i in range(27):
+#            if eval('h'+str(i+1)) ==False:
+#                selected_measure.append(i+1)
+#        for k in selected_measure:
+#            measure_name.append(eval('m'+str(i+1)))
+#            target_list.append(eval('t'+str(i+1)))
+#            weight_list.append(eval('w'+str(i+1)))
+        
+#        print(selected_measure,measure_name,target_list,weight_list)
+        input2 = {'Measure': measure_name, 
+                'Target': target_list, 
+                'Weight': list(np.array(weight_list)/100)} 
+        UD_Measure = pd.DataFrame(input2, columns = ['Measure', 'Target', 'Weight']) 
+        UD_Measure['Target'] = UD_Measure.apply(lambda x: x['Target']/100 if x['Measure'] in percent_input else x['Target'], axis = 1)
+
+        input3 = {'Perf_Range_U_Min': [1], 
+                        'Perf_Range_U_Max': [in_pos_perf/100], 
+                        'Adj_Limit_U': [in_pos_adj/100],
+                        'Perf_Range_L_Min': [1],
+                        'Perf_Range_L_Max': [in_neg_perf/100],
+                        'Adj_Limit_L': [in_neg_adj/100]} 
+        UD_Contract = pd.DataFrame(input3, columns = ['Perf_Range_U_Min','Perf_Range_U_Max','Adj_Limit_U','Perf_Range_L_Min','Perf_Range_L_Max', 'Adj_Limit_L']) 
+
+        if cohort_selected == cohort_recom:
+            cohort = Recom_Pt_cohort
+        else:
+            cohort = 'Cohort2'
+
+        t1,t2=Contract_Calculation(Recom_Contract, UD_Measure,UD_Contract,cohort,rebate_novbc/100, rebate_vbc/100)
+        t1.reset_index(inplace = True)
+        t2.reset_index(inplace = True)
+
+        return 'tab-1',sim_result_box(t1),table_sim_result(t1),sim_result_box(t2),table_sim_result(t2)
+    return 'tab-0',{},[],{},[]
+
+
 
 #input
 @app.callback(
