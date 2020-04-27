@@ -1,0 +1,61 @@
+@decimal-format phone {
+  grouping-separator: " ";
+}
+@decimal-format price {
+  grouping-separator: ",";
+  decimal-separator : "."
+}
+@decimal-format sweprice {
+  grouping-separator: " ";
+  decimal-separator : ","
+}
+@decimal-format creditcard {
+  grouping-separator: " ";
+}
+@media all {
+  td.phone {
+      number-format: "## ##", "phone";
+  }
+}
+@media screen {
+  td.price {
+      number-format: "###,##0.00", "price";
+      /* price is actually redundant as this format would be the default */
+  }
+  td.price::after {
+      content: " USD";
+  }
+  td.sweprice {
+      number-format: "### ##0,00", "sweprice";
+  }
+  .creditcard {
+      number-format: "#### ####", "creditcard";
+  }
+  td.sweprice::after {
+      content: " SEK";
+  }
+}
+@media speech {
+  /* 
+      Grouping both unnecessary and unwanted, words like
+     "billion", "million" and "thousand" should be spelled out
+     Those words should only be spelled out by a screen reader when
+     grouping is not specified.
+  */ 
+  td.price {
+      number-format: "0.00", "price";
+  }
+  td.sweprice {
+      number-format: "0,00", "sweprice";
+  }
+  td.price::after {
+      content: " US dollars";
+  }
+  td.sweprice::after {
+      content: " Swedish crowns";
+  }
+  .creditcard {
+      /* Speak numbers in pairs, no nead to hear the word "thousand" */
+      number-format: "## ## ## ##", "creditcard";
+  }
+}
