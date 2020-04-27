@@ -55,8 +55,8 @@ def get_header_mgmt(app, dashboard_active, drilldown_active, report_active, Home
                     # Use row and col to control vertical alignment of logo / brand
                     dbc.Row(
                         [
-                            dbc.Col(html.Img(src=app.get_asset_url("logo-demo.png"), style={"height":"4rem", "padding-top":"1px"})),
-                            dbc.Col(dbc.NavbarBrand("ValueGen Solution", className="ml-2")),
+                            dbc.Col(html.Img(src=app.get_asset_url("logo-demo.png"), style={"height":"4rem", "padding-top":"1px", "padding-left":"2rem"})),
+                            dbc.Col(dbc.NavbarBrand("", className="ml-2")),
                         ],
                         align="center",
                         no_gutters=True,
@@ -65,10 +65,11 @@ def get_header_mgmt(app, dashboard_active, drilldown_active, report_active, Home
                 dbc.NavbarToggler(id="navbar-toggler"),
                 dbc.Collapse(menu, id="navbar-collapse", navbar=True),
                 ],
-            color="light",
+            color="#fff",
             sticky = "top",
             expand = True,
             className="sticky-top",
+            style={"box-shadow":"0 4px 8px 0 rgba(0, 0, 0, 0.05), 0 6px 20px 0 rgba(0, 0, 0, 0.05)"}
 #            dark=True,
         )
     return header

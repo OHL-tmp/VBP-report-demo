@@ -60,67 +60,76 @@ def tableview():
 						[
 							html.Div(
 								[
-									html.H5("Select Dimension"),
+									html.H4("Select Dimension", style={"font-size":"1rem","padding-left":"0.5rem", "padding-top":"0.5rem"}),
+									html.H5("First Dimension", style={"font-size":"0.8rem","color":"#919191","padding-left":"0.5rem", "padding-top":"0.5rem"}),
 									dcc.Dropdown(
 										id = "dropdown-dimension-1",
-										options = [{"label": k, "value": k, 'disabled' : False} for k in list(dimension.keys()) if len(dimension[k]) != 0] 
-										+ [{"label": 'Service Category', "value": 'Service Category'}, {"label": 'Sub Category', "value": 'Sub Category', 'disabled': True}] 
-										+ [{"label": k, "value": k, 'disabled' : True} for k in list(dimension.keys()) if len(dimension[k]) == 0],
-										placeholder ="Select a dimension",
+										placeholder ="...",
+										options = [{"label": 'Service Category', "value": 'Service Category'}, {"label": 'Sub Category', "value": 'Sub Category', 'disabled': True}] 
+										+ [{"label": k, "value": k, 'disabled' : True} if len(dimension[k]) == 0 else {"label": k, "value": k, 'disabled' : False} for k in list(dimension.keys())],
 										value = 'Risk Score Band',
 										clearable = False,
+										style = {"font-family":"NotoSans-Condensed"}
 										),
+									html.H5("Second Dimension", style={"font-size":"0.8rem","color":"#919191","padding-left":"0.5rem", "padding-top":"0.5rem"}),
 									dcc.Dropdown(
 										id = "dropdown-dimension-2",
 										disabled=True,
-										placeholder ="Select a dimension",
-										
+										placeholder ="...",
+										style = {"font-family":"NotoSans-Condensed"}
 										),
+									html.H5("Third Dimension", style={"font-size":"0.8rem","color":"#919191","padding-left":"0.5rem", "padding-top":"0.5rem"}),
 									dcc.Dropdown(
 										id = "dropdown-dimension-3",
 										disabled=True,
-										placeholder ="Select a dimension",
-										
+										placeholder ="...",
+										style = {"font-family":"NotoSans-Condensed"}
 										),
-									html.H5("Select Measures"),
+									html.H4("Select Measures", style={"font-size":"1rem","padding-left":"0.5rem", "padding-top":"1rem"}),
 									dcc.Dropdown(
 										id = "dropdown-measure-1",
 										options = [{"label": k, "value": k} for k in measure],
 										value = ['Diff % from Target Total Cost', 'YTD Total Cost', 'Annualized Total Cost', 'Target Total Cost'],
 										placeholder ="Select measures",
 										multi = True,
+										style = {"font-family":"NotoSans-Condensed"}
 										),
 								]
 							),
+							html.Hr(className="ml-1"),
 							html.Div(
 								[
-									html.H5("Filters"),
-									html.H6("Filter 1"),
+									html.H4("Filters", style={"font-size":"1rem","padding-left":"0.5rem", "padding-top":"0.5rem"}),
+									html.H5("Filter 1", style={"font-size":"0.8rem","color":"#919191","padding-left":"0.5rem", "padding-top":"0.5rem"}),
 									dcc.Dropdown(
 										id = "dimension_filter_selection_1",
-										options = [{"label": k, "value": k, 'disabled' : False} for k in list(dimension.keys()) if len(dimension[k]) != 0] 
-										+ [{"label": 'Service Category', "value": 'Service Category'}, {"label": 'Sub Category', "value": 'Sub Category', 'disabled': True}] 
-										+ [{"label": k, "value": k, 'disabled' : True} for k in list(dimension.keys()) if len(dimension[k]) == 0],
+										options = [{"label": 'Service Category', "value": 'Service Category'}, {"label": 'Sub Category', "value": 'Sub Category', 'disabled': True}] 
+										+ [{"label": k, "value": k, 'disabled' : True} if len(dimension[k]) == 0 else {"label": k, "value": k, 'disabled' : False} for k in list(dimension.keys())],
 										placeholder = "Add a Filter",
+										style = {"font-family":"NotoSans-Condensed"}
 										),
-			#						html.H6("Sub Category"),
+									html.H5("", style={"font-size":"0.8rem"}),
 									dcc.Dropdown(
 										id = "dimension_filter_1",
 										placeholder = "Select Filter Value",
 										multi = True,
+										style = {"font-family":"NotoSans-Condensed"},
 										),
-									html.H6("Filter 2"),
+									html.H5("Filter 2", style={"font-size":"0.8rem","color":"#919191","padding-left":"0.5rem", "padding-top":"0.5rem"}),
 									dcc.Dropdown(
 										id = "dimension_filter_selection_2",
 										options = [{"label": k, "value": k} for k in list(dimension.keys())],
 										placeholder = "Add a Filter",
+										style = {"font-family":"NotoSans-Condensed"}
 										),
+									html.H5("", style={"font-size":"0.8rem"}),
 									dcc.Dropdown(
 										id = "dimension_filter_2",
 										placeholder = "Select Filter Value",
 										multi = True,
+										style = {"font-family":"NotoSans-Condensed"}
 										),
-									html.H6("+ Add more Filter"),
+									html.H5("+ Add more Filter", style={"font-size":"1rem","color":"#1357DD","padding-left":"0.5rem", "padding-top":"0.5rem"}),
 								]
 							)
 						],
@@ -132,11 +141,11 @@ def tableview():
 						[
 							html.Div(
 								[
-									html.Div("Default sorted by Diff % from Target Total Cost"),
+									html.P("*Default sorted by Diff % from Target Total Cost", style={"font-size":"0.6rem"}),
 									dash_table.DataTable(
 										id = 'datatable-tableview',
-										style_header = {'height': 'auto', 'width':'auto','whiteSpace':'normal','font-family':'NotoSans-CondensedLight','font-size':'auto'},
-										style_cell = {'font-family':'NotoSans-Condensed','font-size':'0.8rem'},
+										style_header = {'height': 'auto', 'width':'auto','whiteSpace':'normal','font-family':'NotoSans-Condensed','font-size':'auto','backgroundColor': '#dce7fc','color':'#1357DD'},
+										style_cell = {'font-family':'NotoSans-Regular','font-size':'0.8rem','textAlign': 'center'},
 										#fixed_rows={ 'headers': True, 'data': 0 },
 										style_table = {'textAlign': 'center'},
 										sort_action='native',
@@ -148,7 +157,7 @@ def tableview():
 									        }],
 										)
 								],
-								style={"padding-left":"1rem","padding-bottom":"1rem","overflow-x":"scroll",'max-height':'60rem'}
+								style={"padding-left":"1rem","padding-right":"1rem","padding-bottom":"1rem","overflow":"scroll",'max-height':'60rem'}
 							)
 							
 						],

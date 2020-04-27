@@ -55,8 +55,8 @@ def create_layout():
                         [
                             dbc.Tabs(
 							    [
-							        dbc.Tab(tab_setup(), label="Contract Simulation Setup"),
-							        dbc.Tab(tab_result(), label="Result"),
+							        dbc.Tab(tab_setup(), label="Contract Simulation Setup", style={"background-color":"#fff"}, tab_style={"font-family":"NotoSans-Condensed"}),
+							        dbc.Tab(tab_result(), label="Result", style={"background-color":"#fff"}, tab_style={"font-family":"NotoSans-Condensed"}),
 							        
 							    ], id = 'tab_container'
 							)
@@ -75,9 +75,9 @@ def tab_setup():
 				[
 					dbc.Row(
 						[
-							dbc.Col(html.H1("VBC Contract Simulation Setup")),
+							dbc.Col(html.H1("VBC Contract Simulation Setup", style={"padding-left":"2rem","font-size":"3"}), width=9),
 							dbc.Col([
-                                dbc.Button("Edit Assumption", id = 'button-edit-assumption'),
+                                dbc.Button("Edit Assumption", id = 'button-edit-assumption', style={"border-radius":"5rem"}),
                                 dbc.Modal([
                                     dbc.ModalHeader("Edit Assumption"),
                                     dbc.ModalBody("模型需要的其他assumptions"),
@@ -85,8 +85,11 @@ def tab_setup():
                                         dbc.Button("SUBMIT", id = 'close-edit-assumption')
                                         )
                                     ], id = 'modal-edit-assumption'),
-                                ]),
-						]
+                                ], 
+                                width=3,
+                                style={"padding-top":"1rem"}),
+						],
+                        style={"padding-top":"2rem"}
 					),
 					html.Div(
                         [
@@ -97,7 +100,7 @@ def tab_setup():
                                 ]
                             )
                         ],
-                        style={"padding-left":"2rem","padding-right":"1rem","border-radius":"5rem","background-color":"#f7f7f7","margin-top":"2rem"}
+                        style={"padding-left":"2rem","padding-right":"1rem","border-radius":"5rem","background-color":"#fff","margin-top":"2rem"}
                     ),
                     html.Div(
                         [
@@ -113,7 +116,7 @@ def tab_setup():
                                 ]
                             )
                         ],
-                        style={"padding-left":"2rem","padding-right":"1rem","border-radius":"5rem","background-color":"#f7f7f7","margin-top":"2rem"}
+                        style={"padding-left":"2rem","padding-right":"1rem","border-radius":"5rem","background-color":"#fff","margin-top":"2rem"}
                     ),
                     html.Div(
                         [
@@ -121,8 +124,10 @@ def tab_setup():
                         ]
                     ),
                     html.Div([
-                        dbc.Button("Submit for Simulation", id = 'button-simulation-submit')
-                        ]),
+                        dbc.Button("Submit for Simulation", color="primary",id = 'button-simulation-submit')
+                        ],
+                        style={"text-align":"center", "padding-bottom":"2rem"}),
+
 					
 				]
 			)
@@ -138,7 +143,7 @@ def card_performance_measure_setup():
                     ]
                 ),
                 className="mb-3",
-                style={"box-shadow":"0 4px 8px 0 rgba(0, 0, 0, 0.05), 0 6px 20px 0 rgba(0, 0, 0, 0.05)", "border":"none", "border-radius":"0.5rem"}
+                style={"background-color":"#fff", "border":"none", "border-radius":"0.5rem"}
             )
 
 def card_target_patient():
@@ -156,24 +161,27 @@ def card_target_patient():
                             [
                                 dbc.Col(
                                     [
-                                        html.H3("Recommended", style={"font-size":"0.6rem"}),
-                                        html.H5("Class III & IV CHF Patients", id = 'target-patient-recom'),
+                                        html.H3("Recommended", style={"font-size":"1rem"}),
+                                        html.H5("Class III & IV CHF Patients", style={"font-size":"1rem"}, id = 'target-patient-recom'),
                                     ], 
                                     style={"padding":"0.8rem"},
-                                    width=2,
+                                    width=4,
                                 ),
                                 dbc.Col(
                                     [
-                                        html.H3("Payer Contract", style={"font-size":"0.6rem"}),
+                                        html.H3("Payer Contract", style={"font-size":"1rem"}),
                                         html.Div([
-                                            dcc.Dropdown(id = 'target-patient-input',
+                                            dcc.Dropdown(
+                                                id = 'target-patient-input',
                                                 options = [{'label':'All Classes', 'value':'All Classes'},
-                                                {'label':'Class III & IV CHF Patients', 'value':'Class III & IV CHF Patients'}],
-                                                value = 'All Classes'),
-                                            ]),
+                                                            {'label':'Class III & IV CHF Patients', 'value':'Class III & IV CHF Patients'}],
+                                                value = 'All Classes',
+                                                style={"font-family":"NotoSans-Regular"}
+                                            )
+                                        ]),
                                     ], 
                                     style={"padding":"0.8rem"},
-                                    width=2,
+                                    width=4,
                                 ),
                             ],
                         ),
@@ -181,7 +189,7 @@ def card_target_patient():
                     ]
                 ),
                 className="mb-3",
-                style={"box-shadow":"0 4px 8px 0 rgba(0, 0, 0, 0.05), 0 6px 20px 0 rgba(0, 0, 0, 0.05)", "border":"none", "border-radius":"0.5rem"}
+                style={"background-color":"#f7f7f7", "border":"none", "border-radius":"0.5rem"}
             )
 
 
@@ -202,75 +210,88 @@ def card_outcome_measure():
                                 dbc.Col(
 #                                	dbc.Button("Edit Assumption"),
                                     modal_dashboard_domain_selection(domain_ct),
+                                    style={"padding-left":"2rem"},
                                     width=4,
                                 ),
                                 dbc.Col(
                                 	[
                                 		html.Div(
                                 			[
-                                				html.H4("Baseline"),
+                                				html.H4("Baseline", style={"font-size":"1rem"}),
+                                                html.Hr(className="ml-1"),
                                 				dbc.Row(
                                 					[
                                 						dbc.Col("Recommended", width=6),
                                 						dbc.Col("Payer Contract", width=6),
-                                					]
+                                					],
+                                                    style={"font-family":"NotoSans-Condensed", "font-size":"0.8rem","text-align":"center"}
                                 				)
                                 			]
                                 		)
                                 	],
+                                    style={"text-align":"center"},
                                     width=2,
                                 ),
                                 dbc.Col(
                                 	[
                                 		html.Div(
                                 			[
-                                				html.H4("Target"),
+                                				html.H4("Target", style={"font-size":"1rem"}),
+                                                html.Hr(className="ml-1"),
                                 				dbc.Row(
                                 					[
                                 						dbc.Col("Recommended", width=6),
                                 						dbc.Col("Payer Contract", width=6),
-                                					]
+                                					],
+                                                    style={"font-family":"NotoSans-Condensed", "font-size":"0.8rem","text-align":"center"}
                                 				)
                                 			]
                                 		)
                                 	],
+                                    style={"text-align":"center"},
                                     width=2,
                                 ),
                                 dbc.Col(
                                 	[
                                 		html.Div(
                                 			[
-                                				html.H4("Likelihood to achieve"),
+                                				html.H4("Likelihood to achieve", style={"font-size":"1rem"}),
+                                                html.Hr(className="ml-1"),
                                 				dbc.Row(
                                 					[
                                 						dbc.Col("Recommended", width=6),
                                 						dbc.Col("Payer Contract", width=6),
-                                					]
+                                					],
+                                                    style={"font-family":"NotoSans-Condensed", "font-size":"0.8rem","text-align":"center"}
                                 				)
                                 			]
                                 		)
                                 	],
+                                    style={"text-align":"center"},
                                     width=2,
                                 ),
                                 dbc.Col(
                                 	[
                                 		html.Div(
                                 			[
-                                				html.H4("Weight"),
+                                				html.H4("Weight", style={"font-size":"1rem"}),
+                                                html.Hr(className="ml-1"),
                                 				dbc.Row(
                                 					[
                                 						dbc.Col("Recommended", width=6),
                                 						dbc.Col("Payer Contract", width=6),
-                                					]
+                                					],
+                                                    style={"font-family":"NotoSans-Condensed", "font-size":"0.8rem","text-align":"center"}
                                 				)
                                 			]
                                 		)
                                 	],
+                                    style={"text-align":"center"},
                                     width=2,
                                 ),
 
                             ],
-
+                            style={"padding-right":"1.5rem", "padding-left":"0rem"}
                             
                         ),
                         card_measure_modifier(domain_ct),
@@ -278,7 +299,7 @@ def card_outcome_measure():
                     ]
                 ),
                 className="mb-3",
-                style={"box-shadow":"0 4px 8px 0 rgba(0, 0, 0, 0.05), 0 6px 20px 0 rgba(0, 0, 0, 0.05)", "border":"none", "border-radius":"0.5rem"}
+                style={"background-color":"#f7f7f7", "border":"none", "border-radius":"0.5rem"}
             )
 
 
@@ -292,9 +313,9 @@ def card_measure_modifier(n):
                                 [
                                     dbc.Row(
                                         [
-                                            dbc.Col(domain_set[i], id = u'outcome-domain-{}'.format(i+1), width=10),
-                                            dbc.Col(id = u'outcome-domain-weight-recom-{}'.format(i+1)),
-                                            dbc.Col(id = u'outcome-domain-weight-user-{}'.format(i+1)),
+                                            dbc.Col(domain_set[i], id = u'outcome-domain-{}'.format(i+1), style={"font-family":"NotoSans-Regular","color":"#919191","font-size":"1rem"}, width=10),
+                                            dbc.Col(id = u'outcome-domain-weight-recom-{}'.format(i+1), style={"font-family":"NotoSans-Regular","color":"#919191","font-size":"1rem"}),
+                                            dbc.Col(id = u'outcome-domain-weight-user-{}'.format(i+1), style={"font-family":"NotoSans-Regular","color":"#919191","font-size":"1rem"}),
                                         ]
                                     ),
                                     html.Hr(className="ml-1"),
@@ -331,12 +352,12 @@ def row_measure_modifier_combine(n):
                 dbc.Row(
                     [
                         dbc.Col(html.Div(measures_lv2[m]), width=4),
-                        dbc.Col(html.Div(df_recom_measure[df_recom_measure['Measure'] == measures_lv2[m]]['Baseline'], id = u'measure-base-recom-{}-{}'.format(n+1, m+1)), width=1),
-                        dbc.Col(html.Div(df_payor_contract_baseline[df_payor_contract_baseline['Measure'] == measures_lv2[m]]['Baseline'], id = u'measure-base-user-{}-{}'.format(n+1, m+1)), width=1),
-                        dbc.Col(html.Div(df_recom_measure[df_recom_measure['Measure'] == measures_lv2[m]]['Target'], id = u'measure-target-recom-{}-{}'.format(n+1, m+1)), width=1),
+                        dbc.Col(html.Div('$'+str(df_recom_measure[df_recom_measure['Measure'] == measures_lv2[m]]['Baseline']), id = u'measure-base-recom-{}-{}'.format(n+1, m+1)), width=0.5),
+                        dbc.Col(html.Div('$'+str(df_payor_contract_baseline[df_payor_contract_baseline['Measure'] == measures_lv2[m]]['Baseline']) id = u'measure-base-user-{}-{}'.format(n+1, m+1)), width=1),
+                        dbc.Col(html.Div('$'+str(df_recom_measure[df_recom_measure['Measure'] == measures_lv2[m]]['Target']), id = u'measure-target-recom-{}-{}'.format(n+1, m+1)), width=1),
                         dbc.Col(
                             dcc.Input(id = u'measure-target-user-{}-{}'.format(n+1, m+1), 
-                                type = 'number', debounce = True, persistence = True, persistence_type = 'session'), 
+                                type = 'number', debounce = True, persistence = True, persistence_type = 'session', size="4"), 
                             width=1),
                         dbc.Col(html.Div(df_recom_measure[df_recom_measure['Measure'] == measures_lv2[m]]['Likelihood'], id = u'measure-like-recom-{}-{}'.format(n+1, m+1)), width=1),
                         dbc.Col(html.Div(id = u'measure-like-user-{}-{}'.format(n+1, m+1),style = {"background-color": '#ffffff'}), width=1),
@@ -344,23 +365,25 @@ def row_measure_modifier_combine(n):
                         dbc.Col(
                             dcc.Input(id = u'measure-weight-user-{}-{}'.format(n+1, m+1),
                                 type = 'number', debounce = True, persistence = True, persistence_type = 'session',
-                                min = 0, max = 100), 
+                                min = 0, max = 100, size="4"), 
                             width=1),
                     ]
                 )
-                ], id = u"outcome-measure-row-{}-{}".format(n+1,m+1))
+                ],
+                style={"font-family":"NotoSans-Regular","font-size":"1rem"}, 
+                id = u"outcome-measure-row-{}-{}".format(n+1,m+1))
         elif m in percent_input:
             card = html.Div([
                 dbc.Row(
                     [
                         dbc.Col(html.Div(measures_lv2[m]), width=4),
-                        dbc.Col(html.Div(df_recom_measure[df_recom_measure['Measure'] == measures_lv2[m]]['Baseline']*100, id = u'measure-base-recom-{}-{}'.format(n+1, m+1)), width=1),
-                        dbc.Col(html.Div(df_payor_contract_baseline[df_payor_contract_baseline['Measure'] == measures_lv2[m]]['Baseline']*100, id = u'measure-base-user-{}-{}'.format(n+1, m+1)), width=1),
-                        dbc.Col(html.Div(df_recom_measure[df_recom_measure['Measure'] == measures_lv2[m]]['Target']*100, id = u'measure-target-recom-{}-{}'.format(n+1, m+1)), width=1),
+                        dbc.Col(html.Div('{:.0%}'.format(df_recom_measure[df_recom_measure['Measure'] == measures_lv2[m]]['Baseline']), id = u'measure-base-recom-{}-{}'.format(n+1, m+1)), width=1),
+                        dbc.Col(html.Div('{:.0%}'.format(df_payor_contract_baseline[df_payor_contract_baseline['Measure'] == measures_lv2[m]]['Baseline']), id = u'measure-base-user-{}-{}'.format(n+1, m+1)), width=1),
+                        dbc.Col(html.Div('{:.0%}'.format(df_recom_measure[df_recom_measure['Measure'] == measures_lv2[m]]['Target']), id = u'measure-target-recom-{}-{}'.format(n+1, m+1)), width=1),
                         dbc.Col(
                             dcc.Input(id = u'measure-target-user-{}-{}'.format(n+1, m+1), 
                                 type = 'number', debounce = True, persistence = True, persistence_type = 'session',
-                                min = 0, max = 100), 
+                                min = 0, max = 100, size="4"), 
                             width=1),
                         dbc.Col(html.Div(df_recom_measure[df_recom_measure['Measure'] == measures_lv2[m]]['Likelihood'], id = u'measure-like-recom-{}-{}'.format(n+1, m+1)), width=1),
                         dbc.Col(html.Div(id = u'measure-like-user-{}-{}'.format(n+1, m+1),style = {"background-color": '#ffffff'}), width=1),
@@ -368,11 +391,13 @@ def row_measure_modifier_combine(n):
                         dbc.Col(
                             dcc.Input(id = u'measure-weight-user-{}-{}'.format(n+1, m+1),
                                 type = 'number', debounce = True, persistence = True, persistence_type = 'session',
-                                min = 0, max = 100), 
+                                min = 0, max = 100, size="4"), 
                             width=1),
                     ]
                 )
-                ], id = u"outcome-measure-row-{}-{}".format(n+1,m+1))
+                ],
+                style={"font-family":"NotoSans-Regular","font-size":"1rem"}, 
+                id = u"outcome-measure-row-{}-{}".format(n+1,m+1))
         else:
             card = html.Div([
     #            row_measure_modifier(measures_lv2[m])
@@ -384,7 +409,7 @@ def row_measure_modifier_combine(n):
                         dbc.Col(html.Div(df_recom_measure[df_recom_measure['Measure'] == measures_lv2[m]]['Target'], id = u'measure-target-recom-{}-{}'.format(n+1, m+1)), width=1),
                         dbc.Col(
                             dcc.Input(id = u'measure-target-user-{}-{}'.format(n+1, m+1), 
-                                type = 'number', debounce = True, persistence = True, persistence_type = 'session'), 
+                                type = 'number', debounce = True, persistence = True, persistence_type = 'session', size="4"), 
                             width=1),
                         dbc.Col(html.Div(df_recom_measure[df_recom_measure['Measure'] == measures_lv2[m]]['Likelihood'], id = u'measure-like-recom-{}-{}'.format(n+1, m+1)), width=1),
                         dbc.Col(html.Div(id = u'measure-like-user-{}-{}'.format(n+1, m+1),style = {"background-color": '#ffffff'}), width=1),
@@ -392,11 +417,13 @@ def row_measure_modifier_combine(n):
                         dbc.Col(
                             dcc.Input(id = u'measure-weight-user-{}-{}'.format(n+1, m+1),
                                 type = 'number', debounce = True, persistence = True, persistence_type = 'session',
-                                min = 0, max = 100), 
+                                min = 0, max = 100, size="4"), 
                             width=1),
                     ]
                 )
-                ], id = u"outcome-measure-row-{}-{}".format(n+1,m+1))
+                ], 
+                style={"font-family":"NotoSans-Regular","font-size":"1rem"}, 
+                id = u"outcome-measure-row-{}-{}".format(n+1,m+1))
         card_outcome_measure_container.append(card)
     return html.Div(card_outcome_measure_container)
 
@@ -421,7 +448,7 @@ def card_overall_likelihood_to_achieve():
                     ]
                 ),
                 className="mb-3",
-                style={"box-shadow":"0 4px 8px 0 rgba(0, 0, 0, 0.05), 0 6px 20px 0 rgba(0, 0, 0, 0.05)", "border":"none", "border-radius":"0.5rem"}
+                style={"background-color":"#f7f7f7", "border":"none", "border-radius":"0.5rem"}
             )
 
 
@@ -435,7 +462,7 @@ def card_contractural_arrangement_setup():
                     ]
                 ),
                 className="mb-3",
-                style={"box-shadow":"0 4px 8px 0 rgba(0, 0, 0, 0.05), 0 6px 20px 0 rgba(0, 0, 0, 0.05)", "border":"none", "border-radius":"0.5rem"}
+                style={"border":"none", "border-radius":"0.5rem"}
             )
 
 def card_contract_wo_vbc_adjustment():
@@ -446,13 +473,13 @@ def card_contract_wo_vbc_adjustment():
                             [
                                 dbc.Col(html.Img(src=app.get_asset_url("bullet-round-blue.png"), width="10px"), width="auto", align="start", style={"margin-top":"-4px"}),
                                 dbc.Col(html.H4("Contract without VBC Adjustment", style={"font-size":"1rem", "margin-left":"10px"}), width=4),
-                                dbc.Col(html.Div("Rebate"), width=1),
+                                dbc.Col(html.Div("Rebate", style={"font-family":"NotoSans-Condensed","font-size":"1rem","text-align":"center"}), width=1),
 								dbc.Col(
                                     dcc.Input(id = 'input-rebate',
                                         type = 'number', debounce = True, persistence = True, persistence_type = 'session',
                                         min = 0, max = 100), 
-                                    width=1),
-								dbc.Col(dbc.Button("EDIT Contract Input"), width=2),
+                                    width=3),
+								dbc.Col(dbc.Button("EDIT Contract Input", style={"border-radius":"5rem", "font-family":"NotoSans-Regular","font-size":"0.8rem"}), width=2),
                             ],
                             no_gutters=True,
                         ),
@@ -460,7 +487,7 @@ def card_contract_wo_vbc_adjustment():
                     ]
                 ),
                 className="mb-3",
-                style={"box-shadow":"0 4px 8px 0 rgba(0, 0, 0, 0.05), 0 6px 20px 0 rgba(0, 0, 0, 0.05)", "border":"none", "border-radius":"0.5rem"}
+                style={"background-color":"#f7f7f7", "border":"none", "border-radius":"0.5rem"}
             )
 
 def card_vbc_contract():
@@ -470,40 +497,65 @@ def card_vbc_contract():
                         dbc.Row(
                             [
                                 dbc.Col(html.Img(src=app.get_asset_url("bullet-round-blue.png"), width="10px"), width="auto", align="start", style={"margin-top":"-4px"}),
-                                dbc.Col(html.H4("VBC Contract", style={"font-size":"1rem", "margin-left":"10px"}), width=4),
-                                dbc.Col(html.Div("Base Rebate"), width=1),
+                                dbc.Col(html.H4("VBC Contract", style={"font-size":"1rem", "margin-left":"10px"}), width=3),
+                                
 								dbc.Col(
-                                    dcc.Input(id = 'input-base-rebate',
-                                        type = 'number', debounce = True, persistence = True, persistence_type = 'session',
-                                        min = 0, max = 100), 
-                                    width=1),
-								dbc.Col(html.Div("Maximum Positive Adjustment"), width=1),
-								dbc.Col(
-                                    dcc.Input(id = 'input-max-pos-adj',
-                                        type = 'number', debounce = True, persistence = True, persistence_type = 'session',
-                                        min = 0, max = 100, placeholder = 'input a positive number'), 
-                                    width=1),
-                                dbc.Col(html.Div("Maximum Negative Adjustment"), width=1),
+                                    [
+                                        html.H3("Base Rebate", style={"font-size":"0.8rem"}),
+                                        html.Div([
+                                            dcc.Input(id = 'input-base-rebate',
+                                                    type = 'number', debounce = True, persistence = True, persistence_type = 'session',
+                                                    min = 0, max = 100, size="16",style={"font-family":"NotoSans-Regular","color":"#919191"}), 
+                                        ]),
+                                    ], 
+                                    style={"padding":"0.8rem"},
+                                    width=2),
                                 dbc.Col(
-                                    dcc.Input(id = 'input-max-neg-adj',
-                                        type = 'number', debounce = True, persistence = True, persistence_type = 'session',
-                                        min = -100, max = 0, placeholder = 'input a negative number'), 
-                                    width=1),
-                                dbc.Col(html.Div("Risk Share Method"), width=1),
-                                dbc.Col(dcc.Dropdown(options = [
-                                        {'label':'Rebate adjustment', 'value':'Rebate adjustment'},
-                                        {'label':'Shared savings/loses', 'value':'Shared savings/loses'},
-                                        {'label':'Money back', 'value':'Money back'},
-                                        {'label':'Formulary upgrade', 'value':'Formulary upgrade'}
-                                    ],
-                                    value = 'Rebate adjustment'), width=1),
+                                    [
+                                        html.H3("Maximum Positive Adjustment", style={"font-size":"0.8rem"}),
+                                        html.Div([
+                                            dcc.Input(id = 'input-max-pos-adj',
+                                                    type = 'number', debounce = True, persistence = True, persistence_type = 'session',
+                                                    min = 0, max = 100, placeholder = 'input a positive number', size="16",style={"font-family":"NotoSans-Regular","color":"#919191"}), 
+                                        ]),
+                                    ], 
+                                    style={"padding":"0.8rem"},
+                                    width=2),
+                                dbc.Col(
+                                    [
+                                        html.H3("Maximum Negative Adjustment", style={"font-size":"0.8rem"}),
+                                        html.Div([
+                                            dcc.Input(id = 'input-max-neg-adj',
+                                                    type = 'number', debounce = True, persistence = True, persistence_type = 'session',
+                                                    min = -100, max = 0, placeholder = 'input a negative number', size="16",style={"font-family":"NotoSans-Regular","color":"#919191"}), 
+                                        ]),
+                                    ], 
+                                    style={"padding":"0.8rem"},
+                                    width=2),
+								dbc.Col(
+                                    [
+                                        html.H3("Risk Share Method", style={"font-size":"0.8rem"}),
+                                        html.Div([
+                                            dcc.Dropdown(options = [
+                                                            {'label':'Rebate adjustment', 'value':'Rebate adjustment'},
+                                                            {'label':'Shared savings/loses', 'value':'Shared savings/loses'},
+                                                            {'label':'Money back', 'value':'Money back'},
+                                                            {'label':'Formulary upgrade', 'value':'Formulary upgrade'}
+                                                        ],
+                                                        value = 'Rebate adjustment',
+                                                        style={"width":"14rem","height":"0.6rem","font-family":"NotoSans-Regular","font-size":"0.8rem","color":"#919191"}),
+                                        ]),
+                                    ], 
+                                    style={"padding":"0.8rem"},
+                                    width=2),
+                                
                             ],
                             no_gutters=True,
                         ),
                     ]
                 ),
                 className="mb-3",
-                style={"box-shadow":"0 4px 8px 0 rgba(0, 0, 0, 0.05), 0 6px 20px 0 rgba(0, 0, 0, 0.05)", "border":"none", "border-radius":"0.5rem"}
+                style={"background-color":"#f7f7f7", "border":"none", "border-radius":"0.5rem"}
             )
 
 def card_contract_adjust():
@@ -520,7 +572,7 @@ def card_contract_adjust():
                     ]
                 ),
                 className="mb-3",
-                style={"box-shadow":"0 4px 8px 0 rgba(0, 0, 0, 0.05), 0 6px 20px 0 rgba(0, 0, 0, 0.05)", "border":"none", "border-radius":"0.5rem"}
+                style={"background-color":"#f7f7f7", "border":"none", "border-radius":"0.5rem"}
             )
 
 
@@ -528,35 +580,35 @@ def card_contract_adjust_sub():
 	return dbc.Card(
                 dbc.CardBody(
                     [
-                    	dbc.Col(html.H4("Positive Adjustment", style={"font-size":"1rem", "margin-left":"10px"})),
+                    	dbc.Col(html.H1("Positive Adjustment", style={"font-size":"1rem"})),
                     	dbc.Row(
                             [
                                 dbc.Col(html.Div(""), width=6),
-								dbc.Col(html.Div("Recommended"), width=3),
-								dbc.Col(html.Div("Payer Contract"), width=3),
+								dbc.Col(html.H3("Recommended", style={"font-size":"0.8rem"}), width=3),
+								dbc.Col(html.H3("Payer Contract", style={"font-size":"0.8rem"}), width=3),
                             ],
                             no_gutters=True,
                         ),
                         dbc.Row(
                             [
-                                dbc.Col(html.Div("Performance Level Threshold"), width=6),
-								dbc.Col(html.Div("115%", id = 'recom-pos-perf'), width=3),
+                                dbc.Col(html.H2("Performance Level Threshold", style={"color":"#919191","font-size":"0.8rem"}), width=6),
+								dbc.Col(html.Div("115%", id = 'recom-pos-perf', style={"font-family":"NotoSans-Regular","font-size":"0.8rem", "text-align":"center"}), width=3),
 								dbc.Col(
                                     dcc.Input(id = 'input-pos-perform',
                                         type = 'number', debounce = True, persistence = True, persistence_type = 'session',
-                                        min = 100), 
+                                        min = 100, size="12"), 
                                      width=3),
                             ],
                             no_gutters=True,
                         ),
                         dbc.Row(
                             [
-                                dbc.Col(html.Div("Maximum Positive Adjustment"), width=6),
-								dbc.Col(html.Div(id = 'recom-max-pos-adj'), width=3),
+                                dbc.Col(html.H2("Maximum Positive Adjustment", style={"color":"#919191","font-size":"0.8rem"}), width=6),
+								dbc.Col(html.Div(id = 'recom-max-pos-adj', style={"font-family":"NotoSans-Regular","font-size":"0.8rem", "text-align":"center"}), width=3),
 								dbc.Col(
                                     dcc.Input(id = 'input-pos-adj',
                                         type = 'number', debounce = True, persistence = True, persistence_type = 'session',
-                                        min = 0), 
+                                        min = 0, size="12"), 
                                      width=3),
                             ],
                             no_gutters=True,
@@ -564,35 +616,35 @@ def card_contract_adjust_sub():
 
                         html.Hr(className="ml-1"),
 
-                        dbc.Col(html.H4("Negative Adjustment", style={"font-size":"1rem", "margin-left":"10px"})),
+                        dbc.Col(html.H1("Negative Adjustment", style={"font-size":"1rem"})),
                     	dbc.Row(
                             [
                                 dbc.Col(html.Div(""), width=6),
-								dbc.Col(html.Div("Recommended"), width=3),
-								dbc.Col(html.Div("Payer Contract"), width=3),
+								dbc.Col(html.H3("Recommended", style={"font-size":"0.8rem"}), width=3),
+								dbc.Col(html.H3("Payer Contract", style={"font-size":"0.8rem"}), width=3),
                             ],
                             no_gutters=True,
                         ),
                         dbc.Row(
                             [
-                                dbc.Col(html.Div("Performance Level Threshold"), width=6),
-								dbc.Col(html.Div("85%", id = 'recom-neg-perf'), width=3),
+                                dbc.Col(html.H2("Performance Level Threshold", style={"color":"#919191","font-size":"0.8rem"}), width=6),
+								dbc.Col(html.Div("85%", id = 'recom-neg-perf', style={"font-family":"NotoSans-Regular","font-size":"0.8rem", "text-align":"center"}), width=3),
 								dbc.Col(
                                     dcc.Input(id = 'input-neg-perform',
                                         type = 'number', debounce = True, persistence = True, persistence_type = 'session',
-                                        min = 0, max = 100), 
+                                        min = 0, max = 100, size="12"), 
                                      width=3),
                             ],
                             no_gutters=True,
                         ),
                         dbc.Row(
                             [
-                                dbc.Col(html.Div("Maximum Negative Adjustment"), width=6),
-								dbc.Col(html.Div(id = 'recom-max-neg-adj'), width=3),
+                                dbc.Col(html.H2("Maximum Negative Adjustment", style={"color":"#919191","font-size":"0.8rem"}), width=6),
+								dbc.Col(html.Div(id = 'recom-max-neg-adj', style={"front-family":"NotoSans-Regular","font-size":"0.8rem", "text-align":"center"}), width=3),
 								dbc.Col(
                                     dcc.Input(id = 'input-neg-adj',
                                         type = 'number', debounce = True, persistence = True, persistence_type = 'session',
-                                        max = 0), 
+                                        max = 0, size="12"), 
                                      width=3),
                             ],
                             no_gutters=True,
@@ -600,7 +652,7 @@ def card_contract_adjust_sub():
                     ]
                 ),
                 className="mb-3",
-                style={"box-shadow":"0 4px 8px 0 rgba(0, 0, 0, 0.05), 0 6px 20px 0 rgba(0, 0, 0, 0.05)", "border":"none", "border-radius":"0.5rem"}
+                style={"background-color":"#f7f7f7", "border":"none", "border-radius":"0.5rem"}
             )
 
 
