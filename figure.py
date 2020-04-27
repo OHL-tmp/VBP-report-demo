@@ -29,8 +29,8 @@ domain_set = ["Cost & Utilization  Reduction", "Improving Disease Outcome",
                  "Decreasing Health Disparities", "Increasing Patient Safety",
                  "Enhancing Care Quality", "Better Patient Experience"]
 
-domain_colordict={'Cost & Utilization  Reduction':'red','Improving Disease Outcome':'green','Decreasing Health Disparities':'grey'
-                  ,'Increasing Patient Safety':'yellow' ,'Enhancing Care Quality':'blue' ,'Better Patient Experience':'white'}
+domain_colordict={'Cost & Utilization  Reduction':'rgba(246,177,17,0.7)','Improving Disease Outcome':'rgba(31,64,229,0.7)','Decreasing Health Disparities':'grey'
+                  ,'Increasing Patient Safety':'yellow' ,'Enhancing Care Quality':'blue' ,'Better Patient Experience':'white'} #'rgba(223,136,133,0.7)' pink   'rgba(31,64,229,0.7)' blue rgba(246,177,17,0.7) yellow
     
   
 table_header_bg_color = "#f1f6ff"
@@ -56,7 +56,8 @@ def bargraph_overall(df):  #df_overall['month'] df_overall['base'] df_overall['a
             marker=dict(
                 color=colors['blue'],
                 opacity=arange(0.34,0.34+0.06*n,0.06) 
-                       )
+                       ),
+            hovertemplate='%{y:,.0f}',
         ),
         row=1,col=1,secondary_y=False,
     )
@@ -72,7 +73,8 @@ def bargraph_overall(df):  #df_overall['month'] df_overall['base'] df_overall['a
             marker=dict(
                 color=colors['yellow'],
                 opacity=arange(0.34,0.34+0.06*n,0.06) 
-                       )
+                       ),
+            hovertemplate='%{y:,.0f}',
         ),
         row=1,col=1,secondary_y=False,
     )
@@ -93,7 +95,8 @@ def bargraph_overall(df):  #df_overall['month'] df_overall['base'] df_overall['a
             ),
             text=y3_trend[1:],
             textposition='top center',
-            texttemplate='%{y:.1%}'
+            texttemplate='%{y:.0%}',
+            hovertemplate='%{y:.2%}',
         ),
         row=1,col=1,secondary_y=True,
     )
@@ -144,7 +147,7 @@ def waterfall_overall(x,y1,y2): #df_waterfall['label']  df_waterfall['base'] df_
     y2_waterfall=y2
     fig_waterfall = go.Figure(data=[
         go.Bar(
-            
+            name='',
             x=x_waterfall, 
             y=y1_waterfall,
             text=y1_waterfall,
@@ -153,12 +156,15 @@ def waterfall_overall(x,y1,y2): #df_waterfall['label']  df_waterfall['base'] df_
             texttemplate='%{y:.2s}',
             marker=dict(
                     color=[colors['blue'],colors['blue'],colors['transparent'],colors['blue'],colors['grey']],
-                    opacity=[1,0.7,0,0.7,0.7]
+                    opacity=[1,0.7,0,0.5,0.7]
                     ),
-            marker_line=dict( color = colors['transparent'] )
+            marker_line=dict( color = colors['transparent'] ),
+            hovertemplate='%{y:,.0f}',
+            hoverinfo='y',
             
         ),
-        go.Bar(     
+        go.Bar(  
+            name='',
             x=x_waterfall, 
             y=y2_waterfall,
             text=y2_waterfall,
@@ -168,7 +174,9 @@ def waterfall_overall(x,y1,y2): #df_waterfall['label']  df_waterfall['base'] df_
             marker=dict(
                     color=colors['yellow'],
                     opacity=0.7
-                    )
+                    ),
+            hovertemplate='%{y:,.0f}',
+            hoverinfo='y',
         )
     ])
     # Change the bar mode
@@ -249,7 +257,8 @@ def piechart_utilizer(label,value): #df_util_split['Class']  df_util_split['%']
                     colors=["#1357DD","F5B111","#df8885"]            
                     ),
             textinfo='label+percent',
-            textposition='auto'
+            textposition='auto',
+            hoverinfo='skip',
         )
     ])
     fig_util_split.update_layout(
@@ -268,10 +277,11 @@ def bargraph_h(x,y):#df_script_per_util['avg script']  df_script_per_util['label
     x_script_per_util=x
     y_script_per_util=y
     fig_script_per_util = go.Figure(data=[
-        go.Bar(        
+        go.Bar(
+            name='',
             x=x_script_per_util, 
             y=y_script_per_util,
-            text=x_script_per_util,
+            text="",
             textposition='inside', 
             texttemplate='%{x:.2s}',
             width=0.5,
@@ -280,7 +290,9 @@ def bargraph_h(x,y):#df_script_per_util['avg script']  df_script_per_util['label
                     color=[colors['grey'],'#1357DD','#1357DD'],
                     opacity=[0.7,0.7,1]
                     ),
-            orientation='h'
+            orientation='h',
+            hoverinfo='y',
+            hovertemplate='%{x:,.2f}',
         )
     ])
     # Change the bar mode
@@ -314,7 +326,8 @@ def bargraph_stack3(x,y1,y2,y3) : #   df_tot_script_split['dosage'] df_tot_scrip
             marker=dict(
                     color='#1357DD',
                     opacity=1
-                    )
+                    ),
+            hovertemplate='%{y:,.0f}',
         ),
         go.Bar(
             name='Annualized', 
@@ -327,7 +340,8 @@ def bargraph_stack3(x,y1,y2,y3) : #   df_tot_script_split['dosage'] df_tot_scrip
             marker=dict(
                     color='#1357DD',
                     opacity=0.7
-                    )
+                    ),
+            hovertemplate='%{y:,.0f}',
         ),
         go.Bar(
             name='Plan Target', 
@@ -340,7 +354,8 @@ def bargraph_stack3(x,y1,y2,y3) : #   df_tot_script_split['dosage'] df_tot_scrip
             marker=dict(
                     color=colors['grey'],
                     opacity=0.7
-                    )
+                    ),
+            hovertemplate='%{y:,.0f}',
         )
     ])
     # Change the bar mode
@@ -613,7 +628,8 @@ def bargraph_perform(df_measure_perform,d): #df_measure_perform, 0 or 1 or 2....
     y=df_measure_perform[df_measure_perform['Domain']==domain_set[d]]['Measure']
     
     fig_measure_perform = go.Figure(data=[
-        go.Bar(        
+        go.Bar(
+            name='',
             x=x, 
             y=y,
             text=x,
@@ -624,7 +640,9 @@ def bargraph_perform(df_measure_perform,d): #df_measure_perform, 0 or 1 or 2....
                     opacity=0.7
                     ),
             orientation='h',
-            width=0.5
+            width=0.5,
+            hovertemplate='%{x:.2%}',
+            hoverinfo='x',
         )
     ])
     # Change the bar mode
@@ -1292,7 +1310,7 @@ def sim_result_box(df_sim_result):
     
     x=df['Contract Type'].to_list()[1:3]
     median=df['Best Estimate'].to_list()[1:3]
-    fillcolor=['rgba(18,85,222,0.5)','rgba(246,177,17,0.5)']
+    fillcolor=['rgba(18,85,222,0)','rgba(246,177,17,0)']
     markercolor=[colors['blue'],colors['yellow']]
     base=df.values[0,2]
     
@@ -1323,7 +1341,7 @@ def sim_result_box(df_sim_result):
                 color='rgba(191,191,191,0.5)',
                 #opacity=0.7,
                 line=dict(
-                    color=colors['grey'],
+                    color='rgba(191,191,191,0)',
 
                 )
                        ), 
@@ -1341,7 +1359,8 @@ def sim_result_box(df_sim_result):
                 q3=[q3[i]],
                 upperfence=[upperfence[i]],
                 fillcolor=fillcolor[i],
-                width=0.3,
+                width=0.2,
+                line_width=3,
                 marker=dict(
                     color=markercolor[i],
                     opacity=0.7,
@@ -1465,12 +1484,15 @@ def sim_result_box(df_sim_result):
     return fig_sim
 
 def table_sim_result(df):
-    df=df[df.columns[2:]]
+    df['scenario']=['Contract','w/o','VBC Payout','Contract with','VBC Payout','(Recommended)','Contract with','VBC Payout','(User Defined)']
+    
    
     table=dash_table.DataTable(
         data=df.to_dict('records'),
         #id=tableid,
         columns=[
+        {"name": ["Contract Type","Contract Type"], "id": "scenario"},
+        {"name": ["Item","Item"], "id": "Item"},
         {"name": ["","Best Estimate(Mn)"], "id": "Best Estimate",'type': 'numeric',"format":Format( precision=1, scheme=Scheme.fixed,),},
         {"name": [ "Full Range","Low(Mn)"], "id": "Worst",'type': 'numeric',"format":Format( precision=1, scheme=Scheme.fixed,),},
         {"name": [ "Full Range","High(Mn)"], "id": "Best",'type': 'numeric',"format":Format( precision=1, scheme=Scheme.fixed,),},
@@ -1486,16 +1508,48 @@ def table_sim_result(df):
         style_cell={
             'textAlign': 'center',
             'font-family':'NotoSans-Regular',
-            'fontSize':12
+            'fontSize':12,
+            'border':'0px',
+            'height': '1.5rem',
         },
         style_cell_conditional=[
+            { 'if': {'row_index':c }, 
+             'color': 'black', 
+             'font-family': 'NotoSans-CondensedLight',
+             'border-top': '1px solid grey',
+             'border-left': '1px solid grey',
+             'border-right': '1px solid grey',
+              } if c in [0,3,6] else 
             
+            { 'if': {'row_index':c }, 
+             'color': 'black', 
+             'font-family': 'NotoSans-CondensedBlackItalic',
+             'border-left': '1px solid grey',
+             'border-right': '1px solid grey',
+             'text-decoration':'underline'
+              } if c in [1,4,7] else 
+            { "if": {"row_index":c },
+             'font-family': 'NotoSans-CondensedLight',
+             'backgroundColor':'rgba(191,191,191,0.7)',
+             'color': '#1357DD',
+             'fontWeight': 'bold',
+             'border-bottom': '1px solid grey',
+             'border-left': '1px solid grey',
+             'border-right': '1px solid grey',
+              } if c in [2,5,8]  else 
+            { "if": {"column_id":"scenario" }, 
+             'font-family': 'NotoSans-CondensedLight',
+             'backgroundColor':'white',
+             'color': 'black',
+             'fontWeight': 'bold', 
+             'text-decoration':'none'
+              } for c in range(0,10)
         ],
         style_table={
             'back':  colors['blue'],
         },
         style_header={
-            'height': '4rem',
+            'height': '2.5rem',
             'minWidth': '3rem',
             'maxWidth':'3rem',
             'whiteSpace': 'normal',
@@ -1505,7 +1559,24 @@ def table_sim_result(df):
             'fontSize':14,
             'color': '#1357DD',
             'text-align':'center',
+            'border':'1px solid grey',
+            'text-decoration':'none'
         },
+        style_header_conditional=[
+            { 'if': {'column_id':'scenario'},
+            'backgroundColor': colors['transparent'],
+            'color': colors['transparent'],
+            'border':'0px'          
+            },
+            { 'if': {'column_id':'Item'},
+            'backgroundColor': colors['transparent'],
+            'color': colors['transparent'],
+            'border':'0px' , 
+            'border-right':'1px solid grey' ,
+            },
+        ],
+        
+        
     )
     return table
 

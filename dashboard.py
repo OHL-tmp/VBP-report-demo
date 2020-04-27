@@ -27,6 +27,8 @@ from modal_dashboard_domain_selection import *
 BASE_PATH = pathlib.Path(__file__).parent.resolve()
 DATA_PATH = BASE_PATH.joinpath("Data").resolve()
 
+#modebar display
+button_to_rm=['zoom2d', 'pan2d', 'select2d', 'lasso2d', 'zoomIn2d', 'zoomOut2d', 'autoScale2d', 'hoverClosestCartesian','hoverCompareCartesian','hoverClosestGl2d', 'hoverClosestPie', 'toggleHover','toggleSpikelines']
 
 app = dash.Dash(__name__, url_base_pathname='/vbc-demo/contract-manager/')
 
@@ -97,7 +99,7 @@ def create_layout():
     load_data()
     return html.Div(
                 [ 
-                    html.Div([Header_mgmt(app, True, False, False, False)], style={"height":"6rem"}, , className = "sticky-top navbar-expand-lg"),
+                    html.Div([Header_mgmt(app, True, False, False, False)], style={"height":"6rem"}, className = "sticky-top navbar-expand-lg"),
                     
                     html.Div(
                         [
@@ -179,8 +181,8 @@ def div_overall_performance():
                     html.P("As of June 30th.", style={"color":"#000", "font-size":"0.8rem"}),
                     dbc.Row(
                         [
-                            dbc.Col(dcc.Graph(figure=bargraph_overall1), width=7),
-                            dbc.Col(dcc.Graph(figure=waterfall_overall1), width=5),
+                            dbc.Col(dcc.Graph(figure=bargraph_overall1,config={'modeBarButtonsToRemove': button_to_rm,'displaylogo': False,}), width=7),
+                            dbc.Col(dcc.Graph(figure=waterfall_overall1,config={'modeBarButtonsToRemove': button_to_rm,'displaylogo': False,}), width=5),
                         ],
                     ),
                 ],
@@ -265,7 +267,7 @@ def card_sub1_volumn_based_measures(volumn_measure, fig, tab,size):
     if tab=='dash':
         figure=html.Div([fig],style=style)
     else:
-        figure=dcc.Graph(figure=fig,style=style)
+        figure=dcc.Graph(figure=fig,style=style,config={'modeBarButtonsToRemove': button_to_rm,'displaylogo': False,})
 
     return html.Div(
 	    		[
@@ -304,12 +306,12 @@ def card_sub2_volumn_based_measures(volumn_measure,fig1,fig2,tab1,tab2,height1,h
     if tab1=='dash':
         figure1=html.Div([fig1],style=style1)
     else:
-        figure1=dcc.Graph(figure=fig1,style=style1)
+        figure1=dcc.Graph(figure=fig1,style=style1,config={'modeBarButtonsToRemove': button_to_rm,'displaylogo': False,})
     
     if tab2=='dash':
         figure2=html.Div([fig2],style=style2)
     else:
-        figure2=dcc.Graph(figure=fig2, style=style2)
+        figure2=dcc.Graph(figure=fig2, style=style2,config={'modeBarButtonsToRemove': button_to_rm,'displaylogo': False,})
 
     return html.Div(
 			    [
@@ -419,7 +421,7 @@ def card_overview_value_based_measures():
                         ),
                         
                         dcc.Graph(style={"height":"22rem"}, id = "bubble_graph_domain",
-                            figure = bubblegraph(df_domain_perform,[0,1],'Domain'))
+                            figure = bubblegraph(df_domain_perform,[0,1],'Domain'),config={'modeBarButtonsToRemove': button_to_rm,'displaylogo': False,})
                     ]
                 ),
                 className="mb-3",
@@ -496,7 +498,7 @@ def card_sub_value_based_measures():
                         html.Div(
                             [
                                 html.Div(id = "graph-container-domain-selected-1", style={"max-height":"20rem"}),
-                                dcc.Graph(id = "graph-container-domain-selected-2", style={"height":"15rem"}),
+                                dcc.Graph(id = "graph-container-domain-selected-2", style={"height":"15rem"},config={'modeBarButtonsToRemove': button_to_rm,'displaylogo': False,}),
                             ],
                         ),
                     ]
@@ -848,4 +850,4 @@ def generate_measure_watchlist(n, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, 
 
 
 if __name__ == "__main__":
-    app.run_server(host="127.0.0.1",debug=True, port = 8052)
+    app.run_server(host="127.0.0.1",debug=True)
