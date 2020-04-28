@@ -23,9 +23,33 @@ from modal_simulation_measure_selection import *
 from contract_calculation import *
 from modal_simulation_input import *
 
+
+
 df_sim_rev=pd.read_csv("data/Output_Pharma_Net_Revenue.csv")
 df_sim_rebate=pd.read_csv("data/Output_Rebate.csv")
 df_sim_cost=pd.read_csv("data/Total_Cost.csv")
+
+## setup
+#df_setup=pd.read_csv("data/setup.csv")
+df_setup1=pd.read_csv("data/setup_1.csv")
+df_setup2=pd.read_csv("data/setup_2.csv")
+## 初始化
+global measures_select,df_setup_filter
+
+df_setup_filter=pd.read_csv('data/df_setup_filter.csv')
+measures_select=['Cost & Utilization Reduction', 'Improving Disease Outcome', 'CHF Related Average Cost per Patient', 'CHF Related Hospitalization Rate', 'NT-proBNP Change %', 'LVEF LS Mean Change %']
+domain_index=[0,3]
+domain1_index=[1,2]
+domain2_index=[4,5]
+domain3_index=[]
+domain4_index=[]
+domain5_index=[]
+list_forborder=[[0, True], [0, False], [1, True], [1, False], [2, True], [2, False], [3, True], [3, False], [4, True], [4, False]]
+percent_list=[2,4,7,8,10,11,12,13,14,15,16,17,19,20,22,23,24,26,27,28]
+dollar_list=[1,3,5,6]
+
+
+                    
 
 df_factor_doc=pd.read_csv("data/confounding_factors_doc.csv")
 
@@ -73,6 +97,191 @@ def create_layout():
                 style={"background-color":"#f5f5f5"},
             )
 
+def table_setup(df,rows):
+    
+    df=df[df['id'].isin(rows)]
+    
+    table=dash_table.DataTable(
+        data=df.to_dict('records'),
+        id='computed-table',
+        columns=[
+        {"name": '', "id":'measures'} ,
+        {"name": '', "id":'recom_value'} ,
+        {"name": 'Recommended', "id":'tarrecom_value'} ,
+        {"name": 'User Defined', "id":'taruser_value', 'editable':True,} ,
+        {"name": 'Recommended', "id":'probrecom'} ,
+        {"name": 'User Defined', "id":'probuser'} ,
+        {"name": 'Recommended', "id":'weight_recom'} ,
+        {"name": 'User Defined', "id":'weight_user', 'editable':True,} , 
+        {"name": 'highlight_recom', "id":'highlight_recom'} ,
+        {"name": 'highlight_user', "id":'highlight_user'} ,
+        {"name": 'green_thres', "id":'green_thres'} ,
+        {"name": 'yellow_thres', "id":'yellow_thres'} ,
+        {"name": 'id', "id":'id'} ,
+        ], 
+        #row_selectable='multi',        
+        
+
+        style_data_conditional=[
+            { 'if': {'row_index':c[0],'column_editable': c[1] }, 
+             'color': 'grey', 
+             'backgroundColor': 'white',
+             'font-family': 'NotoSans-CondensedLight',
+             'font-weight':'bold', 
+             'border':'0px',
+             'border-bottom': '1px solid grey',
+             'border-top': '1px solid grey',
+             #'border-right': '0px',
+     
+              } if (c[0] in domain_index) and (c[1]==False) else 
+            { 'if': {'row_index':c[0] ,'column_editable': c[1],},   
+             'border-bottom': '1px solid blue', 
+             'border-top': '1px solid grey', 
+             #'border-right': '0px',    
+              } if (c[0] in domain_index) and (c[1]==True) else 
+            {
+            'if': {'row_index':c[0] ,'column_editable': c[1], },
+            'border': '1px solid blue',
+            } if not(c[0] in domain_index) and (c[1]==True) else 
+            { 'if': {'row_index':c[0] ,'column_editable': c[1],},   
+             'border': '0px',       
+             #'border-right': '0px',    
+              }
+            for c in list_forborder
+        
+    ]+[{
+            'if': {
+                'column_id': 'probrecom',
+                'filter_query': '{highlight_recom} eq "green"'
+            },
+            'backgroundColor': 'green',
+            'color': 'white',
+        },
+        {
+            'if': {
+                'column_id': 'probrecom',
+                'filter_query': '{highlight_recom} eq "yellow"'
+            },
+            'backgroundColor': 'yellow',
+            'color': 'white',
+        },
+        {
+            'if': {
+                'column_id': 'probrecom',
+                'filter_query': '{highlight_recom} eq "red"'
+            },
+            'backgroundColor': 'red',
+            'color': 'white',
+        },
+            {
+            'if': {
+                'column_id': 'probuser',
+                'filter_query': '{highlight_user} eq "green"'
+            },
+            'backgroundColor': 'green',
+            'color': 'white',
+        },
+        {
+            'if': {
+                'column_id': 'probuser',
+                'filter_query': '{highlight_user} eq "yellow"'
+            },
+            'backgroundColor': 'yellow',
+            'color': 'white',
+        },
+        {
+            'if': {
+                'column_id': 'probuser',
+                'filter_query': '{highlight_user} eq "red"'
+            },
+            'backgroundColor': 'red',
+            'color': 'white',
+        },
+    
+    ],
+        style_cell={
+            'textAlign': 'center',
+            'font-family':'NotoSans-Regular',
+            'fontSize':12,
+            'border':'0px',
+            'height': '1.5rem',
+        },
+        style_cell_conditional=[
+            
+        {
+            'if': {
+                'column_id': 'recom_value',
+            },
+            'backgroundColor': 'grey',
+            'color': 'black',
+        },
+        {
+            'if': {
+                'column_id': 'tarrecom_value',
+            },
+            'backgroundColor': 'grey',
+            'color': 'black',
+        },
+        {
+            'if': {
+                'column_id': 'weight_recom',
+            },
+            'backgroundColor': 'grey',
+            'color': 'black',
+        },
+            
+        
+        {
+            'if': {
+                'column_id': 'highlight_recom',
+            },
+            'display':'none'
+        },
+        {
+            'if': {
+                'column_id': 'highlight_user',
+            },
+            'display':'none'
+        },
+        {
+            'if': {
+                'column_id': 'green_thres',
+            },
+            'display':'none'
+        },
+        {
+            'if': {
+                'column_id': 'yellow_thres',
+            },
+            'display':'none'
+        }, 
+        {
+            'if': {
+                'column_id': 'id',
+            },
+            'display':'none'
+        }, 
+        ],
+        style_table={
+            'back':  colors['blue'],
+        },
+        style_header={
+            'height': '2.5rem',
+            'minWidth': '3rem',
+            'maxWidth':'3rem',
+            'whiteSpace': 'normal',
+            'backgroundColor': '#f1f6ff',
+            'fontWeight': 'bold',
+            'font-family':'NotoSans-CondensedLight',
+            'fontSize':14,
+            'color': '#1357DD',
+            'text-align':'center',
+            'border':'0px solid grey',
+            'text-decoration':'none'
+        },
+                
+    )
+    return table 
 
 def tab_setup():
 	return html.Div(
@@ -136,6 +345,7 @@ def card_performance_measure_setup():
                     [
                         card_target_patient(),
                         card_outcome_measure(),
+                        
                         card_overall_likelihood_to_achieve(),
                     ]
                 ),
@@ -291,8 +501,9 @@ def card_outcome_measure():
                             style={"padding-right":"1.5rem", "padding-left":"0rem"}
                             
                         ),
-                        card_measure_modifier(domain_ct),
+#                        card_measure_modifier(domain_ct),
 #                        card_measure_modifier(),
+                        html.Div([table_setup(df_setup1,[0,1,2,9,11])],id='table_setup'),
                     ]
                 ),
                 className="mb-3",
@@ -711,6 +922,7 @@ def tab_result():
 					        dbc.Collapse(
 					            collapse_result_1(),
 					            id="collapse_result_1",
+                                is_open=True,
 					        ),
 					    ]
 					),
@@ -726,6 +938,7 @@ def tab_result():
 					        dbc.Collapse(
 					            collapse_result_2(),
 					            id="collapse_result_2",
+                                is_open=True,
 					        ),
 					    ]
 					),
@@ -741,6 +954,7 @@ def tab_result():
 					        dbc.Collapse(
 					            collapse_result_3(),
 					            id="collapse_result_3",
+                                is_open=True,
 					        ),
 					    ]
 					),
@@ -848,8 +1062,10 @@ def collapse_confounding_factors():
 
 app.layout = create_layout()
 
-#link to model
 
+
+#link to model
+'''
 @app.callback(
     [Output('tab_container', 'active_tab'),
     Output('sim_result_box_1','figure'),
@@ -1085,7 +1301,7 @@ def overall_like(l1,l2,l3,l4,l5,l6,l7,l8,l9,l10,l11,l12,l13,l14,l15,l16,l17,l18,
             return '',{"background-color": '#ffffff'}
     else:
         return '',{"background-color": '#ffffff'}
-
+'''
 
 #input modal measure
 @app.callback(
@@ -1248,7 +1464,7 @@ def toggle_collapse_domain_selection_measures_6(v1):
     if measure_count > 0: 
         return  "primary", True, u"{} measures selected".format(measure_count)
     return "light", False, ""   
-
+'''
 ##update outcome measures
 def show_domain_card(color):
     if color == 'primary':
@@ -1727,24 +1943,6 @@ def show_measure_row_6(v1, m1, m2, m3, m4):
     return h1, h2, h3, h4
 
 '''
-# contratual
-@app.callback(
-    Output('recom-max-pos-adj', 'children'),
-    [Input('input-max-pos-adj', 'value')]
-    )
-def show_max_pos_adj(v):
-    if v:
-        return '{:.0%}'.format(v/100)
-    return ""
-
-@app.callback(
-    Output('recom-max-neg-adj', 'children'),
-    [Input('input-max-neg-adj', 'value')]
-    )
-def show_max_neg_adj(v):
-    if v:
-        return '{:.0%}'.format(v/100)
-    return ""'''
 
 
 # results
@@ -1853,9 +2051,246 @@ def toggle_popover(n1, n2, is_open):
 		return not is_open
 	return is_open	
 
+@app.callback(
+    Output('table_setup', 'children'),
+#    Output('table_setup', 'hidden'),
+#    [Output('computed-table', 'data'),
+#    Output('computed-table', 'selected_row_ids')],
+    [Input(f'dashboard-card-domain-selection-{d+1}', 'color') for d in range(domain_ct)]
+    + [Input(f'checklist-domain-measures-lv2-1-{n+1}', 'value') for n in range(4)]
+    + [Input(f'checklist-domain-measures-lv2-2-{n+1}', 'value') for n in range(4)]
+    + [Input(f'checklist-domain-measures-lv2-4-1', 'value')]
+    + [Input(f'checklist-domain-measures-lv2-5-1', 'value')]
+    + [Input(f'checklist-domain-measures-lv2-6-1', 'value')]
+    +[Input('target-patient-input','value')]
+    #+[Input('computed-table', 'data_timestamp')],
+    #[State('computed-table', 'data')]
+    )
+def update_table(d1,d2,d3,d4,d5,d6,mc1,mc2,mc3,mc4,mc5,mc6,mc7,mc8,mc9,mc10,mc11,cohort):#,timestamp, data
+    global domain_index,domain1_index,domain2_index,domain3_index,domain4_index,domain5_index,list_forborder,df_setup_filter,measures_select,df_setup
+    if cohort == 'CHF+AF (Recommended)':
+        df_setup = df_setup1
+    else:
+        df_setup = df_setup2
+    domain_selected = []
+    for i in range(6):
+        if eval('d' + str(i+1)) == 'primary':
+            domain_selected.append(domain_set[i])
+    measure_selected = []
+    for i in range(11):
+        if eval('mc'+str(i+1)) and len(eval('mc'+str(i+1))) > 0:
+            measure_selected.extend(eval('mc'+str(i+1)))
+    #ctx = dash.callback_context.triggered
+    #print(ctx)
+    #triggered = dash.callback_context.triggered[0]['prop_id']
+        
+    #if triggered == 'dashboard-card-domain-selection-1.color':
+    measures_select = domain_selected + measure_selected
+    #print(measures_select)
+    #df=df_setup[df_setup['measures'].isin(measures_select)]
+    rows=df_setup[df_setup['measures'].isin(measures_select)]['id'].to_list()
+    
+    temp=df_setup[df_setup['measures'].isin(measures_select)]#pd.DataFrame(data)
+    domain_index=[]
+    domain1_index=[]
+    domain2_index=[]
+    domain3_index=[]
+    domain4_index=[]
+    domain5_index=[]
+    list_forborder=[]
+    #df_setup_filter=df
+    
+    for i in range(len(temp)):
+        list_forborder.append([i,True])
+        list_forborder.append([i,False])
+        if temp.values[i,0] in ['Cost & Utilization Reduction','Improving Disease Outcome','Increasing Patient Safety','Enhancing Care Quality','Better Patient Experience']:
+            domain_index.append(i)
+            
+    for i in range(len(domain_index)):
+        for j in range(len(temp)):
+            if i==len(domain_index)-1:
+                if(j>domain_index[i]):
+                    eval('domain'+str(i+1)+'_index').append(j)
+            else: 
+                if (j>domain_index[i]) & (j<domain_index[i+1]):
+                    eval('domain'+str(i+1)+'_index').append(j)
+                    
+    return table_setup(df_setup,rows)
+    
+
+#    return False #table_setup(df)
+
+@app.callback(
+    Output('computed-table', 'data'),
+    [Input('computed-table', 'data_timestamp')],
+    [State('computed-table', 'data')])
+def update_columns(timestamp, data):
+    #df_setup_filter=pd.read_csv('data/df_setup_filter.csv')
+    #print(measures_select)
+    #print(pd.DataFrame(data)['measures'].to_list())
+    #global measures_select,df_setup_filter
+    #print(set(measures_select)==set(pd.DataFrame(data)['measures'].to_list()))
+    #if set(measures_select)==set(pd.DataFrame(data)['measures'].to_list()):
+    
+
+    #print(domain_index)
+    #print(domain1_index)
+    #print(domain2_index)
+    #print(domain1_index+domain2_index+domain3_index+domain4_index+domain5_index)
+    weight_1=0
+    weight_2=0
+    weight_3=0
+    weight_4=0
+    weight_5=0 
+    for i in domain1_index+domain2_index+domain3_index+domain4_index+domain5_index:
+        #print(i)
+        row=data[i]
+        row['weight_user']=str(row['weight_user']).replace('$','').replace('%','')
+        row['taruser_value']=str(row['taruser_value']).replace('$','').replace('%','')
+                       
+        if i in domain1_index:
+            weight_1=weight_1+float(row['weight_user'])
+        if i in domain2_index:
+            weight_2=weight_2+float(row['weight_user'])
+        if i in domain3_index:
+            weight_3=weight_3+float(row['weight_user'])
+        if i in domain4_index:
+            weight_4=weight_4+float(row['weight_user'])
+        if i in domain5_index:
+            weight_5=weight_5+float(row['weight_user'])
+            
+        row['weight_user']= '{}%'.format(row['weight_user']) 
+        
+        if row['measures'] in ["LVEF LS Mean Change %", "Change in Self-Care Score", "Change in Mobility Score", "DOT", "PDC", "MPR"] :
+           # print(row['taruser_value'])
+            if float(row['taruser_value'])<=float(row['yellow_thres']):
+                row['highlight_user']='yellow'
+                row['probuser']='Mid'
+                if float(row['taruser_value'])<=float(row['green_thres']):
+                    row['highlight_user']='green'
+                    row['probuser']='High'
+            else:
+                row['highlight_user']='red'
+                row['probuser']='Low'
+                
+        else:
+            #print(row)
+            if float(row['taruser_value'])>=float(row['yellow_thres']):
+                row['highlight_user']='yellow'
+                row['probuser']='Mid'
+                if float(row['taruser_value'])>=float(row['green_thres']):
+                    row['highlight_user']='green'
+                    row['probuser']='High'
+            else:
+                row['highlight_user']='red'
+                row['probuser']='Low'
+            
+        if i in percent_list:
+            row['taruser_value']='{}%'.format(row['taruser_value'])
+        else:
+            row['taruser_value']='${}'.format(row['taruser_value']) 
+    
+    j=0
+    for i in domain_index:
+        j=j+1
+        data[i]['taruser_value']=''
+        data[i]['weight_user']=str(eval('weight_'+str(j)))+'%'
+#else:
+#    data=df_setup_filter.to_dict('records')
+
+    return data #,rows
+
+@app.callback(
+    [Output('tab_container', 'active_tab'),
+    Output('sim_result_box_1','figure'),
+    Output('sim_result_table_1','children'),
+    Output('sim_result_box_2','figure'),
+    Output('sim_result_table_2','children'),
+    Output('sim_result_box_3','figure'),
+    Output('sim_result_table_3','children')],
+    [Input('button-simulation-submit', 'n_clicks'),
+    Input('recom-pos-perf','children'),
+    Input('recom-neg-perf','children'),
+    Input('input-max-pos-adj','value'),
+    Input('input-max-neg-adj','value'),
+    Input('input-pos-perform', 'value'),
+    Input('input-neg-perform', 'value'),
+    Input('input-pos-adj', 'value'),
+    Input('input-neg-adj', 'value'),
+    Input('target-patient-recom','children'),
+    Input('target-patient-input','value'),
+    Input('input-rebate','value'),
+    Input('input-base-rebate','value'),]
+    +[Input('computed-table','derived_virtual_data')]
+)
+def simulation(submit_button, re_pos_perf, re_neg_perf, re_pos_adj, re_neg_adj, in_pos_perf, in_neg_perf, in_pos_adj, in_neg_adj, cohort_recom, cohort_selected, rebate_novbc, rebate_vbc,data):
+#    m1,m2,m3,m4,t1,t2,t3,t4,w1,w2,w3,w4):
+    if cohort_selected == 'CHF+AF (Recommended)':
+        df = df_setup1
+    else:
+        df = df_setup2
+    triggered = [t["prop_id"] for t in dash.callback_context.triggered]
+    submit = len([1 for i in triggered if i == "button-simulation-submit.n_clicks"])
+    if submit:
+        
+        dff = df if data is None else pd.DataFrame(data)
+        
+        input1 = {'Perf_Range_U_Min': [1], 
+                    'Perf_Range_U_Max': [float(re_pos_perf[:-1])/100], 
+                    'Adj_Limit_U': [re_pos_adj/100],
+                    'Perf_Range_L_Min': [1],
+                    'Perf_Range_L_Max': [float(re_neg_perf[:-1])/100],
+                    'Adj_Limit_L': [re_neg_adj/100]} 
+        Recom_Contract = pd.DataFrame(input1, columns = ['Perf_Range_U_Min','Perf_Range_U_Max','Adj_Limit_U','Perf_Range_L_Min','Perf_Range_L_Max', 'Adj_Limit_L'])
+        
+#        selected_measure = []
+        measure_list = list(dff['measures'])
+        measure_name = []
+        target_list = []
+        weight_list = []
+        for i in range(len(measure_list)):
+            if measure_list[i] not in ['Cost & Utilization Reduction','Improving Disease Outcome','Increasing Patient Safety','Enhancing Care Quality','Better Patient Experience']:
+                measure_name.append(measure_list[i])
+                target_list.append(float(str(list(dff['taruser_value'])[i]).replace('$','').replace('%','')))
+                weight_list.append(float(str(list(dff['weight_user'])[i]).replace('$','').replace('%','')))  
+                
+        print(target_list)
+#        target_list = [float(str(i).replace('$','').replace('%','')) for i in  list(dff['taruser_value'])] 
+#        weight_list = [float(str(i).replace('$','').replace('%','')) for i in list(dff['weight_user'])]
+#        for i in range(27):
+#            if eval('h'+str(i+1)) ==False:
+#                selected_measure.append(i+1)
+#        for k in selected_measure:
+#            measure_name.append(eval('m'+str(i+1)))
+#            target_list.append(eval('t'+str(i+1)))
+#            weight_list.append(eval('w'+str(i+1)))
+        
+#        print(selected_measure,measure_name,target_list,weight_list)
+        input2 = {'Measure': measure_name, 
+                'Target': target_list, 
+                'Weight': list(np.array(weight_list)/100)} 
+        UD_Measure = pd.DataFrame(input2, columns = ['Measure', 'Target', 'Weight']) 
+        UD_Measure['Target'] = UD_Measure.apply(lambda x: x['Target']/100 if x['Measure'] in percent_input else x['Target'], axis = 1)
+
+        input3 = {'Perf_Range_U_Min': [1], 
+                        'Perf_Range_U_Max': [in_pos_perf/100], 
+                        'Adj_Limit_U': [in_pos_adj/100],
+                        'Perf_Range_L_Min': [1],
+                        'Perf_Range_L_Max': [in_neg_perf/100],
+                        'Adj_Limit_L': [in_neg_adj/100]} 
+        UD_Contract = pd.DataFrame(input3, columns = ['Perf_Range_U_Min','Perf_Range_U_Max','Adj_Limit_U','Perf_Range_L_Min','Perf_Range_L_Max', 'Adj_Limit_L']) 
+
+
+        t1,t2,t3=Contract_Calculation(Recom_Contract, UD_Measure,UD_Contract,cohort_selected,rebate_novbc/100, rebate_vbc/100)
+        t1.reset_index(inplace = True)
+        t2.reset_index(inplace = True)
+        t3.reset_index(inplace  =True)
+
+        return 'tab-1',sim_result_box(t1),table_sim_result(t1),sim_result_box(t2),table_sim_result(t2),sim_result_box(t3),table_sim_result(t3)
+    return 'tab-0',{},[],{},[],{},[]
 
 if __name__ == "__main__":
-    app.run_server(host="127.0.0.1",debug=True, port = 8052)
+    app.run_server(host="127.0.0.1",debug=True)
 
 
 
