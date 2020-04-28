@@ -23,6 +23,8 @@ from contract_calculation import *
 
 df_sim_rev=pd.read_csv("data/Output_Pharma_Net_Revenue.csv")
 df_sim_rebate=pd.read_csv("data/Output_Rebate.csv")
+df_sim_cost=pd.read_csv("data/Total_Cost.csv")
+
 df_factor_doc=pd.read_csv("data/confounding_factors_doc.csv")
 
 
@@ -748,8 +750,8 @@ def collapse_result_3():
             		[
             			dbc.Row(
             				[
-            					dbc.Col(html.Img(src=app.get_asset_url("logo-demo.png")), width=6),
-            					dbc.Col(html.Img(src=app.get_asset_url("logo-demo.png")), width=6)
+            					dbc.Col(html.Div([dcc.Graph(id = 'sim_result_box_3',style={"height":"50vh", "width":"90vh"},config={'modeBarButtonsToRemove': button_to_rm,'displaylogo': False,})]),width=6 ),
+            					dbc.Col(html.Div(id = 'sim_result_table_3'), width=6)
             				]
             			)
             		]

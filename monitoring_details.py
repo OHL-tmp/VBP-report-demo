@@ -22,7 +22,6 @@ from modal_drilldown_tableview import *
 
 
 df_drilldown=pd.read_csv("data/drilldown_sample_6.csv")
-dimensions=df_drilldown.columns[0:12]
 df_drill_waterfall=pd.read_csv("data/drilldown waterfall graph.csv")
 df_driver=pd.read_csv("data/Drilldown Odometer.csv")
 df_driver_all=pd.read_csv("data/Drilldown All Drivers.csv")
@@ -35,6 +34,11 @@ for i in list(df_drilldown.columns[0:14]):
     for j in list(df_drilldown[i].unique()):
         all_dimension.append([i,j])
 all_dimension=pd.DataFrame(all_dimension,columns=['dimension','value'])
+
+#for modify criteria list
+dimensions = ['Age Band' , 'Gender' , 'Comorbidity Type' , 'Risk Score Band' , 'NYHA Class' , 'Medication Adherence' ,  'Weight Band' , 'Comorbidity Score' , 'Ejection Fraction' , 'Years Since HF Diagnosis' , 'Prior Use of ACE/ARB' ]
+
+disable_list=['Weight Band','Comorbidity Score','Ejection Fraction','Years Since HF Diagnosis','Prior Use of ACE/ARB']
 
 # Path
 BASE_PATH = pathlib.Path(__file__).parent.resolve()
@@ -356,6 +360,7 @@ def card_graph1_performance_drilldown():
                 style={"box-shadow":"0 4px 8px 0 rgba(0, 0, 0, 0.05), 0 6px 20px 0 rgba(0, 0, 0, 0.05)", "border":"none", "border-radius":"0.5rem"}
             )
 
+    
 def mod_criteria_button():
     return [
                                 dbc.Button(
@@ -370,7 +375,7 @@ def mod_criteria_button():
                                         html.Div(
                                             [
                                                 dbc.RadioItems(
-                                                    options = [{'label':c , 'value':c} for c in dimensions
+                                                    options = [{'label':c , 'value':c,'disabled' : False} if c not in disable_list else {'label':c , 'value':c,'disabled' : True} for c in dimensions
                                                               ],
                                                     value = "Risk Score Band",
                                                     labelCheckedStyle={"color": "#057aff"},

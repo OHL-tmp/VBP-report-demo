@@ -1024,13 +1024,13 @@ def dashtable_lv3(df,dimension,tableid,row_select):#row_select: numeric 0 or 1
         id=tableid,
         columns=[
         {"name": ["", dimension], "id": dimension},
-        {"name": ["Total Episode Cost", "YTD Avg Episode Cost"], "id": "YTD Avg Episode Cost",'type': 'numeric',"format":FormatTemplate.money(0)},
-        {"name": ["Total Episode Cost", "% Cost Diff from Target"], "id": "% Cost Diff from Target",'type': 'numeric',"format":FormatTemplate.percentage(1)},
-        {"name": ["Total Episode Cost", "Contribution to Overall Performance Difference"], "id": "Contribution to Overall Performance Difference",'type': 'numeric',"format":FormatTemplate.percentage(1)},
+        {"name": ["Average CHF Related Cost", "YTD Avg Cost"], "id": "YTD Avg Episode Cost",'type': 'numeric',"format":FormatTemplate.money(0)},
+        {"name": ["Average CHF Related Cost", "% Diff from Benchmark"], "id": "% Cost Diff from Target",'type': 'numeric',"format":FormatTemplate.percentage(1)},
+        {"name": ["Average CHF Related Cost", "Contribution to Overall Performance Difference"], "id": "Contribution to Overall Performance Difference",'type': 'numeric',"format":FormatTemplate.percentage(1)},
         {"name": ["Utilization Rate", "YTD Avg Utilization Rate"], "id": "YTD Avg Utilization Rate",'type': 'numeric',"format":Format( precision=1, scheme=Scheme.fixed,),},
-        {"name": ["Utilization Rate", "% Util Diff from Target"], "id": "% Util Diff from Target",'type': 'numeric',"format":FormatTemplate.percentage(1)},
+        {"name": ["Utilization Rate", "% Diff from Benchmark"], "id": "% Util Diff from Target",'type': 'numeric',"format":FormatTemplate.percentage(1)},
         {"name": ["Unit Cost", "YTD Avg Cost per Unit"], "id": "YTD Avg Cost per Unit",'type': 'numeric',"format":FormatTemplate.money(0)},
-        {"name": ["Unit Cost", "% Unit Cost Diff from Target"], "id": "% Unit Cost Diff from Target",'type': 'numeric',"format":FormatTemplate.percentage(1)},
+        {"name": ["Unit Cost", "% Diff from Benchmark"], "id": "% Unit Cost Diff from Target",'type': 'numeric',"format":FormatTemplate.percentage(1)},
     ],
         merge_duplicate_headers=True,
         sort_action="custom",
@@ -1307,27 +1307,36 @@ def table_driver_all(df):
 ####################################################################################################################################################################################
     
 def sim_result_box(df_sim_result):
-
-    df=df_sim_result.iloc[[2,5,8]]
+    ### k used for pick color
+    k=1 
     
-    x=df['Contract Type'].to_list()[1:3]
-    median=df['Best Estimate'].to_list()[1:3]
-    fillcolor=['rgba(18,85,222,0)','rgba(246,177,17,0)']
-    markercolor=[colors['blue'],colors['yellow']]
+    if len(df_sim_result)==10:
+        df=df_sim_result.iloc[[0,3,6,9]]
+        k=k-1
+    else:df=df_sim_result.iloc[[2,5,8]]
+    
+    n=len(df)
+    
+    x=df['Contract Type'].to_list()[1:n]
+    median=df['Best Estimate'].to_list()[1:n]
     base=df.values[0,2]
     
+    #color for bar and box
+    fillcolor=['rgba(226,225,253,0)','rgba(18,85,222,0)','rgba(246,177,17,0)']
+    markercolor=['rgba(226,225,253,0.7)','rgba(191,191,191,0.7)','rgba(18,85,222,0.7)','rgba(246,177,17,0.7)']
+        
     annotations = []
     
     if df.values[1,3]<df.values[1,4]:
-        lowerfence=df['Worst'].to_list()[1:3]
-        q1=df['Lower End'].to_list()[1:3]
-        q3=df['Higher End'].to_list()[1:3]
-        upperfence=df['Best'].to_list()[1:3]
+        lowerfence=df['Worst'].to_list()[1:n]
+        q1=df['Lower End'].to_list()[1:n]
+        q3=df['Higher End'].to_list()[1:n]
+        upperfence=df['Best'].to_list()[1:n]
     else:
-        lowerfence=df['Best'].to_list()[1:3]
-        q1=df['Higher End'].to_list()[1:3]
-        q3=df['Lower End'].to_list()[1:3]
-        upperfence=df['Worst'].to_list()[1:3]
+        lowerfence=df['Best'].to_list()[1:n]
+        q1=df['Higher End'].to_list()[1:n]
+        q3=df['Lower End'].to_list()[1:n]
+        upperfence=df['Worst'].to_list()[1:n]
         
     
     fig_sim =go.Figure()
@@ -1336,14 +1345,14 @@ def sim_result_box(df_sim_result):
             go.Bar(
             #name='Revenue before adj', 
             x=x,
-            y=[base,base],
-            text=df.values[0,2],
+            y=[base]*(n-1),
+            #text=base,
             textposition='none',
             marker=dict(
-                color='rgba(191,191,191,0.5)',
+                color=markercolor[0+k],
                 #opacity=0.7,
                 line=dict(
-                    color='rgba(191,191,191,0)',
+                    color=fillcolor[0+k],
 
                 )
                        ), 
@@ -1351,7 +1360,7 @@ def sim_result_box(df_sim_result):
 
     )
     
-    for i in range(len(df)-1):
+    for i in range(n-1):
         fig_sim.add_trace(
             go.Box(
                 x=[x[i]],       
@@ -1364,17 +1373,17 @@ def sim_result_box(df_sim_result):
                 width=0.2,
                 line_width=3,
                 marker=dict(
-                    color=markercolor[i],
-                    opacity=0.7,
+                    color=markercolor[i+1+k],
+                    #opacity=0.7,
 
                 )
 
             ),  
         )
         annotations.append(dict(xref='x', yref='y',axref='x', ayref='y',
-                        x=0+i, y=df['Best'].to_list()[1:3][i],ax=0.3+i, ay=df['Best'].to_list()[1:3][i],
+                        x=0+i, y=df['Best'].to_list()[1:n][i],ax=0.3+i, ay=df['Best'].to_list()[1:n][i],
                         startstandoff=10,
-                        text='Best: '+str(round(df['Best'].to_list()[1:3][i],1))+'Mn',
+                        text='Best: '+str(round(df['Best'].to_list()[1:n][i],1))+'Mn',
                         font=dict(family='NotoSans-CondensedLight', size=12, color='green'),
                         showarrow=True,
                         arrowhead=2,
@@ -1384,9 +1393,9 @@ def sim_result_box(df_sim_result):
                        )
                   )
         annotations.append(dict(xref='x', yref='y',axref='x', ayref='y',
-                        x=0+i, y=df['Worst'].to_list()[1:3][i],ax=0.3+i, ay=df['Worst'].to_list()[1:3][i],
+                        x=0+i, y=df['Worst'].to_list()[1:n][i],ax=0.3+i, ay=df['Worst'].to_list()[1:n][i],
                         startstandoff=10,
-                        text='Worst: '+str(round(df['Worst'].to_list()[1:3][i],1))+'Mn',
+                        text='Worst: '+str(round(df['Worst'].to_list()[1:n][i],1))+'Mn',
                         font=dict(family='NotoSans-CondensedLight', size=12, color='red'),
                         showarrow=True,
                         arrowhead=2,
@@ -1486,7 +1495,20 @@ def sim_result_box(df_sim_result):
     return fig_sim
 
 def table_sim_result(df):
-    df['scenario']=['Contract','w/o','VBC Payout','Contract with','VBC Payout','(Recommended)','Contract with','VBC Payout','(User Defined)']
+    column1=[]
+    n=len(df)
+    style1=[0,3,6]
+    style2=[1,4,7]
+    style3=[2,5,8]
+    
+    if len(df)==10:
+        column1.append('Baseline')
+        style1=[0,1,4,7]
+        style2=[2,5,8]
+        style3=[3,6,9]
+    column1=column1+['Contract','w/o','VBC Payout','Contract with','VBC Payout','(Recommended)','Contract with','VBC Payout','(User Defined)']
+ 
+    df['scenario']=column1
     
    
     table=dash_table.DataTable(
@@ -1521,7 +1543,7 @@ def table_sim_result(df):
              'border-top': '1px solid grey',
              'border-left': '1px solid grey',
              'border-right': '1px solid grey',
-              } if c in [0,3,6] else 
+              } if c in style1 else 
             
             { 'if': {'row_index':c }, 
              'color': 'black', 
@@ -1529,7 +1551,7 @@ def table_sim_result(df):
              'border-left': '1px solid grey',
              'border-right': '1px solid grey',
              'text-decoration':'underline'
-              } if c in [1,4,7] else 
+              } if c in style2 else 
             { "if": {"row_index":c },
              'font-family': 'NotoSans-CondensedLight',
              'backgroundColor':'rgba(191,191,191,0.7)',
@@ -1538,14 +1560,14 @@ def table_sim_result(df):
              'border-bottom': '1px solid grey',
              'border-left': '1px solid grey',
              'border-right': '1px solid grey',
-              } if c in [2,5,8]  else 
+              } if c in style3  else 
             { "if": {"column_id":"scenario" }, 
              'font-family': 'NotoSans-CondensedLight',
              'backgroundColor':'white',
              'color': 'black',
              'fontWeight': 'bold', 
              'text-decoration':'none'
-              } for c in range(0,10)
+              } for c in range(0,n+1)
         ],
         style_table={
             'back':  colors['blue'],
