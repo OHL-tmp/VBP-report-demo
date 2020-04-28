@@ -6,6 +6,7 @@ import dash_html_components as html
 import dash_bootstrap_components as dbc
 import dash_table
 
+import datetime
 import pandas as pd
 import numpy as np
 
@@ -20,6 +21,7 @@ from figure import *
 
 from modal_simulation_measure_selection import *
 from contract_calculation import *
+from modal_simulation_input import *
 
 df_sim_rev=pd.read_csv("data/Output_Pharma_Net_Revenue.csv")
 df_sim_rebate=pd.read_csv("data/Output_Rebate.csv")
@@ -79,14 +81,7 @@ def tab_setup():
 						[
 							dbc.Col(html.H1("VBC Contract Simulation Setup", style={"padding-left":"2rem","font-size":"3"}), width=9),
 							dbc.Col([
-                                dbc.Button("Edit Assumption", id = 'button-edit-assumption', style={"border-radius":"5rem"}),
-                                dbc.Modal([
-                                    dbc.ModalHeader("Edit Assumption"),
-                                    dbc.ModalBody("模型需要的其他assumptions"),
-                                    dbc.ModalFooter(
-                                        dbc.Button("SUBMIT", id = 'close-edit-assumption')
-                                        )
-                                    ], id = 'modal-edit-assumption'),
+                                modal_simulation_input()
                                 ], 
                                 width=3,
                                 style={"padding-top":"1rem"}),
@@ -161,23 +156,23 @@ def card_target_patient():
                         ),
                         dbc.Row(
                             [
-                                dbc.Col(
-                                    [
-                                        html.H3("Recommended", style={"font-size":"1rem"}),
-                                        html.H5("Class III & IV CHF Patients", style={"font-size":"1rem"}, id = 'target-patient-recom'),
-                                    ], 
-                                    style={"padding":"0.8rem"},
-                                    width=4,
-                                ),
+                                    dbc.Col(
+                                                [html.Div([
+                                                    html.H3("Recommended", style={"font-size":"1rem"}),
+                                                    html.H5("CHF+AF (Recommended)", style={"font-size":"1rem"}, id = 'target-patient-recom'),
+                                                ], hidden = True),],
+                                                style={"padding":"0.8rem"},
+                                                width=4,
+                                            ),
                                 dbc.Col(
                                     [
                                         html.H3("Payer Contract", style={"font-size":"1rem"}),
                                         html.Div([
                                             dcc.Dropdown(
                                                 id = 'target-patient-input',
-                                                options = [{'label':'All Classes', 'value':'All Classes'},
-                                                            {'label':'Class III & IV CHF Patients', 'value':'Class III & IV CHF Patients'}],
-                                                value = 'All Classes',
+                                                options = [{'label':'CHF+AF (Recommended)', 'value':'CHF+AF (Recommended)'},
+                                                            {'label':'All CHF Patients', 'value':'All CHF Patients'}],
+                                                value = 'CHF+AF (Recommended)',
                                                 style={"font-family":"NotoSans-Regular"}
                                             )
                                         ]),
@@ -481,7 +476,38 @@ def card_contract_wo_vbc_adjustment():
                                         type = 'number', debounce = True, persistence = True, persistence_type = 'session',
                                         min = 0, max = 100), 
                                     width=3),
-								dbc.Col(dbc.Button("EDIT Contract Input", style={"border-radius":"5rem", "font-family":"NotoSans-Regular","font-size":"0.8rem"}), width=2),
+								dbc.Col([
+									dbc.Button("Edit Rebate Input", id = 'button-edit-rebate-1', style={"background-color":"#38160f", "border":"none", "border-radius":"10rem", "font-family":"NotoSans-Regular", "font-size":"0.6rem"}),
+									dbc.Modal([
+										dbc.ModalHeader(html.H1("EDIT Rebate Input"), style={"font-size":"1rem"}),
+										dbc.ModalBody([
+											dbc.Row([
+												dbc.Col("# of units"),
+												dbc.Col("Rebates %"),
+												],
+												style={"padding":"1rem"}),
+											dbc.Row([
+												dbc.Col(dbc.InputGroup([
+													dbc.Input(),
+													dbc.InputGroupAddon('~', addon_type = 'append'),
+													dbc.Input(),
+													])),
+												dbc.Col(dbc.InputGroup([
+													dbc.Input(),
+													dbc.InputGroupAddon('%', addon_type = 'append'),
+													])),
+												],
+												style={"padding":"1rem"}),
+											dbc.Row([
+												dbc.Col(html.H4("+ Add another range", style={"font-size":"0.8rem","color":"#1357DD"}), ),
+												],
+												style={"padding":"1rem"}),
+											]),
+										dbc.ModalFooter(
+											dbc.Button('SAVE', id = 'close-edit-rebate-1', size="sm")
+											)
+										], id = 'modal-edit-rebate-1'),
+									], width=2),
                             ],
                             no_gutters=True,
                         ),
@@ -518,6 +544,38 @@ def card_vbc_contract():
                                         {'label':'Formulary upgrade', 'value':'Formulary upgrade'}
                                     ],
                                     value = 'Rebate adjustment'), width=1),
+								dbc.Col([
+									dbc.Button("EDIT Rebate Input", id = 'button-edit-rebate-2', style={"background-color":"#38160f", "border":"none", "border-radius":"10rem", "font-family":"NotoSans-Regular", "font-size":"0.6rem"}),
+									dbc.Modal([
+										dbc.ModalHeader(html.H1("Edit Rebate Input"), style={"font-size":"1rem"}),
+										dbc.ModalBody([
+											dbc.Row([
+												dbc.Col("# of units"),
+												dbc.Col("Rebates %"),
+												],
+												style={"padding":"1rem"}),
+											dbc.Row([
+												dbc.Col(dbc.InputGroup([
+													dbc.Input(),
+													dbc.InputGroupAddon('~', addon_type = 'append'),
+													dbc.Input(),
+													])),
+												dbc.Col(dbc.InputGroup([
+													dbc.Input(),
+													dbc.InputGroupAddon('%', addon_type = 'append'),
+													])),
+												],
+												style={"padding":"1rem"}),
+											dbc.Row([
+												dbc.Col(html.H4("+ Add another range", style={"font-size":"0.8rem","color":"#1357DD"})),
+												],
+												style={"padding":"1rem"}),
+											]),
+										dbc.ModalFooter(
+											dbc.Button('SAVE', id = 'close-edit-rebate-2', size="sm")
+											)
+										], id = 'modal-edit-rebate-2'),
+									], width=2),
                             ],
                             no_gutters=True,
                         ),
@@ -561,7 +619,7 @@ def card_contract_adjust_sub():
                         dbc.Row(
                             [
                                 dbc.Col(html.H2("Performance Level Threshold", style={"color":"#919191","font-size":"0.8rem"}), width=6),
-								dbc.Col(html.Div("115%", id = 'recom-pos-perf', style={"font-family":"NotoSans-Regular","font-size":"0.8rem", "text-align":"center"}), width=3),
+								dbc.Col(html.Div("120%", id = 'recom-pos-perf', style={"font-family":"NotoSans-Regular","font-size":"0.8rem", "text-align":"center"}), width=3),
 								dbc.Col(
                                     dcc.Input(id = 'input-pos-perform',
                                         type = 'number', debounce = True, persistence = True, persistence_type = 'session',
@@ -601,7 +659,7 @@ def card_contract_adjust_sub():
                         dbc.Row(
                             [
                                 dbc.Col(html.H2("Performance Level Threshold", style={"color":"#919191","font-size":"0.8rem"}), width=6),
-								dbc.Col(html.Div("85%", id = 'recom-neg-perf', style={"font-family":"NotoSans-Regular","font-size":"0.8rem", "text-align":"center"}), width=3),
+								dbc.Col(html.Div("80%", id = 'recom-neg-perf', style={"font-family":"NotoSans-Regular","font-size":"0.8rem", "text-align":"center"}), width=3),
 								dbc.Col(
                                     dcc.Input(id = 'input-neg-perform',
                                         type = 'number', debounce = True, persistence = True, persistence_type = 'session',
@@ -890,29 +948,21 @@ def simulation(submit_button, re_pos_perf, re_neg_perf, re_pos_adj, re_neg_adj, 
         UD_Contract = pd.DataFrame(input3, columns = ['Perf_Range_U_Min','Perf_Range_U_Max','Adj_Limit_U','Perf_Range_L_Min','Perf_Range_L_Max', 'Adj_Limit_L']) 
 
         if cohort_selected == cohort_recom:
-            cohort = Recom_Pt_cohort
+            cohort = 'CHF+AF (Recommended)'
         else:
-            cohort = 'Cohort2'
+            cohort = 'All CHF Patients'
 
-        t1,t2=Contract_Calculation(Recom_Contract, UD_Measure,UD_Contract,cohort,rebate_novbc/100, rebate_vbc/100)
+        t1,t2,t3=Contract_Calculation(Recom_Contract, UD_Measure,UD_Contract,cohort,rebate_novbc/100, rebate_vbc/100)
         t1.reset_index(inplace = True)
         t2.reset_index(inplace = True)
+        t3.reset_index(inplace  =True)
 
         return 'tab-1',sim_result_box(t1),table_sim_result(t1),sim_result_box(t2),table_sim_result(t2)
     return 'tab-0',{},[],{},[]
 
 
 
-#input
-@app.callback(
-    Output("modal-edit-assumption", "is_open"),
-    [Input("button-edit-assumption", "n_clicks"), Input("close-edit-assumption", "n_clicks")],
-    [State("modal-edit-assumption", "is_open")],
-    )
-def toggle_modal_simulation_measure_selection(n1, n2, is_open):
-    if n1 or n2:
-        return not is_open
-    return is_open
+
 
 ##input likelihood
 
@@ -925,26 +975,30 @@ def cal_measure_likelihood(recom_like, recom_target, user_target, measure, h):
                 rl = 2
             else:
                 rl = 1
-            
+            if measure in percent_input:
+            	ur_target = user_target/100
+            else: 
+            	ur_target = user_target
+
             if measure in positive_measure:
-                if (user_target-recom_target[0])/recom_target[0] > 0.1:
+                if (ur_target-recom_target[0])/recom_target[0] > 0.1:
                     ul = rl -2
-                elif (user_target-recom_target[0])/recom_target[0] > 0.05:
+                elif (ur_target-recom_target[0])/recom_target[0] > 0.05:
                     ul = rl -1
-                elif (user_target-recom_target[0])/recom_target[0] < -0.05:
+                elif (ur_target-recom_target[0])/recom_target[0] < -0.05:
                     ul = rl +1
-                elif (user_target-recom_target[0])/recom_target[0] < -0.1:
+                elif (ur_target-recom_target[0])/recom_target[0] < -0.1:
                     ul = rl +2
                 else:
                     ul = rl
             else:
-                if (user_target-recom_target[0])/recom_target[0] > 0.1:
+                if (ur_target-recom_target[0])/recom_target[0] > 0.1:
                     ul = rl +2
-                elif (user_target-recom_target[0])/recom_target[0] > 0.05:
+                elif (ur_target-recom_target[0])/recom_target[0] > 0.05:
                     ul = rl +1
-                elif (user_target-recom_target[0])/recom_target[0] < -0.05:
+                elif (ur_target-recom_target[0])/recom_target[0] < -0.05:
                     ul = rl -1
-                elif (user_target-recom_target[0])/recom_target[0] < -0.1:
+                elif (ur_target-recom_target[0])/recom_target[0] < -0.1:
                     ul = rl -2
                 else:
                     ul = rl
@@ -1738,9 +1792,70 @@ def toggle_collapse(n, is_open):
     return is_open
 
 
+#modal-input 
+def parse_contents(contents, filename, date):
+	return html.Div([
+        html.H6(filename),
+        html.H6(datetime.datetime.fromtimestamp(date)),
+        ])
+
+@app.callback(
+	Output('output-data-upload', 'children'),
+	[Input('upload-data', 'contents')],
+	[State('upload-data', 'filename'),
+	State('upload-data','last_modified')]
+	)
+def upload_output(list_of_contents, list_of_names, list_of_dates):
+	if list_of_contents is not None:
+		children = [
+			parse_contents(list_of_contents, list_of_names, list_of_dates) 
+		]
+		return children
+
+
+@app.callback(
+	Output('popover-age', 'is_open'),
+	[Input('button-popover-age', 'n_clicks'), Input('popover-age-submit', 'n_clicks')],
+	[State('popover-age', 'is_open')],
+	)
+def toggle_popover(n1, n2, is_open):
+	if n1 or n2:
+		return not is_open
+	return is_open
+
+@app.callback(
+	Output('modal-edit-assumption', 'is_open'),
+	[Input('button-edit-assumption', 'n_clicks'), Input('close-edit-assumption', 'n_clicks')],
+	[State('modal-edit-assumption', 'is_open')],
+	)
+def toggle_popover(n1, n2, is_open):
+	if n1 or n2:
+		return not is_open
+	return is_open
+
+@app.callback(
+	Output('modal-edit-rebate-1', 'is_open'),
+	[Input('button-edit-rebate-1', 'n_clicks'), Input('close-edit-rebate-1', 'n_clicks')],
+	[State('modal-edit-rebate-1', 'is_open')],
+	)
+def toggle_popover(n1, n2, is_open):
+	if n1 or n2:
+		return not is_open
+	return is_open
+
+@app.callback(
+	Output('modal-edit-rebate-2', 'is_open'),
+	[Input('button-edit-rebate-2', 'n_clicks'), Input('close-edit-rebate-2', 'n_clicks')],
+	[State('modal-edit-rebate-2', 'is_open')],
+	)
+def toggle_popover(n1, n2, is_open):
+	if n1 or n2:
+		return not is_open
+	return is_open	
+
 
 if __name__ == "__main__":
-    app.run_server(host="127.0.0.1",debug=True)
+    app.run_server(host="127.0.0.1",debug=True, port = 8052)
 
 
 

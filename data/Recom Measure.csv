@@ -3,3 +3,7 @@ CHF+AF (Recommended),CHF Related Average Cost per Patient,47566,0.5,48000,High
 CHF+AF (Recommended),CHF Related Hospitalization Rate,0.35,0.25,0.4,High
 CHF+AF (Recommended),NT-proBNP Change %,-0.25,0,0,High
 CHF+AF (Recommended),LVEF LS Mean Change %,0.03,0.25,0,High
+All CHF Patients,CHF Related Average Cost per Patient,33100,0.5,33100,High
+All CHF Patients,CHF Related Hospitalization Rate,0.35,0.25,0.4,High
+All CHF Patients,NT-proBNP Change %,-0.25,0,0,High
+All CHF Patients,LVEF LS Mean Change %,0.03,0.25,0,High
