@@ -353,7 +353,7 @@ def row_measure_modifier_combine(n):
                     [
                         dbc.Col(html.Div(measures_lv2[m]), width=4),
                         dbc.Col(html.Div('$'+str(df_recom_measure[df_recom_measure['Measure'] == measures_lv2[m]]['Baseline']), id = u'measure-base-recom-{}-{}'.format(n+1, m+1)), width=0.5),
-                        dbc.Col(html.Div('$'+str(df_payor_contract_baseline[df_payor_contract_baseline['Measure'] == measures_lv2[m]]['Baseline']) id = u'measure-base-user-{}-{}'.format(n+1, m+1)), width=1),
+                        dbc.Col(html.Div('$'+str(df_payor_contract_baseline[df_payor_contract_baseline['Measure'] == measures_lv2[m]]['Baseline']), id = u'measure-base-user-{}-{}'.format(n+1, m+1)), width=1),
                         dbc.Col(html.Div('$'+str(df_recom_measure[df_recom_measure['Measure'] == measures_lv2[m]]['Target']), id = u'measure-target-recom-{}-{}'.format(n+1, m+1)), width=1),
                         dbc.Col(
                             dcc.Input(id = u'measure-target-user-{}-{}'.format(n+1, m+1), 

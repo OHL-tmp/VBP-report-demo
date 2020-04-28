@@ -707,9 +707,11 @@ def tbl_measure(df_measure_perform,d):
         df['highlight']=df.apply(lambda x : 1 if (x['Performance Diff from Target']<0.05)& (x['Weight']>0.3)  else 0, axis=1)
     else: df['highlight']=1
     
+    percent_list=['Performance Diff from Target','Weight']
+    
     measure_tbl=dash_table.DataTable(
         data=df.to_dict('records'),
-        columns=[ {'id': c, 'name': c} for c in df.columns ],
+        columns=[ {'id': c, 'name': c,'type': 'numeric',"format":FormatTemplate.percentage(1)} if c in percent_list else {'id': c, 'name': c} for c in df.columns ],
         sort_action="native",
         sort_mode='multi',
         style_data={
