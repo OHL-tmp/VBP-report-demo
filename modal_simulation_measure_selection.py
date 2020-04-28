@@ -82,10 +82,10 @@ default_measure = list(df_recom_measure["Measure"])
 
 domain_focus = list(Domain_options.keys())
 
-domain_set = ["Cost & Utilization  Reduction", "Improving Disease Outcome",
+domain_set = ["Cost & Utilization Reduction", "Improving Disease Outcome",
                  "Decreasing Health Disparities", "Increasing Patient Safety",
                  "Enhancing Care Quality", "Better Patient Experience"]
-domain_measure = {"Cost & Utilization  Reduction" : 8, "Improving Disease Outcome" : 10,
+domain_measure = {"Cost & Utilization Reduction" : 8, "Improving Disease Outcome" : 10,
                  "Decreasing Health Disparities" : 0, "Increasing Patient Safety" : 2,
                  "Enhancing Care Quality" : 3, "Better Patient Experience" : 4}
 
