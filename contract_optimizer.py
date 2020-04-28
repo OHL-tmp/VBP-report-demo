@@ -869,7 +869,7 @@ def card_contract_adjust_sub(app):
                                         [
                                             dcc.Input(id = 'input-max-pos-adj',
                                                 type = 'number', debounce = True, persistence = True, persistence_type = 'session',
-                                                min = 0, max = 100, size="6", placeholder = 'input a positive number',style={"text-align":"center"}), 
+                                                min = 0, max = 100, size="6", style={"text-align":"center"}), 
                                             dbc.InputGroupAddon("%", addon_type="append"),
                                         ],
                                         className="mb-3",
@@ -938,7 +938,7 @@ def card_contract_adjust_sub(app):
                                             dbc.InputGroupAddon("-", addon_type="prepend"),
                                             dcc.Input(id = 'input-max-neg-adj',
                                                 type = 'number', debounce = True, persistence = True, persistence_type = 'session',
-                                                min = 0, max = 100, size="6", placeholder = 'input a negative number',style={"text-align":"center"}), 
+                                                min = 0, max = 100, size="6", style={"text-align":"center"}), 
                                             dbc.InputGroupAddon("%", addon_type="append"),
                                         ],
                                         className="mb-3",
@@ -953,7 +953,7 @@ def card_contract_adjust_sub(app):
                                             dbc.InputGroupAddon("-", addon_type="prepend"),
                                             dcc.Input(id = 'input-neg-adj',
                                                 type = 'number', debounce = True, persistence = True, persistence_type = 'session',
-                                                max = 0, size="6",style={"text-align":"center"}), 
+                                                min = 0, max = 100, size="6",style={"text-align":"center"}), 
                                             dbc.InputGroupAddon("%", addon_type="append"),
                                         ],
                                         className="mb-3",
@@ -994,6 +994,7 @@ def tab_result(app):
 					        dbc.Collapse(
 					            collapse_result_1(app),
 					            id="optimizer-collapse_result_1",
+                                is_open = True,
 					        ),
 					    ],
                         style={"padding-top":"1rem"}
@@ -1011,6 +1012,7 @@ def tab_result(app):
 					        dbc.Collapse(
 					            collapse_result_2(app),
 					            id="optimizer-collapse_result_2",
+                                is_open = True,
 					        ),
 					    ],
                         style={"padding-top":"1rem"}
@@ -1028,6 +1030,7 @@ def tab_result(app):
 					        dbc.Collapse(
 					            collapse_result_3(app),
 					            id="optimizer-collapse_result_3",
+                                is_open = True,
 					        ),
 					    ],
                         style={"padding-top":"1rem"}
@@ -2263,8 +2266,9 @@ def update_columns(timestamp, data):
             else:
                 row['highlight_user']='red'
                 row['probuser']='Low'
-            
-        if i in percent_list:
+        
+        if row['measures'] not in ['CHF Related Average Cost per Patient','CHF Related Average IP Cost per Patient','All Causes Average Cost per Patient','All Causes Average IP Cost per Patient']:    
+        
             row['taruser_value']='{}%'.format(row['taruser_value'])
         else:
             row['taruser_value']='${}'.format(row['taruser_value']) 

@@ -761,13 +761,14 @@ def tbl_measure(df_measure_perform,d):
 def tbl_non_contract(df,measures):
     df=df[df['Measure'].isin(measures)]
     
-    percent_list=['Performance Diff from Target','Weight']
+    percent_list=['Performance Diff from Target']
     
     measure_tbl=dash_table.DataTable(
         data=df.to_dict('records'),
         columns=[ {'id': c, 'name': c,'type': 'numeric',"format":FormatTemplate.percentage(1)} if c in percent_list else {'id': c, 'name': c} for c in df.columns ],
         sort_action="native",
         sort_mode='single',
+        sort_by=[{"column_id":"Performance Diff from Target","direction":"desc"},],
         style_data={
             'whiteSpace': 'normal',
             'height': 'auto',
