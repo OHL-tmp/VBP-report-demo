@@ -21,19 +21,12 @@ from figure import *
 from modal_simulation_measure_selection import *
 from contract_calculation import *
 
+from app import app
+
 df_sim_rev=pd.read_csv("data/Output_Pharma_Net_Revenue.csv")
 df_sim_rebate=pd.read_csv("data/Output_Rebate.csv")
 df_factor_doc=pd.read_csv("data/confounding_factors_doc.csv")
 
-
-# Path
-BASE_PATH = pathlib.Path(__file__).parent.resolve()
-DATA_PATH = BASE_PATH.joinpath("Data").resolve()
-
-
-app = dash.Dash(__name__, url_base_pathname='/vbc-demo/contract-optimizer/')
-
-server = app.server
 
 #df_recom_measure = pd.read_csv("data/recom_measure.csv")
 df_payor_contract_baseline = pd.read_csv("data/payor_contract_baseline.csv")
@@ -207,7 +200,7 @@ def card_outcome_measure():
                             [
                                 dbc.Col(
 #                                	dbc.Button("Edit Assumption"),
-                                    modal_dashboard_domain_selection(domain_ct),
+                                    modal_optimizer_domain_selection(domain_ct),
                                     style={"padding-left":"2rem"},
                                     width=4,
                                 ),
@@ -739,7 +732,7 @@ def tab_result():
 					    [
 					        dbc.Button(
 					            "Pharma’s Revenue Projection",
-					            id="collapse_button_result_1",
+					            id="optimizer-collapse_button_result_1",
 					            className="mb-3",
 					            color="light",
 					            block=True,
@@ -747,7 +740,7 @@ def tab_result():
 					        ),
 					        dbc.Collapse(
 					            collapse_result_1(),
-					            id="collapse_result_1",
+					            id="optimizer-collapse_result_1",
 					        ),
 					    ],
                         style={"padding-top":"1rem"}
@@ -756,7 +749,7 @@ def tab_result():
 					    [
 					        dbc.Button(
 					            "Pharma’s Rebate Projection",
-					            id="collapse_button_result_2",
+					            id="optimizer-collapse_button_result_2",
 					            className="mb-3",
 					            color="light",
 					            block=True,
@@ -764,7 +757,7 @@ def tab_result():
 					        ),
 					        dbc.Collapse(
 					            collapse_result_2(),
-					            id="collapse_result_2",
+					            id="optimizer-collapse_result_2",
 					        ),
 					    ],
                         style={"padding-top":"1rem"}
@@ -773,7 +766,7 @@ def tab_result():
 					    [
 					        dbc.Button(
 					            "Plan’s Total Cost Projection for Target Patient",
-					            id="collapse_button_result_3",
+					            id="optimizer-collapse_button_result_3",
 					            className="mb-3",
 					            color="light",
 					            block=True,
@@ -781,7 +774,7 @@ def tab_result():
 					        ),
 					        dbc.Collapse(
 					            collapse_result_3(),
-					            id="collapse_result_3",
+					            id="optimizer-collapse_result_3",
 					        ),
 					    ],
                         style={"padding-top":"1rem"}
@@ -790,7 +783,7 @@ def tab_result():
 					    [
 					        dbc.Button(
 					            "Confounding Factors Needed to be Accounted for in the Contract",
-					            id="collapse_button_confounding_factors",
+					            id="optimizer-collapse_button_confounding_factors",
 					            className="mb-3",
 					            color="light",
 					            block=True,
@@ -798,7 +791,7 @@ def tab_result():
 					        ),
 					        dbc.Collapse(
 					            collapse_confounding_factors(),
-					            id="collapse_confounding_factors",
+					            id="optimizer-collapse_confounding_factors",
 					        ),
 					    ],
                         style={"padding-top":"1rem"}
@@ -895,7 +888,7 @@ def collapse_confounding_factors():
 
 
 
-app.layout = create_layout()
+layout = create_layout()
 
 #link to model
 
@@ -1142,9 +1135,9 @@ def overall_like(l1,l2,l3,l4,l5,l6,l7,l8,l9,l10,l11,l12,l13,l14,l15,l16,l17,l18,
 
 #input modal measure
 @app.callback(
-    Output("modal-centered", "is_open"),
+    Output("optimizer-modal-centered", "is_open"),
     [Input("open-centered", "n_clicks"), Input("close-centered", "n_clicks")],
-    [State("modal-centered", "is_open")],
+    [State("optimizer-modal-centered", "is_open")],
     )
 def toggle_modal_simulation_measure_selection(n1, n2, is_open):
     if n1 or n2:
@@ -1161,10 +1154,10 @@ def toggle_collapse_domain_selection_measures(n, is_open):
 
 for i in range(domain_ct):
     app.callback(
-        [Output(f"collapse-{i+1}", "is_open"), 
-         Output(f"collapse-button-{i+1}","children")],
-        [Input(f"collapse-button-{i+1}", "n_clicks")],
-        [State(f"collapse-{i+1}", "is_open")],
+        [Output(f"optimizer-collapse-{i+1}", "is_open"), 
+         Output(f"optimizer-collapse-button-{i+1}","children")],
+        [Input(f"optimizer-collapse-button-{i+1}", "n_clicks")],
+        [State(f"optimizer-collapse-{i+1}", "is_open")],
     )(toggle_collapse_domain_selection_measures)
 
 
@@ -1176,9 +1169,9 @@ def open_measure_lv2(n, is_open):
 for d in range(len(list(Domain_options.keys()))):
     for i in range(len(list(Domain_options[list(Domain_options.keys())[d]].keys()))):
         app.callback(
-            [Output(f"checklist-domain-measures-lv2-container-{d+1}-{i+1}","is_open")],
+            [Output(f"optimizer-checklist-domain-measures-lv2-container-{d+1}-{i+1}","is_open")],
             [Input(f"measures-lv1-{d+1}-{i+1}","n_clicks")],
-            [State(f"checklist-domain-measures-lv2-container-{d+1}-{i+1}","is_open")],
+            [State(f"optimizer-checklist-domain-measures-lv2-container-{d+1}-{i+1}","is_open")],
         )(open_measure_lv2)
 
 
@@ -1190,20 +1183,20 @@ def sum_selected_measure(v):
 for d in range(len(list(Domain_options.keys()))):
     for i in range(len(list(Domain_options[list(Domain_options.keys())[d]].keys()))):
         app.callback(
-            [Output(f"dashboard-card-selected-{d+1}-{i+1}", "color"),
-            Output(f"dashboard-card-selected-{d+1}-{i+1}", "children")],
-            [Input(f"checklist-domain-measures-lv2-{d+1}-{i+1}", "value")],
+            [Output(f"optimizer-card-selected-{d+1}-{i+1}", "color"),
+            Output(f"optimizer-card-selected-{d+1}-{i+1}", "children")],
+            [Input(f"optimizer-checklist-domain-measures-lv2-{d+1}-{i+1}", "value")],
         )(sum_selected_measure)
 
 ## Domain 1
 @app.callback(
-    [Output("dashboard-card-domain-selection-1", "color"),
-    Output("dashboard-card-domain-selection-1", "outline"),
-    Output("dashboard-card-selected-domain-1", "children")],
-    [Input("checklist-domain-measures-lv2-1-1", "value"),
-    Input("checklist-domain-measures-lv2-1-2", "value"),
-    Input("checklist-domain-measures-lv2-1-3", "value"),
-    Input("checklist-domain-measures-lv2-1-4", "value")],
+    [Output("optimizer-card-domain-selection-1", "color"),
+    Output("optimizer-card-domain-selection-1", "outline"),
+    Output("optimizer-card-selected-domain-1", "children")],
+    [Input("optimizer-checklist-domain-measures-lv2-1-1", "value"),
+    Input("optimizer-checklist-domain-measures-lv2-1-2", "value"),
+    Input("optimizer-checklist-domain-measures-lv2-1-3", "value"),
+    Input("optimizer-checklist-domain-measures-lv2-1-4", "value")],
 )
 def toggle_collapse_domain_selection_measures_1(v1, v2, v3, v4):
     if v1:
@@ -1229,12 +1222,12 @@ def toggle_collapse_domain_selection_measures_1(v1, v2, v3, v4):
 
 ## Domain 2
 @app.callback(
-    [Output("dashboard-card-domain-selection-2", "color"),
-    Output("dashboard-card-domain-selection-2", "outline"),
-    Output("dashboard-card-selected-domain-2", "children")],
-    [Input("checklist-domain-measures-lv2-2-1", "value"),
-    Input("checklist-domain-measures-lv2-2-2", "value"),
-    Input("checklist-domain-measures-lv2-2-3", "value")],
+    [Output("optimizer-card-domain-selection-2", "color"),
+    Output("optimizer-card-domain-selection-2", "outline"),
+    Output("optimizer-card-selected-domain-2", "children")],
+    [Input("optimizer-checklist-domain-measures-lv2-2-1", "value"),
+    Input("optimizer-checklist-domain-measures-lv2-2-2", "value"),
+    Input("optimizer-checklist-domain-measures-lv2-2-3", "value")],
 )
 def toggle_collapse_domain_selection_measures_2(v1, v2, v3):
     if v1:
@@ -1256,10 +1249,10 @@ def toggle_collapse_domain_selection_measures_2(v1, v2, v3):
 
 ## Domain 4
 @app.callback(
-    [Output("dashboard-card-domain-selection-4", "color"),
-    Output("dashboard-card-domain-selection-4", "outline"),
-    Output("dashboard-card-selected-domain-4", "children")],
-    [Input("checklist-domain-measures-lv2-4-1", "value")],
+    [Output("optimizer-card-domain-selection-4", "color"),
+    Output("optimizer-card-domain-selection-4", "outline"),
+    Output("optimizer-card-selected-domain-4", "children")],
+    [Input("optimizer-checklist-domain-measures-lv2-4-1", "value")],
 )
 def toggle_collapse_domain_selection_measures_4(v1):
     if v1:
@@ -1272,10 +1265,10 @@ def toggle_collapse_domain_selection_measures_4(v1):
 
 ## Domain 5
 @app.callback(
-    [Output("dashboard-card-domain-selection-5", "color"),
-    Output("dashboard-card-domain-selection-5", "outline"),
-    Output("dashboard-card-selected-domain-5", "children")],
-    [Input("checklist-domain-measures-lv2-5-1", "value")],
+    [Output("optimizer-card-domain-selection-5", "color"),
+    Output("optimizer-card-domain-selection-5", "outline"),
+    Output("optimizer-card-selected-domain-5", "children")],
+    [Input("optimizer-checklist-domain-measures-lv2-5-1", "value")],
 )
 def toggle_collapse_domain_selection_measures_5(v1):
     if v1:
@@ -1288,10 +1281,10 @@ def toggle_collapse_domain_selection_measures_5(v1):
 
 ## Domain 6
 @app.callback(
-    [Output("dashboard-card-domain-selection-6", "color"),
-    Output("dashboard-card-domain-selection-6", "outline"),
-    Output("dashboard-card-selected-domain-6", "children")],
-    [Input("checklist-domain-measures-lv2-6-1", "value")],
+    [Output("optimizer-card-domain-selection-6", "color"),
+    Output("optimizer-card-domain-selection-6", "outline"),
+    Output("optimizer-card-selected-domain-6", "children")],
+    [Input("optimizer-checklist-domain-measures-lv2-6-1", "value")],
 )
 def toggle_collapse_domain_selection_measures_6(v1):
     if v1:
@@ -1311,7 +1304,7 @@ def show_domain_card(color):
 for d in range(domain_ct):
     app.callback(
         [Output(f'outcome-domain-container-{d+1}', 'hidden')],
-        [Input(f'dashboard-card-domain-selection-{d+1}', 'color')]
+        [Input(f'optimizer-card-domain-selection-{d+1}', 'color')]
         )(show_domain_card)
 
 
@@ -1802,9 +1795,9 @@ def show_max_neg_adj(v):
 
 # results
 @app.callback(
-    Output("collapse_result_1", "is_open"),
-    [Input("collapse_button_result_1", "n_clicks")],
-    [State("collapse_result_1", "is_open")],
+    Output("optimizer-collapse_result_1", "is_open"),
+    [Input("optimizer-collapse_button_result_1", "n_clicks")],
+    [State("optimizer-collapse_result_1", "is_open")],
 )
 def toggle_collapse(n, is_open):
     if n:
@@ -1813,9 +1806,9 @@ def toggle_collapse(n, is_open):
 
 
 @app.callback(
-    Output("collapse_result_2", "is_open"),
-    [Input("collapse_button_result_2", "n_clicks")],
-    [State("collapse_result_2", "is_open")],
+    Output("optimizer-collapse_result_2", "is_open"),
+    [Input("optimizer-collapse_button_result_2", "n_clicks")],
+    [State("optimizer-collapse_result_2", "is_open")],
 )
 def toggle_collapse(n, is_open):
     if n:
@@ -1824,9 +1817,9 @@ def toggle_collapse(n, is_open):
 
 
 @app.callback(
-    Output("collapse_result_3", "is_open"),
-    [Input("collapse_button_result_3", "n_clicks")],
-    [State("collapse_result_3", "is_open")],
+    Output("optimizer-collapse_result_3", "is_open"),
+    [Input("optimizer-collapse_button_result_3", "n_clicks")],
+    [State("optimizer-collapse_result_3", "is_open")],
 )
 def toggle_collapse(n, is_open):
     if n:
@@ -1835,9 +1828,9 @@ def toggle_collapse(n, is_open):
 
 
 @app.callback(
-    Output("collapse_confounding_factors", "is_open"),
-    [Input("collapse_button_confounding_factors", "n_clicks")],
-    [State("collapse_confounding_factors", "is_open")],
+    Output("optimizer-collapse_confounding_factors", "is_open"),
+    [Input("optimizer-collapse_button_confounding_factors", "n_clicks")],
+    [State("optimizer-collapse_confounding_factors", "is_open")],
 )
 def toggle_collapse(n, is_open):
     if n:

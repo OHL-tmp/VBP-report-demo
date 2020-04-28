@@ -102,39 +102,41 @@ def modal_dashboard_domain_selection(n):
                                 html.Div(
                                     [
                                         dbc.Row([
-                                             dbc.Col(html.H2("Select Domain", style={"font-size":"2rem"}), width=7),
+                                             dbc.Col(html.H2("Select Domain", style={"font-size":"2rem","color":"#fff"}), width=7),
                                              dbc.Col(
-                                                [
-                                                    dbc.Card(
-                                                        dbc.CardBody(
-                                                            [
-                                                                html.Div(
-                                                                    [
-                                                                        dbc.Row(
-                                                                            [
-                                                                                dbc.Col(html.H2("Disease", style={"font-size":"1rem","padding":"0.6rem"})),
-                                                                                dbc.Col(dbc.Input(placeholder = "CHF",className = "mb-3",disabled = True, style={"font-family":"NotoSans-SemiBold", "font-size":"1rem", "border":"none"}))
-                                                                            ]
-                                                                        )
-                                                                    ],
-                                                                    style={"margin-top":"-1rem"}
-                                                                ),
-                                                                html.Div(
-                                                                    [
+                                                dbc.Card(
+                                                    dbc.CardBody(
+                                                        [
+                                                            html.Div(
+                                                                [
                                                                     dbc.Row(
-                                                                            [
-                                                                                dbc.Col(html.H2("Brand Name", style={"font-size":"1rem","padding":"0.6rem"})),
-                                                                                dbc.Col(dbc.Input(placeholder = "Entresto",className = "mb-3",disabled = True, style={"font-family":"NotoSans-SemiBold", "font-size":"1rem", "border":"none"}))
-                                                                            ]
-                                                                        ),
-                                                                    html.P("25 out of XX measures XXX", style={"font-size":"0.7rem"}),
-                                                                    ]
-                                                                )
-                                                            ],
-                                                            style={"background-color":"#none", "border":"none", "border-radius":"0.5rem"}
-                                                        )
-                                                    )
-                                                ],
+                                                                        [
+                                                                            dbc.Col(html.H3("Disease", style={"font-size":"1rem","padding":"0.2rem"}), width=6),
+                                                                            dbc.Col(html.Div("CHF", style={"font-family":"NotoSans-SemiBold", "font-size":"1rem", "border":"none","padding":"0.0rem"}), width=6)
+                                                                        ]
+                                                                    )
+                                                                ],
+                                                                style={"margin-bottom":"-1rem"}
+                                                            ),
+                                                            html.Hr(),
+                                                            html.Div(
+                                                                [
+                                                                    dbc.Row(
+                                                                        [
+                                                                            dbc.Col(html.H3("Brand Name", style={"font-size":"1rem","padding":"0.2rem"}), width=6),
+                                                                            dbc.Col(html.Div("Entresto", style={"font-family":"NotoSans-SemiBold", "font-size":"1rem", "border":"none","padding":"0.0rem"}), width=6)
+                                                                        ],
+                                                                        style={"margin-top":"-0.5rem", "margin-bottom":"-1rem"}
+                                                                    ),
+                                                                    html.Hr(),
+                                                                    html.P("25 out of XX measures XXX", style={"font-size":"0.7rem","padding-left":"0.2rem"}),
+                                                                ]
+                                                            )
+                                                        ]
+                                                    ),
+                                                    style={"box-shadow":"0 4px 8px 0 rgba(0, 0, 0, 0.05), 0 6px 20px 0 rgba(0, 0, 0, 0.05)", "background-color":"#none", "border":"#919191", "border-radius":"0.5rem","width":"22rem"}
+                                                    
+                                                ),
                                                 width=5
                                             )
                                              
@@ -142,7 +144,7 @@ def modal_dashboard_domain_selection(n):
                                     ]
                                 )
                             ],
-                            style={"background-image":"url('./assets/domain_selection_bg_s.png')","backgroud-size":"auto"}
+                            style={"background-image":"url('./assets/domain_selection_bg_s.png')","backgroud-size":"auto","border":"none"}
                             ),
                             dbc.ModalBody(
                                 card_domain_selection(n)
@@ -157,6 +159,7 @@ def modal_dashboard_domain_selection(n):
                         id="modal-centered",
                         size='lg',
                         scrollable=True,
+                        style={"border":"none"}
                     ),
                 ]
             )
@@ -222,6 +225,7 @@ def collapse_domain_selection_measures(n):
                             )
                         ),
                         id=u"collapse-{}".format(n+1),
+                        style={"padding-top":"1rem"}
                     ),
                 ]
             )

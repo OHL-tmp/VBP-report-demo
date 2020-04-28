@@ -714,7 +714,7 @@ def tbl_measure(df_measure_perform,d):
         },
         style_cell_conditional=[
             {'if': {'column_id': df.columns[0]},
-             'width': '2.5rem',
+             'minWidth': '2.5rem',
              'font-family':'NotoSans-CondensedLight',
             }, 
             {'if': {'column_id': 'highlight'},
@@ -726,6 +726,7 @@ def tbl_measure(df_measure_perform,d):
         style_header={
             'height': 'auto',
             'whiteSpace': 'normal',
+            'maxWidth':'3rem',
             'backgroundColor': table_header_bg_color,
             'fontWeight': 'bold',
             'font-family':'NotoSans-Condensed',
@@ -1514,17 +1515,15 @@ def table_factor_doc(df,tableid='factor_doc'):
         data=df.to_dict('records'),
         id=tableid,
         columns=[{"name": c, "id": c} for c in df.columns  ],       
-        style_data={
-            'whiteSpace': 'normal',
-            'height': 'auto'
-        },
        
-        style_cell={
+        style_data={
+            'height':'auto',
+            'width':'3rem',
+            'whiteSpace':'normal',
             'textAlign': 'center',
             'font-family':'NotoSans-Regular',
             'fontSize':12,
-            'width':'auto',
-            'whiteSpace':'normal',
+            
         },
         style_cell_conditional=[
             {'if': {'column_id': df.columns[0]},
@@ -1538,8 +1537,6 @@ def table_factor_doc(df,tableid='factor_doc'):
         },
         style_header={
             'height': '4rem',
-            'minWidth': '3rem',
-            'maxWidth':'3rem',
             'whiteSpace': 'normal',
             'backgroundColor': '#f1f6ff',
             'fontWeight': 'bold',

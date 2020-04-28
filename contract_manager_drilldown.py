@@ -20,6 +20,8 @@ from figure import *
 
 from modal_drilldown_tableview import *
 
+from app import app
+
 
 df_drilldown=pd.read_csv("data/drilldown_sample_6.csv")
 dimensions=df_drilldown.columns[0:12]
@@ -34,17 +36,6 @@ for i in list(df_drilldown.columns[0:14]):
     for j in list(df_drilldown[i].unique()):
         all_dimension.append([i,j])
 all_dimension=pd.DataFrame(all_dimension,columns=['dimension','value'])
-
-# Path
-BASE_PATH = pathlib.Path(__file__).parent.resolve()
-DATA_PATH = BASE_PATH.joinpath("Data").resolve()
-
-
-app = dash.Dash(__name__, url_base_pathname='/vbc-demo/contract-manager-drilldown/')
-
-server = app.server
-
-
 
 
 def create_layout(app):
@@ -561,7 +552,9 @@ def card_table2_performance_drilldown(app):
                 style={"box-shadow":"0 4px 8px 0 rgba(0, 0, 0, 0.05), 0 6px 20px 0 rgba(0, 0, 0, 0.05)", "border":"none", "border-radius":"0.5rem"}
             )
 
-app.layout = create_layout(app)
+
+
+layout = create_layout(app)
 
 
 
@@ -733,9 +726,9 @@ def sort_table3(sort_dim):
 
 ## modal
 @app.callback(
-    Output("modal-centered", "is_open"),
+    Output("drilldown_modal-centered", "is_open"),
     [Input("open-centered", "n_clicks"), Input("close-centered", "n_clicks")],
-    [State("modal-centered", "is_open")],
+    [State("drilldown_modal-centered", "is_open")],
 )
 def toggle_modal_dashboard_domain_selection(n1, n2, is_open):
     if n1 or n2:
