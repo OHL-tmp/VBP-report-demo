@@ -29,8 +29,8 @@ domain_set = ["Cost & Utilization  Reduction", "Improving Disease Outcome",
                  "Decreasing Health Disparities", "Increasing Patient Safety",
                  "Enhancing Care Quality", "Better Patient Experience"]
 
-domain_colordict={'Cost & Utilization  Reduction':'red','Improving Disease Outcome':'green','Decreasing Health Disparities':'grey'
-                  ,'Increasing Patient Safety':'yellow' ,'Enhancing Care Quality':'blue' ,'Better Patient Experience':'white'}
+domain_colordict={'Cost & Utilization  Reduction':'rgba(246,177,17,0.7)','Improving Disease Outcome':'rgba(31,64,229,0.7)','Decreasing Health Disparities':'grey'
+                  ,'Increasing Patient Safety':'yellow' ,'Enhancing Care Quality':'blue' ,'Better Patient Experience':'white'} #'rgba(223,136,133,0.7)' pink   'rgba(31,64,229,0.7)' blue rgba(246,177,17,0.7) yellow
     
   
 table_header_bg_color = "#f1f6ff"
@@ -56,7 +56,8 @@ def bargraph_overall(df):  #df_overall['month'] df_overall['base'] df_overall['a
             marker=dict(
                 color=colors['blue'],
                 opacity=arange(0.34,0.34+0.06*n,0.06) 
-                       )
+                       ),
+            hovertemplate='%{y:,.0f}',
         ),
         row=1,col=1,secondary_y=False,
     )
@@ -72,7 +73,8 @@ def bargraph_overall(df):  #df_overall['month'] df_overall['base'] df_overall['a
             marker=dict(
                 color=colors['yellow'],
                 opacity=arange(0.34,0.34+0.06*n,0.06) 
-                       )
+                       ),
+            hovertemplate='%{y:,.0f}',
         ),
         row=1,col=1,secondary_y=False,
     )
@@ -93,7 +95,8 @@ def bargraph_overall(df):  #df_overall['month'] df_overall['base'] df_overall['a
             ),
             text=y3_trend[1:],
             textposition='top center',
-            texttemplate='%{y:.1%}'
+            texttemplate='%{y:.0%}',
+            hovertemplate='%{y:.2%}',
         ),
         row=1,col=1,secondary_y=True,
     )
@@ -144,7 +147,7 @@ def waterfall_overall(x,y1,y2): #df_waterfall['label']  df_waterfall['base'] df_
     y2_waterfall=y2
     fig_waterfall = go.Figure(data=[
         go.Bar(
-            
+            name='',
             x=x_waterfall, 
             y=y1_waterfall,
             text=y1_waterfall,
@@ -153,12 +156,15 @@ def waterfall_overall(x,y1,y2): #df_waterfall['label']  df_waterfall['base'] df_
             texttemplate='%{y:.2s}',
             marker=dict(
                     color=[colors['blue'],colors['blue'],colors['transparent'],colors['blue'],colors['grey']],
-                    opacity=[1,0.7,0,0.7,0.7]
+                    opacity=[1,0.7,0,0.5,0.7]
                     ),
-            marker_line=dict( color = colors['transparent'] )
+            marker_line=dict( color = colors['transparent'] ),
+            hovertemplate='%{y:,.0f}',
+            hoverinfo='y',
             
         ),
-        go.Bar(     
+        go.Bar(  
+            name='',
             x=x_waterfall, 
             y=y2_waterfall,
             text=y2_waterfall,
@@ -168,7 +174,9 @@ def waterfall_overall(x,y1,y2): #df_waterfall['label']  df_waterfall['base'] df_
             marker=dict(
                     color=colors['yellow'],
                     opacity=0.7
-                    )
+                    ),
+            hovertemplate='%{y:,.0f}',
+            hoverinfo='y',
         )
     ])
     # Change the bar mode
@@ -249,7 +257,8 @@ def piechart_utilizer(label,value): #df_util_split['Class']  df_util_split['%']
                     colors=["#1357DD","F5B111","#df8885"]            
                     ),
             textinfo='label+percent',
-            textposition='auto'
+            textposition='auto',
+            hoverinfo='skip',
         )
     ])
     fig_util_split.update_layout(
@@ -268,10 +277,11 @@ def bargraph_h(x,y):#df_script_per_util['avg script']  df_script_per_util['label
     x_script_per_util=x
     y_script_per_util=y
     fig_script_per_util = go.Figure(data=[
-        go.Bar(        
+        go.Bar(
+            name='',
             x=x_script_per_util, 
             y=y_script_per_util,
-            text=x_script_per_util,
+            text="",
             textposition='inside', 
             texttemplate='%{x:.2s}',
             width=0.5,
@@ -280,7 +290,9 @@ def bargraph_h(x,y):#df_script_per_util['avg script']  df_script_per_util['label
                     color=[colors['grey'],'#1357DD','#1357DD'],
                     opacity=[0.7,0.7,1]
                     ),
-            orientation='h'
+            orientation='h',
+            hoverinfo='y',
+            hovertemplate='%{x:,.2f}',
         )
     ])
     # Change the bar mode
@@ -314,7 +326,8 @@ def bargraph_stack3(x,y1,y2,y3) : #   df_tot_script_split['dosage'] df_tot_scrip
             marker=dict(
                     color='#1357DD',
                     opacity=1
-                    )
+                    ),
+            hovertemplate='%{y:,.0f}',
         ),
         go.Bar(
             name='Annualized', 
@@ -327,7 +340,8 @@ def bargraph_stack3(x,y1,y2,y3) : #   df_tot_script_split['dosage'] df_tot_scrip
             marker=dict(
                     color='#1357DD',
                     opacity=0.7
-                    )
+                    ),
+            hovertemplate='%{y:,.0f}',
         ),
         go.Bar(
             name='Plan Target', 
@@ -340,7 +354,8 @@ def bargraph_stack3(x,y1,y2,y3) : #   df_tot_script_split['dosage'] df_tot_scrip
             marker=dict(
                     color=colors['grey'],
                     opacity=0.7
-                    )
+                    ),
+            hovertemplate='%{y:,.0f}',
         )
     ])
     # Change the bar mode
@@ -613,7 +628,8 @@ def bargraph_perform(df_measure_perform,d): #df_measure_perform, 0 or 1 or 2....
     y=df_measure_perform[df_measure_perform['Domain']==domain_set[d]]['Measure']
     
     fig_measure_perform = go.Figure(data=[
-        go.Bar(        
+        go.Bar(
+            name='',
             x=x, 
             y=y,
             text=x,
@@ -624,7 +640,9 @@ def bargraph_perform(df_measure_perform,d): #df_measure_perform, 0 or 1 or 2....
                     opacity=0.7
                     ),
             orientation='h',
-            width=0.5
+            width=0.5,
+            hovertemplate='%{x:.2%}',
+            hoverinfo='x',
         )
     ])
     # Change the bar mode
@@ -689,9 +707,11 @@ def tbl_measure(df_measure_perform,d):
         df['highlight']=df.apply(lambda x : 1 if (x['Performance Diff from Target']<0.05)& (x['Weight']>0.3)  else 0, axis=1)
     else: df['highlight']=1
     
+    percent_list=['Performance Diff from Target','Weight']
+    
     measure_tbl=dash_table.DataTable(
         data=df.to_dict('records'),
-        columns=[ {'id': c, 'name': c} for c in df.columns ],
+        columns=[ {'id': c, 'name': c,'type': 'numeric',"format":FormatTemplate.percentage(1)} if c in percent_list else {'id': c, 'name': c} for c in df.columns ],
         sort_action="native",
         sort_mode='multi',
         style_data={
@@ -1005,13 +1025,13 @@ def dashtable_lv3(df,dimension,tableid,row_select):#row_select: numeric 0 or 1
         id=tableid,
         columns=[
         {"name": ["", dimension], "id": dimension},
-        {"name": ["Total Episode Cost", "YTD Avg Episode Cost"], "id": "YTD Avg Episode Cost",'type': 'numeric',"format":FormatTemplate.money(0)},
-        {"name": ["Total Episode Cost", "% Cost Diff from Target"], "id": "% Cost Diff from Target",'type': 'numeric',"format":FormatTemplate.percentage(1)},
-        {"name": ["Total Episode Cost", "Contribution to Overall Performance Difference"], "id": "Contribution to Overall Performance Difference",'type': 'numeric',"format":FormatTemplate.percentage(1)},
+        {"name": ["Average CHF Related Cost", "YTD Avg Cost"], "id": "YTD Avg Episode Cost",'type': 'numeric',"format":FormatTemplate.money(0)},
+        {"name": ["Average CHF Related Cost", "% Diff from Benchmark"], "id": "% Cost Diff from Target",'type': 'numeric',"format":FormatTemplate.percentage(1)},
+        {"name": ["Average CHF Related Cost", "Contribution to Overall Performance Difference"], "id": "Contribution to Overall Performance Difference",'type': 'numeric',"format":FormatTemplate.percentage(1)},
         {"name": ["Utilization Rate", "YTD Avg Utilization Rate"], "id": "YTD Avg Utilization Rate",'type': 'numeric',"format":Format( precision=1, scheme=Scheme.fixed,),},
-        {"name": ["Utilization Rate", "% Util Diff from Target"], "id": "% Util Diff from Target",'type': 'numeric',"format":FormatTemplate.percentage(1)},
+        {"name": ["Utilization Rate", "% Diff from Benchmark"], "id": "% Util Diff from Target",'type': 'numeric',"format":FormatTemplate.percentage(1)},
         {"name": ["Unit Cost", "YTD Avg Cost per Unit"], "id": "YTD Avg Cost per Unit",'type': 'numeric',"format":FormatTemplate.money(0)},
-        {"name": ["Unit Cost", "% Unit Cost Diff from Target"], "id": "% Unit Cost Diff from Target",'type': 'numeric',"format":FormatTemplate.percentage(1)},
+        {"name": ["Unit Cost", "% Diff from Benchmark"], "id": "% Unit Cost Diff from Target",'type': 'numeric',"format":FormatTemplate.percentage(1)},
     ],
         merge_duplicate_headers=True,
         sort_action="custom",
@@ -1286,29 +1306,39 @@ def table_driver_all(df):
 ####################################################################################################################################################################################
 ######################################################################       Simulation         ####################################################################################
 ####################################################################################################################################################################################
-    
-def sim_result_box(df_sim_result):
+   
 
-    df=df_sim_result.iloc[[2,5,8]]
+def sim_result_box(df_sim_result):
+    ### k used for pick color
+    k=1 
     
-    x=df['Contract Type'].to_list()[1:3]
-    median=df['Best Estimate'].to_list()[1:3]
-    fillcolor=['rgba(18,85,222,0.5)','rgba(246,177,17,0.5)']
-    markercolor=[colors['blue'],colors['yellow']]
+    if len(df_sim_result)==10:
+        df=df_sim_result.iloc[[0,3,6,9]]
+        k=k-1
+    else:df=df_sim_result.iloc[[2,5,8]]
+    
+    n=len(df)
+    
+    x=df['Contract Type'].to_list()[1:n]
+    median=df['Best Estimate'].to_list()[1:n]
     base=df.values[0,2]
     
+    #color for bar and box
+    fillcolor=['rgba(226,225,253,0)','rgba(18,85,222,0)','rgba(246,177,17,0)']
+    markercolor=['rgba(226,225,253,0.7)','rgba(191,191,191,0.7)','rgba(18,85,222,0.7)','rgba(246,177,17,0.7)']
+        
     annotations = []
     
     if df.values[1,3]<df.values[1,4]:
-        lowerfence=df['Worst'].to_list()[1:3]
-        q1=df['Lower End'].to_list()[1:3]
-        q3=df['Higher End'].to_list()[1:3]
-        upperfence=df['Best'].to_list()[1:3]
+        lowerfence=df['Worst'].to_list()[1:n]
+        q1=df['Lower End'].to_list()[1:n]
+        q3=df['Higher End'].to_list()[1:n]
+        upperfence=df['Best'].to_list()[1:n]
     else:
-        lowerfence=df['Best'].to_list()[1:3]
-        q1=df['Higher End'].to_list()[1:3]
-        q3=df['Lower End'].to_list()[1:3]
-        upperfence=df['Worst'].to_list()[1:3]
+        lowerfence=df['Best'].to_list()[1:n]
+        q1=df['Higher End'].to_list()[1:n]
+        q3=df['Lower End'].to_list()[1:n]
+        upperfence=df['Worst'].to_list()[1:n]
         
     
     fig_sim =go.Figure()
@@ -1317,14 +1347,14 @@ def sim_result_box(df_sim_result):
             go.Bar(
             #name='Revenue before adj', 
             x=x,
-            y=[base,base],
-            text=df.values[0,2],
+            y=[base]*(n-1),
+            #text=base,
             textposition='none',
             marker=dict(
-                color='rgba(191,191,191,0.5)',
+                color=markercolor[0+k],
                 #opacity=0.7,
                 line=dict(
-                    color=colors['grey'],
+                    color=fillcolor[0+k],
 
                 )
                        ), 
@@ -1332,7 +1362,7 @@ def sim_result_box(df_sim_result):
 
     )
     
-    for i in range(len(df)-1):
+    for i in range(n-1):
         fig_sim.add_trace(
             go.Box(
                 x=[x[i]],       
@@ -1342,19 +1372,20 @@ def sim_result_box(df_sim_result):
                 q3=[q3[i]],
                 upperfence=[upperfence[i]],
                 fillcolor=fillcolor[i],
-                width=0.3,
+                width=0.2,
+                line_width=3,
                 marker=dict(
-                    color=markercolor[i],
-                    opacity=0.7,
+                    color=markercolor[i+1+k],
+                    #opacity=0.7,
 
                 )
 
             ),  
         )
         annotations.append(dict(xref='x', yref='y',axref='x', ayref='y',
-                        x=0+i, y=df['Best'].to_list()[1:3][i],ax=0.3+i, ay=df['Best'].to_list()[1:3][i],
+                        x=0+i, y=df['Best'].to_list()[1:n][i],ax=0.3+i, ay=df['Best'].to_list()[1:n][i],
                         startstandoff=10,
-                        text='Best: '+str(round(df['Best'].to_list()[1:3][i],1))+'Mn',
+                        text='Best: '+str(round(df['Best'].to_list()[1:n][i],1))+'Mn',
                         font=dict(family='NotoSans-CondensedLight', size=12, color='green'),
                         showarrow=True,
                         arrowhead=2,
@@ -1364,9 +1395,9 @@ def sim_result_box(df_sim_result):
                        )
                   )
         annotations.append(dict(xref='x', yref='y',axref='x', ayref='y',
-                        x=0+i, y=df['Worst'].to_list()[1:3][i],ax=0.3+i, ay=df['Worst'].to_list()[1:3][i],
+                        x=0+i, y=df['Worst'].to_list()[1:n][i],ax=0.3+i, ay=df['Worst'].to_list()[1:n][i],
                         startstandoff=10,
-                        text='Worst: '+str(round(df['Worst'].to_list()[1:3][i],1))+'Mn',
+                        text='Worst: '+str(round(df['Worst'].to_list()[1:n][i],1))+'Mn',
                         font=dict(family='NotoSans-CondensedLight', size=12, color='red'),
                         showarrow=True,
                         arrowhead=2,
@@ -1466,12 +1497,28 @@ def sim_result_box(df_sim_result):
     return fig_sim
 
 def table_sim_result(df):
-    df=df[df.columns[2:]]
+    column1=[]
+    n=len(df)
+    style1=[0,3,6]
+    style2=[1,4,7]
+    style3=[2,5,8]
+    
+    if len(df)==10:
+        column1.append('Baseline')
+        style1=[0,1,4,7]
+        style2=[2,5,8]
+        style3=[3,6,9]
+    column1=column1+['Contract','w/o','VBC Payout','Contract with','VBC Payout','(Recommended)','Contract with','VBC Payout','(User Defined)']
+ 
+    df['scenario']=column1
+    
    
     table=dash_table.DataTable(
         data=df.to_dict('records'),
         #id=tableid,
         columns=[
+        {"name": ["Contract Type","Contract Type"], "id": "scenario"},
+        {"name": ["Item","Item"], "id": "Item"},
         {"name": ["","Best Estimate(Mn)"], "id": "Best Estimate",'type': 'numeric',"format":Format( precision=1, scheme=Scheme.fixed,),},
         {"name": [ "Full Range","Low(Mn)"], "id": "Worst",'type': 'numeric',"format":Format( precision=1, scheme=Scheme.fixed,),},
         {"name": [ "Full Range","High(Mn)"], "id": "Best",'type': 'numeric',"format":Format( precision=1, scheme=Scheme.fixed,),},
@@ -1487,16 +1534,48 @@ def table_sim_result(df):
         style_cell={
             'textAlign': 'center',
             'font-family':'NotoSans-Regular',
-            'fontSize':12
+            'fontSize':12,
+            'border':'0px',
+            'height': '1.5rem',
         },
-        style_cell_conditional=[
+        style_data_conditional=[
+            { 'if': {'row_index':c }, 
+             'color': 'black', 
+             'font-family': 'NotoSans-CondensedLight',
+             'border-top': '1px solid grey',
+             'border-left': '1px solid grey',
+             'border-right': '1px solid grey',
+              } if c in style1 else 
             
+            { 'if': {'row_index':c }, 
+             'color': 'black', 
+             'font-family': 'NotoSans-CondensedBlackItalic',
+             'border-left': '1px solid grey',
+             'border-right': '1px solid grey',
+             'text-decoration':'underline'
+              } if c in style2 else 
+            { "if": {"row_index":c },
+             'font-family': 'NotoSans-CondensedLight',
+             'backgroundColor':'rgba(191,191,191,0.7)',
+             'color': '#1357DD',
+             'fontWeight': 'bold',
+             'border-bottom': '1px solid grey',
+             'border-left': '1px solid grey',
+             'border-right': '1px solid grey',
+              } if c in style3  else 
+            { "if": {"column_id":"scenario" }, 
+             'font-family': 'NotoSans-CondensedLight',
+             'backgroundColor':'white',
+             'color': 'black',
+             'fontWeight': 'bold', 
+             'text-decoration':'none'
+              } for c in range(0,n+1)
         ],
         style_table={
             'back':  colors['blue'],
         },
         style_header={
-            'height': '4rem',
+            'height': '2.5rem',
             'minWidth': '3rem',
             'maxWidth':'3rem',
             'whiteSpace': 'normal',
@@ -1506,7 +1585,24 @@ def table_sim_result(df):
             'fontSize':14,
             'color': '#1357DD',
             'text-align':'center',
+            'border':'1px solid grey',
+            'text-decoration':'none'
         },
+        style_header_conditional=[
+            { 'if': {'column_id':'scenario'},
+            'backgroundColor': colors['transparent'],
+            'color': colors['transparent'],
+            'border':'0px'          
+            },
+            { 'if': {'column_id':'Item'},
+            'backgroundColor': colors['transparent'],
+            'color': colors['transparent'],
+            'border':'0px' , 
+            'border-right':'1px solid grey' ,
+            },
+        ],
+        
+        
     )
     return table
 

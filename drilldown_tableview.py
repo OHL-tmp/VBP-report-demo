@@ -32,9 +32,9 @@ dimension = {'Age Band' : ['<65', '65-74', '75-85', '>=85'], 'Gender' : ['F', 'M
 'Risk Score Band' : ['Low', 'Mid', 'High'], 'NYHA Class' : ['I', 'II', 'III', 'IV'], 
        'Medication Adherence' : ['Compliant', 'Non-compliant'], 'Managing Physician (Group)': ['Group A', 'Group B', 'Group C', 'Group D'], 
        'Weight Band' : [], 'Comorbidity Score' : [], 'Ejection Fraction' : [], 'Years Since HF Diagnosis' : [], 'Prior Use of ACE/ARB' : []}
-measure = ['YTD Utilization', 'Annualized Utilization', 'Target Utilization', 'Diff % from Target Utilization',
-		'YTD Total Cost', 'Annualized Total Cost', 'Target Total Cost', 'Diff % from Target Total Cost',
-		'YTD Unit Cost', 'Annualized Unit Cost', 'Target Unit Cost', 'Diff % from Target Unit Cost']
+measure = ['YTD Utilization', 'Annualized Utilization', 'Benchmark Utilization', 'Diff % from Benchmark Utilization',
+		'YTD Total Cost', 'Annualized Total Cost', 'Benchmark Total Cost', 'Diff % from Benchmark Total Cost',
+		'YTD Unit Cost', 'Annualized Unit Cost', 'Benchmark Unit Cost', 'Diff % from Benchmark Unit Cost']
 measure_ori = ['YTD Utilization', 'Annualized Utilization', 'Target Utilization',
 		'YTD Total Cost', 'Annualized Total Cost', 'Target Total Cost']
 filter_list = {
@@ -89,7 +89,7 @@ def tableview():
 									dcc.Dropdown(
 										id = "dropdown-measure-1",
 										options = [{"label": k, "value": k} for k in measure],
-										value = ['Diff % from Target Total Cost', 'YTD Total Cost', 'Annualized Total Cost', 'Target Total Cost'],
+										value = ['Diff % from Benchmark Total Cost', 'YTD Total Cost', 'Annualized Total Cost', 'Benchmark Total Cost'],
 										placeholder ="Select measures",
 										multi = True,
 										style = {"font-family":"NotoSans-Condensed"}
@@ -141,7 +141,7 @@ def tableview():
 						[
 							html.Div(
 								[
-									html.P("*Default sorted by Diff % from Target Total Cost", style={"font-size":"0.6rem"}),
+									html.P("*Default sorted by Diff % from Benchmark Total Cost", style={"font-size":"0.6rem"}),
 									dash_table.DataTable(
 										id = 'datatable-tableview',
 										style_header = {'height': 'auto', 'width':'auto','whiteSpace':'normal','font-family':'NotoSans-Condensed','font-size':'auto','backgroundColor': '#dce7fc','color':'#1357DD'},
