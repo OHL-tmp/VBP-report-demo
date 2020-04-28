@@ -4,7 +4,7 @@
 
 
 .tab {
-  font-family: 'NotoSans-CondensedLight';
+  font-family: 'NotoSans-Condensed';
   font-size: 1rem;
   border-style: solid;
   border-color: rgba(0, 0, 0, 0.2);
@@ -20,7 +20,7 @@
 }
 
 .tab.first {
-  font-family: 'NotoSans-CondensedLight';
+  font-family: 'NotoSans-Condensed';
   font-size: 1rem;
   border-left-style: none;
 }
@@ -37,7 +37,7 @@
   text-decoration: none;
   display: inline-block;
   font-weight: bold;
-  background-color: #1357DD;
+  background-color: #fff;
 } 
 
 .tab:hover {
@@ -51,8 +51,6 @@
   text-align: center;
   text-decoration: none;
   display: inline-block;
-  font-weight: bold;
-  background-color: rgba(0, 0, 0, 0.1);
 } 
 
 .tab.first:focus {
