@@ -32,6 +32,9 @@ df_factor_doc=pd.read_csv("data/confounding_factors_doc.csv")
 BASE_PATH = pathlib.Path(__file__).parent.resolve()
 DATA_PATH = BASE_PATH.joinpath("Data").resolve()
 
+#modebar display
+button_to_rm=['zoom2d', 'pan2d', 'select2d', 'lasso2d', 'zoomIn2d', 'zoomOut2d', 'autoScale2d', 'hoverClosestCartesian','hoverCompareCartesian','hoverClosestGl2d', 'hoverClosestPie', 'toggleHover','toggleSpikelines']
+
 
 app = dash.Dash(__name__, url_base_pathname='/vbc-demo/contract-optimizer/')
 
@@ -771,7 +774,7 @@ def collapse_result_1():
             		[
             			dbc.Row(
             				[
-            					dbc.Col(html.Div([dcc.Graph(id = 'sim_result_box_1',style={"height":"50vh", "width":"90vh"})]),width=6 ),
+            					dbc.Col(html.Div([dcc.Graph(id = 'sim_result_box_1',style={"height":"50vh", "width":"90vh"},config={'modeBarButtonsToRemove': button_to_rm,'displaylogo': False,})]),width=6 ),
             					dbc.Col(html.Div(id = 'sim_result_table_1'), width=6)
             				]
             			)
@@ -787,7 +790,7 @@ def collapse_result_2():
             		[
             			dbc.Row(
             				[
-            					dbc.Col(html.Div([dcc.Graph(id = 'sim_result_box_2',style={"height":"50vh", "width":"90vh"})]),width=6 ),
+            					dbc.Col(html.Div([dcc.Graph(id = 'sim_result_box_2',style={"height":"50vh", "width":"90vh"},config={'modeBarButtonsToRemove': button_to_rm,'displaylogo': False,})]),width=6 ),
             					dbc.Col(html.Div(id = 'sim_result_table_2'), width=6)
             				]
             			)

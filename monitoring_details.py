@@ -25,6 +25,7 @@ df_drilldown=pd.read_csv("data/drilldown_sample_6.csv")
 dimensions=df_drilldown.columns[0:12]
 df_drill_waterfall=pd.read_csv("data/drilldown waterfall graph.csv")
 df_driver=pd.read_csv("data/Drilldown Odometer.csv")
+df_driver_all=pd.read_csv("data/Drilldown All Drivers.csv")
 data_lv3=drilldata_process(df_drilldown,'Service Category')
 data_lv4=drilldata_process(df_drilldown,'Sub Category')
 
@@ -39,6 +40,8 @@ all_dimension=pd.DataFrame(all_dimension,columns=['dimension','value'])
 BASE_PATH = pathlib.Path(__file__).parent.resolve()
 DATA_PATH = BASE_PATH.joinpath("Data").resolve()
 
+#modebar display
+button_to_rm=['zoom2d', 'pan2d', 'select2d', 'lasso2d', 'zoomIn2d', 'zoomOut2d', 'autoScale2d', 'hoverClosestCartesian','hoverCompareCartesian','hoverClosestGl2d', 'hoverClosestPie', 'toggleHover','toggleSpikelines']
 
 app = dash.Dash(__name__, url_base_pathname='/vbc-demo/contract-manager-drilldown/')
 
@@ -58,7 +61,7 @@ def create_layout():
                             col_content_drilldown(),
                         ],
                         className="mb-3",
-                        style={"padding-left":"3rem", "padding-right":"3rem"},
+                        style={"padding-left":"3rem", "padding-right":"3rem","padding-top":"1rem"},
                     ),
                     
                 ],
@@ -192,11 +195,11 @@ def card_overview_drilldown(percentage):
                             [
                                 html.Div(
                                     [
-                                        dcc.Graph(figure=drill_bar(df_drill_waterfall)),
+                                        dcc.Graph(figure=drill_bar(df_drill_waterfall),config={'modeBarButtonsToRemove': button_to_rm,'displaylogo': False,}),
                                     ]
                                 )
                             ],
-                            width=6,
+                            width=7,
                             style={"height":"10rem"}
                         ),
                         dbc.Col(
@@ -204,12 +207,12 @@ def card_overview_drilldown(percentage):
                                 html.Div(
                                     [
                                         html.H3("Target Adj Details", style={"font-size":"1rem","margin-top":"-1.8rem","color":"#919191","background-color":"#f5f5f5","width":"9rem","padding-left":"1rem","padding-right":"1rem","text-align":"center"}),
-                                        html.Div([dcc.Graph(figure=drill_waterfall(df_drill_waterfall),style={"height":"24rem","padding-bottom":"1rem"})]),
+                                        html.Div([dcc.Graph(figure=drill_waterfall(df_drill_waterfall),style={"height":"24rem","padding-bottom":"1rem"},config={'modeBarButtonsToRemove': button_to_rm,'displaylogo': False,})]),
                                     ],
                                     style={"border-radius":"0.5rem","border":"2px solid #d2d2d2","padding":"1rem","height":"25.5rem"}
                                 )
                             ],
-                            width=5,
+                            width=4,
                             
                         )
                     ],
@@ -226,6 +229,14 @@ def card_key_driver_drilldown():
                             [
                                 dbc.Col(html.Img(src=app.get_asset_url("bullet-round-blue.png"), width="10px"), width="auto", align="start", style={"margin-top":"-4px"}),
 		                        dbc.Col(html.H4("Key Drivers", style={"font-size":"1rem", "margin-left":"10px"})),
+                                dbc.Col([dbc.Button("See All Drivers", id = 'button-all-driver'),
+                                        dbc.Modal([
+                                                dbc.ModalHeader("All Drivers"),
+                                                dbc.ModalBody(children = [table_driver_all(df_driver_all)]),
+                                                dbc.ModalFooter(
+                                                        dbc.Button("Close", id = 'close-all-driver')
+                                                        )
+                                                ], id = 'modal-all-driver')]),
                             ],
                             no_gutters=True,
                         ),
@@ -235,19 +246,25 @@ def card_key_driver_drilldown():
                                 dbc.Col(
                                     [
                                         html.Div([gaugegraph(df_driver,0)], style={"padding-top":"1.5rem"}),
-                                        html.Div(html.H4("{:.1f} %".format(df_driver['%'][0]*100)), style={"margin-top":"-1.5rem","margin-left":"3rem","font-size":"1rem","color":"#919191"}),
+                                        html.Div(html.H4("{:.1f} %".format(df_driver['%'][0]*100)), style={"margin-top":"-1.5rem","text-align":"center","font-size":"1rem","color":"#919191"}),
                                     ],
                                     width=6),
                                 dbc.Col(
                                     [
                                         html.Div([gaugegraph(df_driver,1)], style={"padding-top":"1.5rem"}),
-                                        html.Div(html.H4("{:.1f} %".format(df_driver['%'][1]*100)), style={"margin-top":"-1.5rem","margin-left":"3rem","font-size":"1rem","color":"#919191"}),
+                                        html.Div(html.H4("{:.1f} %".format(df_driver['%'][1]*100)), style={"margin-top":"-1.5rem","text-align":"center","font-size":"1rem","color":"#919191"}),
                                     ],
                                     width=6),
                                 dbc.Col(
                                     [
                                         html.Div([gaugegraph(df_driver,2)], style={"padding-top":"1.5rem"}),
-                                        html.Div(html.H4("{:.1f} %".format(df_driver['%'][2]*100)), style={"margin-top":"-1.5rem","margin-left":"2.5rem","font-size":"1rem","color":"#919191"}),
+                                        html.Div(html.H4("{:.1f} %".format(df_driver['%'][2]*100)), style={"margin-top":"-1.5rem","text-align":"center","font-size":"1rem","color":"#919191"}),
+                                    ],
+                                    width=6),
+                                dbc.Col(
+                                    [
+                                        html.Div([gaugegraph(df_driver,2)], style={"padding-top":"1.5rem"}),
+                                        html.Div(html.H4("{:.1f} %".format(df_driver['%'][2]*100)), style={"margin-top":"-1.5rem","text-align":"center","font-size":"1rem","color":"#919191"}),
                                     ],
                                     width=6),
                             ],
@@ -546,6 +563,17 @@ def card_table2_performance_drilldown():
             )
 
 app.layout = create_layout()
+
+@app.callback(
+    Output("modal-all-driver","is_open"),
+    [Input("button-all-driver","n_clicks"),
+     Input("close-all-driver","n_clicks")],
+    [State("modal-all-driver","is_open")]        
+)
+def open_all_driver(n1,n2,is_open):
+    if n1 or n2:
+        return not is_open
+    return is_open
 
 
 
