@@ -1226,14 +1226,14 @@ def drill_bar(df):
 def gaugegraph(df,row):
     fig=daq.Gauge(
             #showCurrentValue=True,
-            scale={'start': -20, 'interval': 5, 'labelInterval': 1},
+            scale={'start': -5, 'interval': 1, 'labelInterval': 2},
             #units="%",
-            color={"gradient":True,"ranges":{"#18cc75":[-20,8],"#39db44":[8,10],"#aeff78":[10,12],"#ffeb78":[12,16],"#ff4d17":[16,20]}}, #
+            color={"gradient":True,"ranges":{"#18cc75":[-5,-1],"#39db44":[-1,0],"#aeff78":[0,2],"#ffeb78":[2,3.5],"#ff4d17":[3.5,5]}}, #
             value=df['%'][row]*100,
             label=df['Name'][row],
             labelPosition='top',    
-            max=20,
-            min=-20,
+            max=5,
+            min=-5,
             size=110,
             style={"font-family":"NotoSans-CondensedLight","font-size":"0.4rem"}
         )  
@@ -1522,7 +1522,9 @@ def table_factor_doc(df,tableid='factor_doc'):
         style_cell={
             'textAlign': 'center',
             'font-family':'NotoSans-Regular',
-            'fontSize':12
+            'fontSize':12,
+            'width':'auto',
+            'whiteSpace':'normal',
         },
         style_cell_conditional=[
             {'if': {'column_id': df.columns[0]},

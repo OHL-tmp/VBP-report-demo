@@ -58,7 +58,7 @@ def create_layout():
                             col_content_drilldown(),
                         ],
                         className="mb-3",
-                        style={"padding-left":"3rem", "padding-right":"3rem"},
+                        style={"padding-left":"3rem", "padding-right":"3rem","padding-top":"1rem"},
                     ),
                     
                 ],
@@ -196,7 +196,7 @@ def card_overview_drilldown(percentage):
                                     ]
                                 )
                             ],
-                            width=6,
+                            width=7,
                             style={"height":"10rem"}
                         ),
                         dbc.Col(
@@ -209,7 +209,7 @@ def card_overview_drilldown(percentage):
                                     style={"border-radius":"0.5rem","border":"2px solid #d2d2d2","padding":"1rem","height":"25.5rem"}
                                 )
                             ],
-                            width=5,
+                            width=4,
                             
                         )
                     ],
@@ -225,7 +225,15 @@ def card_key_driver_drilldown():
                         dbc.Row(
                             [
                                 dbc.Col(html.Img(src=app.get_asset_url("bullet-round-blue.png"), width="10px"), width="auto", align="start", style={"margin-top":"-4px"}),
-		                        dbc.Col(html.H4("Key Drivers", style={"font-size":"1rem", "margin-left":"10px"})),
+		                        dbc.Col(html.H4("Key Drivers", style={"font-size":"1rem", "margin-left":"10px"}), width=8),
+                                dbc.Col(dbc.Button(
+                                    "Show All Drivers",
+                                    #id="button-mod-dim-lv1",
+                                    className="mb-3",
+                                    style={"background-color":"#38160f", "border":"none", "border-radius":"10rem", "font-family":"NotoSans-Regular", "font-size":"0.6rem"},
+                                    ),
+                                    width=3
+                                )
                             ],
                             no_gutters=True,
                         ),
@@ -235,19 +243,25 @@ def card_key_driver_drilldown():
                                 dbc.Col(
                                     [
                                         html.Div([gaugegraph(df_driver,0)], style={"padding-top":"1.5rem"}),
-                                        html.Div(html.H4("{:.1f} %".format(df_driver['%'][0]*100)), style={"margin-top":"-1.5rem","margin-left":"3rem","font-size":"1rem","color":"#919191"}),
+                                        html.Div(html.H4("{:.1f} %".format(df_driver['%'][0]*100)), style={"margin-top":"-1.5rem","text-align":"center","font-size":"1rem","color":"#919191"}),
                                     ],
                                     width=6),
                                 dbc.Col(
                                     [
                                         html.Div([gaugegraph(df_driver,1)], style={"padding-top":"1.5rem"}),
-                                        html.Div(html.H4("{:.1f} %".format(df_driver['%'][1]*100)), style={"margin-top":"-1.5rem","margin-left":"3rem","font-size":"1rem","color":"#919191"}),
+                                        html.Div(html.H4("{:.1f} %".format(df_driver['%'][1]*100)), style={"margin-top":"-1.5rem","text-align":"center","font-size":"1rem","color":"#919191"}),
                                     ],
                                     width=6),
                                 dbc.Col(
                                     [
                                         html.Div([gaugegraph(df_driver,2)], style={"padding-top":"1.5rem"}),
-                                        html.Div(html.H4("{:.1f} %".format(df_driver['%'][2]*100)), style={"margin-top":"-1.5rem","margin-left":"2.5rem","font-size":"1rem","color":"#919191"}),
+                                        html.Div(html.H4("{:.1f} %".format(df_driver['%'][2]*100)), style={"margin-top":"-1.5rem","text-align":"center","font-size":"1rem","color":"#919191"}),
+                                    ],
+                                    width=6),
+                                dbc.Col(
+                                    [
+                                        html.Div([gaugegraph(df_driver,2)], style={"padding-top":"1.5rem"}),
+                                        html.Div(html.H4("{:.1f} %".format(df_driver['%'][2]*100)), style={"margin-top":"-1.5rem","text-align":"center","font-size":"1rem","color":"#919191"}),
                                     ],
                                     width=6),
                             ],

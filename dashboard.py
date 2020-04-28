@@ -109,7 +109,7 @@ def create_layout(app):
                             ),
                         ],
                         className="mb-3",
-                        style={"padding-left":"3rem", "padding-right":"3rem"},
+                        style={"padding-left":"3rem", "padding-right":"3rem","padding-top":"1rem"},
                     ),
                     
                     html.Div(
@@ -838,8 +838,8 @@ def generate_measure_watchlist(n, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, 
     triggered = [t["prop_id"] for t in dash.callback_context.triggered]
     submit = len([1 for i in triggered if i == "close-centered.n_clicks"])
     #switch = len([1 for i in triggered if i == "switch-contract-additional-view.n_clicks"])
+    measure_to_watch = []
     if submit:
-        measure_to_watch = []
         for i in range(24):
             if eval("v"+str(i+1)) and len(eval("v"+str(i+1))) > 0:
                 measure_to_watch.extend(eval("v"+str(i+1)))
