@@ -921,8 +921,8 @@ def datatable_data_selection(v1, v2, v3, d1, d2, f1, f2, m):
 
     table_column.extend(list(set(selected_dimension + ['Service Category', 'Sub Category'])))
     table_column.append("Pt Count")
-    percent_list = ['Diff % from Target Utilization', 'Diff % from Target Total Cost', 'Diff % from Target Unit Cost', 'Patient %']
-    dollar_list = ['YTD Total Cost', 'Annualized Total Cost', 'Target Total Cost', 'YTD Unit Cost', 'Annualized Unit Cost', 'Target Unit Cost']
+    percent_list = ['Diff % from Benchmark Utilization', 'Diff % from Benchmark Total Cost', 'Diff % from Benchmark Unit Cost', 'Patient %']
+    dollar_list = ['YTD Total Cost', 'Annualized Total Cost', 'Benchmark Total Cost', 'YTD Unit Cost', 'Annualized Unit Cost', 'Benchmark Unit Cost']
     if len(selected_dimension) > 0:
 #        ptct_dimension = set(selected_dimension + ['Service Category', 'Sub Category'])
         table_column.extend(measure_ori) 
@@ -933,21 +933,21 @@ def datatable_data_selection(v1, v2, v3, d1, d2, f1, f2, m):
         df_agg['Patient %'] = df_agg['Pt Count']/895500
         df_agg['YTD Utilization'] = df_agg['YTD Utilization']/df_agg['Pt Count']
         df_agg['Annualized Utilization'] = df_agg['Annualized Utilization']/df_agg['Pt Count']
-        df_agg['Target Utilization'] = df_agg['Target Utilization']/df_agg['Pt Count']
-        df_agg['Diff % from Target Utilization'] = (df_agg['Annualized Utilization'] - df_agg['Target Utilization'])/df_agg['Target Utilization']
+        df_agg['Benchmark Utilization'] = df_agg['Target Utilization']/df_agg['Pt Count']
+        df_agg['Diff % from Benchmark Utilization'] = (df_agg['Annualized Utilization'] - df_agg['Benchmark Utilization'])/df_agg['Benchmark Utilization']
         df_agg['YTD Total Cost'] = df_agg['YTD Total Cost']/df_agg['Pt Count']
         df_agg['Annualized Total Cost'] = df_agg['Annualized Total Cost']/df_agg['Pt Count']
-        df_agg['Target Total Cost'] = df_agg['Target Total Cost']/df_agg['Pt Count']
-        df_agg['Diff % from Target Total Cost'] = (df_agg['Annualized Total Cost'] - df_agg['Target Total Cost'])/df_agg['Target Total Cost']
+        df_agg['Benchmark Total Cost'] = df_agg['Target Total Cost']/df_agg['Pt Count']
+        df_agg['Diff % from Benchmark Total Cost'] = (df_agg['Annualized Total Cost'] - df_agg['Benchmark Total Cost'])/df_agg['Benchmark Total Cost']
         df_agg['YTD Unit Cost'] = df_agg['YTD Total Cost']/df_agg['YTD Utilization']
         df_agg['Annualized Unit Cost'] = df_agg['Annualized Total Cost']/df_agg['Annualized Utilization']
-        df_agg['Target Unit Cost'] = df_agg['Target Total Cost']/df_agg['Target Utilization']
-        df_agg['Diff % from Target Unit Cost'] = (df_agg['Annualized Unit Cost'] - df_agg['Target Unit Cost'])/df_agg['Target Unit Cost']
+        df_agg['Benchmark Unit Cost'] = df_agg['Target Total Cost']/df_agg['Target Utilization']
+        df_agg['Diff % from Benchmark Unit Cost'] = (df_agg['Annualized Unit Cost'] - df_agg['Benchmark Unit Cost'])/df_agg['Benchmark Unit Cost']
 #        df_agg.style.format({'Diff % from Target Utilization' : "{:.2%}", 'Diff % from Target Total Cost': "{:.2%}", 'Diff % from Target Unit Cost' : "{:.2%}"})
 #        df_agg.reset_index(inplace = True)
         show_column = selected_dimension + ['Patient %'] + m 
-        if 'Diff % from Target Total Cost' in m:
-            df_agg =  df_agg[show_column].sort_values(by =  'Diff % from Target Total Cost', ascending =False)
+        if 'Diff % from Benchmark Total Cost' in m:
+            df_agg =  df_agg[show_column].sort_values(by =  'Diff % from Benchmark Total Cost', ascending =False)
         else:
             df_agg = df_agg[show_column]
     else:

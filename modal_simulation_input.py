@@ -35,7 +35,7 @@ def modal_simulation_input():
                                     dbc.ModalFooter(
                                         dbc.Button("SAVE", id = 'close-edit-assumption')
                                         )
-                                    ], id = 'modal-edit-assumption', size="lg", is_open = True),
+                                    ], id = 'modal-edit-assumption', size="xl", is_open = True),
 		])
 
 def input_session():
