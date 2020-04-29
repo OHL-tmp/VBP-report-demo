@@ -20,7 +20,7 @@ def modal_simulation_input():
 	return html.Div([
 		dbc.Button("Edit Assumption", id = 'button-edit-assumption', style={"border-radius":"5rem"}),
                                 dbc.Modal([
-                                    dbc.ModalHeader("Edit Assumption", style={"font-family":"NotoSans-Black","font-size":"1.6rem"}),
+                                    dbc.ModalHeader(html.H1("Edit Assumption", style={"font-family":"NotoSans-Black","font-size":"1.5rem"})),
                                     dbc.ModalBody([
                                     	input_session(),
                                     	]),
@@ -145,49 +145,4 @@ def input_session():
 
 
 
-app.layout = modal_simulation_input()
 
-def parse_contents(contents, filename, date):
-	return html.Div([
-        html.H6(filename),
-        html.H6(datetime.datetime.fromtimestamp(date)),
-        ])
-
-@app.callback(
-	Output('output-data-upload', 'children'),
-	[Input('upload-data', 'contents')],
-	[State('upload-data', 'filename'),
-	State('upload-data','last_modified')]
-	)
-def upload_output(list_of_contents, list_of_names, list_of_dates):
-	if list_of_contents is not None:
-		children = [
-			parse_contents(list_of_contents, list_of_names, list_of_dates) 
-		]
-		return children
-
-
-@app.callback(
-	Output('popover-age', 'is_open'),
-	[Input('button-popover-age', 'n_clicks'), Input('popover-age-submit', 'n_clicks')],
-	[State('popover-age', 'is_open')],
-	)
-def toggle_popover(n1, n2, is_open):
-	if n1 or n2:
-		return not is_open
-	return is_open
-
-@app.callback(
-	Output('modal-edit-assumption', 'is_open'),
-	[Input('button-edit-assumption', 'n_clicks'), Input('close-edit-assumption', 'n_clicks')],
-	[State('modal-edit-assumption', 'is_open')],
-	)
-def toggle_popover(n1, n2, is_open):
-	if n1 or n2:
-		return not is_open
-	return is_open
-
-
-
-if __name__ == "__main__":
-    app.run_server(host="127.0.0.1", debug=True, port = 8052)

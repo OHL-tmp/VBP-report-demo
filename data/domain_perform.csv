@@ -1,4 +1,14 @@
 ﻿Domain,Performance Diff from Target,Weight
+<<<<<<< HEAD
+<<<<<<< HEAD
 Cost & Utilization  Reduction,-0.0431559, 0.7 
 Improving Disease Outcome,0.0642857, 0.3 
 Increasing Patient Safety,0.06, 0.2 
+=======
+Cost & Utilization  Reduction,0.003333333,0.6
+Improving Disease Outcome,0.029,0.4
+>>>>>>> 73366b2d07cb1562efbe6d9052de40e3dadf03ad
+=======
+Cost & Utilization  Reduction,0.003333333,0.6
+Improving Disease Outcome,0.029,0.4
+>>>>>>> 2668936aa8f11c0a7484beada86b717e8be4940d

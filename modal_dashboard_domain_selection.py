@@ -127,14 +127,12 @@ def modal_dashboard_domain_selection(n):
                                                                             dbc.Col(html.Div("Entresto", style={"font-family":"NotoSans-SemiBold", "font-size":"1rem", "border":"none","padding":"0.0rem"}), width=6)
                                                                         ],
                                                                         style={"margin-top":"-0.5rem", "margin-bottom":"-1rem"}
-                                                                    ),
-                                                                    html.Hr(),
-                                                                    html.P("25 out of XX measures XXX", style={"font-size":"0.7rem","padding-left":"0.2rem"}),
+                                                                    )
                                                                 ]
                                                             )
                                                         ]
                                                     ),
-                                                    style={"box-shadow":"0 4px 8px 0 rgba(0, 0, 0, 0.05), 0 6px 20px 0 rgba(0, 0, 0, 0.05)", "background-color":"#none", "border":"#919191", "border-radius":"0.5rem","width":"22rem"}
+                                                    style={"box-shadow":"0 4px 8px 0 rgba(0, 0, 0, 0.05), 0 6px 20px 0 rgba(0, 0, 0, 0.05)", "background-color":"none", "border":"#919191", "border-radius":"0.5rem","width":"22rem"}
                                                     
                                                 ),
                                                 width=5
@@ -144,7 +142,7 @@ def modal_dashboard_domain_selection(n):
                                     ]
                                 )
                             ],
-                            style={"background-image":"url('./assets/domain_selection_bg_s.png')","backgroud-size":"auto","border":"none"}
+                            style={"background-image":"url('domain_selection_bg_s.png')","backgroud-size":"auto","border":"none"}
                             ),
                             dbc.ModalBody(
                                 card_domain_selection(n)

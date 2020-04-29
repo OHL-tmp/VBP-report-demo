@@ -319,7 +319,7 @@ def tab_setup(app):
                         ]
                     ),
                     html.Div([
-                        dbc.Button("Submit for Simulation", color="primary",id = 'button-simulation-submit')
+                        dbc.Button("Submit for Simulation", color="primary",id = 'button-simulation-submit', style={"border-radius":"10rem","box-shadow":"0 4px 8px 0 rgba(0, 0, 0, 0.05), 0 6px 20px 0 rgba(0, 0, 0, 0.05)"})
                         ],
                         style={"text-align":"center", "padding-bottom":"2rem"}),
 
@@ -354,14 +354,16 @@ def card_target_patient(app):
                         ),
                         dbc.Row(
                             [
-                                    dbc.Col(
-                                                [html.Div([
-                                                    html.H3("Recommended", style={"font-size":"1rem"}),
-                                                    html.H5("CHF+AF (Recommended)", style={"font-size":"1rem"}, id = 'target-patient-recom'),
-                                                ], hidden = True),],
-                                                style={"padding":"0.8rem"},
-                                                width=4,
-                                            ),
+                                dbc.Col(
+                                    [
+                                        html.Div([
+                                            html.H3("Recommended", style={"font-size":"1rem"}),
+                                            html.H5("CHF+AF (Recommended)", style={"font-size":"1rem"}, id = 'target-patient-recom'),
+                                        ], hidden = True),
+                                    ],
+                                    style={"padding":"0.8rem"},
+                                    width=4,
+                                ),
                                 dbc.Col(
                                     [
                                         html.H3("Payer Contract", style={"font-size":"1rem"}),
@@ -406,8 +408,8 @@ def card_outcome_measure(app):
                                 dbc.Col(
 #                                	dbc.Button("Edit Assumption"),
                                     modal_optimizer_domain_selection(domain_ct),
-                                    style={"padding-left":"2rem"},
-                                    width=4,
+                                    style={"padding-left":"2rem","text-align":"center"},
+                                    width=5,
                                 ),
                                 dbc.Col(
                                 	[
@@ -415,18 +417,12 @@ def card_outcome_measure(app):
                                 			[
                                 				html.H4("Baseline", style={"font-size":"1rem"}),
                                                 html.Hr(className="ml-1"),
-                                				dbc.Row(
-                                					[
-                                						dbc.Col("Recommended", width=6),
-                                						dbc.Col("Payer Contract", width=6),
-                                					],
-                                                    style={"font-family":"NotoSans-Condensed", "font-size":"0.8rem","text-align":"center"}
-                                				)
+                                				
                                 			]
                                 		)
                                 	],
                                     style={"text-align":"center"},
-                                    width=2,
+                                    width=1,
                                 ),
                                 dbc.Col(
                                 	[
@@ -434,13 +430,7 @@ def card_outcome_measure(app):
                                 			[
                                 				html.H4("Target", style={"font-size":"1rem"}),
                                                 html.Hr(className="ml-1"),
-                                				dbc.Row(
-                                					[
-                                						dbc.Col("Recommended", width=6),
-                                						dbc.Col("Payer Contract", width=6),
-                                					],
-                                                    style={"font-family":"NotoSans-Condensed", "font-size":"0.8rem","text-align":"center"}
-                                				)
+                                				
                                 			]
                                 		)
                                 	],
@@ -453,13 +443,7 @@ def card_outcome_measure(app):
                                 			[
                                 				html.H4("Likelihood to achieve", style={"font-size":"1rem"}),
                                                 html.Hr(className="ml-1"),
-                                				dbc.Row(
-                                					[
-                                						dbc.Col("Recommended", width=6),
-                                						dbc.Col("Payer Contract", width=6),
-                                					],
-                                                    style={"font-family":"NotoSans-Condensed", "font-size":"0.8rem","text-align":"center"}
-                                				)
+                                				
                                 			]
                                 		)
                                 	],
@@ -472,13 +456,7 @@ def card_outcome_measure(app):
                                 			[
                                 				html.H4("Weight", style={"font-size":"1rem"}),
                                                 html.Hr(className="ml-1"),
-                                				dbc.Row(
-                                					[
-                                						dbc.Col("Recommended", width=6),
-                                						dbc.Col("Payer Contract", width=6),
-                                					],
-                                                    style={"font-family":"NotoSans-Condensed", "font-size":"0.8rem","text-align":"center"}
-                                				)
+                                				
                                 			]
                                 		)
                                 	],
@@ -487,7 +465,7 @@ def card_outcome_measure(app):
                                 ),
 
                             ],
-                            style={"padding-right":"1.5rem", "padding-left":"0rem"}
+                            style={"padding-right":"0rem", "padding-left":"0rem", "width":"105%", "margin-left":"-4rem", "margin-bottom":"-1rem"}
                             
                         ),
 #                        card_measure_modifier(domain_ct),
@@ -672,17 +650,25 @@ def card_contract_wo_vbc_adjustment(app):
                                 dbc.Col(html.H4("Contract without VBC Adjustment", style={"font-size":"1rem", "margin-left":"10px"}), width=5),
                                 dbc.Col(html.Div("Rebate", style={"font-family":"NotoSans-Condensed","font-size":"1rem","text-align":"center"}), width=1),
 								dbc.Col(
-                                    dcc.Input(id = 'input-rebate',
-                                        type = 'number', debounce = True, persistence = True, persistence_type = 'session',
-                                        min = 0, max = 100), 
-                                    width=3),
+                                    dbc.InputGroup(
+                                                [
+                                                     dcc.Input(id = 'input-rebate',
+                                                                type = 'number', debounce = True, persistence = True, persistence_type = 'session',
+                                                                min = 0, max = 100, size="13", style={"text-align":"center"}), 
+                                                    dbc.InputGroupAddon("%", addon_type="append"),
+                                                ],
+                                                className="mb-3",
+                                                size="sm"
+                                            ),
+                                    width=2
+                                ),
 								dbc.Col([
 									dbc.Button("Edit Rebate Input", id = 'button-edit-rebate-1', style={"background-color":"#38160f", "border":"none", "border-radius":"10rem", "font-family":"NotoSans-Regular", "font-size":"0.6rem"}),
 									dbc.Modal([
-										dbc.ModalHeader(html.H1("EDIT Rebate Input"), style={"font-size":"1rem"}),
+										dbc.ModalHeader(html.H1("EDIT Rebate Input", style={"font-size":"1rem"})),
 										dbc.ModalBody([
 											dbc.Row([
-												dbc.Col("# of units"),
+												dbc.Col("% of market share range"),
 												dbc.Col("Rebates %"),
 												],
 												style={"padding":"1rem"}),
@@ -707,7 +693,8 @@ def card_contract_wo_vbc_adjustment(app):
 											dbc.Button('SAVE', id = 'close-edit-rebate-1', size="sm")
 											)
 										], id = 'modal-edit-rebate-1'),
-									], width=2),
+									], width=2
+                                ),
                             ],
                             no_gutters=True,
                         ),
@@ -743,8 +730,43 @@ def card_vbc_contract(app):
 
                                         ]
                                     ),
-                                    width=3
+                                    width=2
                                 ),
+
+                                dbc.Col([
+                                    dbc.Button("EDIT Rebate Input", id = 'button-edit-rebate-2', style={"background-color":"#38160f", "border":"none", "border-radius":"10rem", "font-family":"NotoSans-Regular", "font-size":"0.6rem"}),
+                                    dbc.Modal([
+                                        dbc.ModalHeader(html.H1("Edit Rebate Input", style={"font-size":"1rem"})),
+                                        dbc.ModalBody([
+                                            dbc.Row([
+                                                dbc.Col("% of market share range"),
+                                                dbc.Col("Rebates %"),
+                                                ],
+                                                style={"padding":"1rem"}),
+                                            dbc.Row([
+                                                dbc.Col(dbc.InputGroup([
+                                                    dbc.Input(),
+                                                    dbc.InputGroupAddon('~', addon_type = 'append'),
+                                                    dbc.Input(),
+                                                    ])),
+                                                dbc.Col(dbc.InputGroup([
+                                                    dbc.Input(),
+                                                    dbc.InputGroupAddon('%', addon_type = 'append'),
+                                                    ])),
+                                                ],
+                                                style={"padding":"1rem"}),
+                                            dbc.Row([
+                                                dbc.Col(html.H4("+ Add another range", style={"font-size":"0.8rem","color":"#1357DD"})),
+                                                ],
+                                                style={"padding":"1rem"}),
+                                            ]),
+                                        dbc.ModalFooter(
+                                            dbc.Button('SAVE', id = 'close-edit-rebate-2', size="sm")
+                                            )
+                                        ], id = 'modal-edit-rebate-2'),
+                                    ], width=2
+                                ),
+
                                 dbc.Col(
                                     html.Div(
                                         [
@@ -757,7 +779,7 @@ def card_vbc_contract(app):
                                                                 {'label':'Formulary upgrade', 'value':'Formulary upgrade'}
                                                             ],
                                                 value = 'Rebate adjustment',
-                                                style={"font-family":"NotoSans-Regular","font-size":"0.8rem","width":"13rem"}
+                                                style={"font-family":"NotoSans-Regular","font-size":"0.8rem","width":"11rem"}
                                             )
                                                 
                                         ]
@@ -767,38 +789,7 @@ def card_vbc_contract(app):
                                     
 #								dbc.Col(html.Div("Maximum Positive Adjustment"), width=1),
 
-								dbc.Col([
-									dbc.Button("EDIT Rebate Input", id = 'button-edit-rebate-2', style={"background-color":"#38160f", "border":"none", "border-radius":"10rem", "font-family":"NotoSans-Regular", "font-size":"0.6rem"}),
-									dbc.Modal([
-										dbc.ModalHeader(html.H1("Edit Rebate Input"), style={"font-size":"1rem"}),
-										dbc.ModalBody([
-											dbc.Row([
-												dbc.Col("# of units"),
-												dbc.Col("Rebates %"),
-												],
-												style={"padding":"1rem"}),
-											dbc.Row([
-												dbc.Col(dbc.InputGroup([
-													dbc.Input(),
-													dbc.InputGroupAddon('~', addon_type = 'append'),
-													dbc.Input(),
-													])),
-												dbc.Col(dbc.InputGroup([
-													dbc.Input(),
-													dbc.InputGroupAddon('%', addon_type = 'append'),
-													])),
-												],
-												style={"padding":"1rem"}),
-											dbc.Row([
-												dbc.Col(html.H4("+ Add another range", style={"font-size":"0.8rem","color":"#1357DD"})),
-												],
-												style={"padding":"1rem"}),
-											]),
-										dbc.ModalFooter(
-											dbc.Button('SAVE', id = 'close-edit-rebate-2', size="sm")
-											)
-										], id = 'modal-edit-rebate-2'),
-									], width=2),
+
                             ],
                             no_gutters=True,
                         ),
@@ -814,8 +805,8 @@ def card_contract_adjust(app):
                     [
                         dbc.Row(
                             [
-                                dbc.Col(html.Img(src=app.get_asset_url("simulation_illustration.png"), style={"max-width":"100%","max-height":"100%"}), width=7,),
-                                dbc.Col(card_contract_adjust_sub(app), width=5)
+                                dbc.Col(html.Img(src=app.get_asset_url("simulation_illustration.png"), style={"max-width":"100%","max-height":"100%"}), width=6),
+                                dbc.Col(card_contract_adjust_sub(app), width=6)
                             ],
                             no_gutters=True,
                         ),
@@ -833,16 +824,16 @@ def card_contract_adjust_sub(app):
                     	dbc.Col(html.H1("Positive Adjustment", style={"font-size":"1rem", "padding-bottom":"1rem"})),
                     	dbc.Row(
                             [
-                                dbc.Col(html.Div(""), width=4),
-								dbc.Col(html.H3("Recommended", style={"font-size":"0.8rem"}), width=4),
-								dbc.Col(html.H3("Payer Contract", style={"font-size":"0.8rem"}), width=4),
+                                dbc.Col(html.Div(""), width=6),
+								dbc.Col(html.H3("Recommended", style={"font-size":"0.8rem"}), width=3),
+								dbc.Col(html.H3("Payer Contract", style={"font-size":"0.8rem"}), width=3),
                             ],
                             no_gutters=True,
                         ),
                         dbc.Row(
                             [
-                                dbc.Col(html.H3("Performance Level Threshold", style={"color":"#919191","font-size":"1rem"}), width=4),
-								dbc.Col(html.Div("120%", id = 'recom-pos-perf', style={"font-family":"NotoSans-Regular","font-size":"1rem", "text-align":"center"}), width=4),
+                                dbc.Col(html.H3("\u2460 Performance Level Threshold", style={"color":"#919191","font-size":"1rem"}), width=6),
+								dbc.Col(html.Div("120%", id = 'recom-pos-perf', style={"font-family":"NotoSans-Regular","font-size":"1rem", "text-align":"center"}), width=3),
 								dbc.Col(
                                     dbc.InputGroup(
                                         [
@@ -854,7 +845,7 @@ def card_contract_adjust_sub(app):
                                         className="mb-3",
                                         size="sm"
                                     ),
-                                    width=4,
+                                    width=3,
                                     style={"text-align":"end"}
                                 ),
 
@@ -863,7 +854,7 @@ def card_contract_adjust_sub(app):
                         ),
                         dbc.Row(
                             [
-                                dbc.Col(html.H3("Rebate Adjustment Cap", style={"color":"#919191","font-size":"1rem"}), width=4),
+                                dbc.Col(html.H3("\u2461 Rebate Adjustment Cap", style={"color":"#919191","font-size":"1rem"}), width=6),
                                 dbc.Col(
                                     dbc.InputGroup(
                                         [
@@ -875,7 +866,7 @@ def card_contract_adjust_sub(app):
                                         className="mb-3",
                                         size="sm"
                                     ),
-                                    width=4,
+                                    width=3,
                                     style={"text-align":"end"}
                                 ),
                                 dbc.Col(
@@ -889,7 +880,7 @@ def card_contract_adjust_sub(app):
                                         className="mb-3",
                                         size="sm"
                                     ),
-                                    width=4,
+                                    width=3,
                                     style={"text-align":"end"}
                                 ),
                                 
@@ -902,16 +893,16 @@ def card_contract_adjust_sub(app):
                         dbc.Col(html.H1("Negative Adjustment", style={"font-size":"1rem", "padding-bottom":"1rem"})),
                     	dbc.Row(
                             [
-                                dbc.Col(html.Div(""), width=4),
-								dbc.Col(html.H3("Recommended", style={"font-size":"0.8rem"}), width=4),
-								dbc.Col(html.H3("Payer Contract", style={"font-size":"0.8rem"}), width=4),
+                                dbc.Col(html.Div(""), width=6),
+								dbc.Col(html.H3("Recommended", style={"font-size":"0.8rem"}), width=3),
+								dbc.Col(html.H3("Payer Contract", style={"font-size":"0.8rem"}), width=3),
                             ],
                             no_gutters=True,
                         ),
                         dbc.Row(
                             [
-                                dbc.Col(html.H3("Performance Level Threshold", style={"color":"#919191","font-size":"1rem"}), width=4),
-								dbc.Col(html.Div("80%", id = 'recom-neg-perf', style={"font-family":"NotoSans-Regular","font-size":"1rem", "text-align":"center"}), width=4),
+                                dbc.Col(html.H3("\u2462 Performance Level Threshold", style={"color":"#919191","font-size":"1rem"}), width=6),
+								dbc.Col(html.Div("80%", id = 'recom-neg-perf', style={"font-family":"NotoSans-Regular","font-size":"1rem", "text-align":"center"}), width=3),
 								dbc.Col(
                                     dbc.InputGroup(
                                         [
@@ -923,7 +914,7 @@ def card_contract_adjust_sub(app):
                                         className="mb-3",
                                         size="sm"
                                     ),
-                                    width=4,
+                                    width=3,
                                     style={"text-align":"end"}
                                 ),
                             ],
@@ -931,20 +922,20 @@ def card_contract_adjust_sub(app):
                         ),
                         dbc.Row(
                             [
-                                dbc.Col(html.H3("Rebate Adjustment Cap", style={"color":"#919191","font-size":"1rem"}), width=4),
+                                dbc.Col(html.H3("\u2463 Rebate Adjustment Cap", style={"color":"#919191","font-size":"1rem"}), width=6),
                                 dbc.Col(
                                     dbc.InputGroup(
                                         [
                                             dbc.InputGroupAddon("-", addon_type="prepend"),
                                             dcc.Input(id = 'input-max-neg-adj',
                                                 type = 'number', debounce = True, persistence = True, persistence_type = 'session',
-                                                min = 0, max = 100, size="6", style={"text-align":"center"}), 
+                                                min = 0, max = 100, size="4", style={"text-align":"center"}), 
                                             dbc.InputGroupAddon("%", addon_type="append"),
                                         ],
                                         className="mb-3",
                                         size="sm"
                                     ),
-                                    width=4,
+                                    width=3,
                                     style={"text-align":"end"}
                                 ),
                                 dbc.Col(
@@ -953,13 +944,13 @@ def card_contract_adjust_sub(app):
                                             dbc.InputGroupAddon("-", addon_type="prepend"),
                                             dcc.Input(id = 'input-neg-adj',
                                                 type = 'number', debounce = True, persistence = True, persistence_type = 'session',
-                                                min = 0, max = 100, size="6",style={"text-align":"center"}), 
+                                                min = 0, max = 100, size="4",style={"text-align":"center"}), 
                                             dbc.InputGroupAddon("%", addon_type="append"),
                                         ],
                                         className="mb-3",
                                         size="sm"
                                     ),
-                                    width=4,
+                                    width=3,
                                     style={"text-align":"end"}
                                 ),
                                 
@@ -1146,122 +1137,12 @@ def collapse_confounding_factors(app):
 
 layout = create_layout(app)
 
-#link to model
+
+
+
+
+
 '''
-@app.callback(
-    [Output('tab_container', 'active_tab'),
-    Output('sim_result_box_1','figure'),
-    Output('sim_result_table_1','children'),
-    Output('sim_result_box_2','figure'),
-    Output('sim_result_table_2','children')],
-    [Input('button-simulation-submit', 'n_clicks'),
-    Input('recom-pos-perf','children'),
-    Input('recom-neg-perf','children'),
-    Input('input-max-pos-adj','value'),
-    Input('input-max-neg-adj','value'),
-    Input('input-pos-perform', 'value'),
-    Input('input-neg-perform', 'value'),
-    Input('input-pos-adj', 'value'),
-    Input('input-neg-adj', 'value'),
-    Input('target-patient-recom','children'),
-    Input('target-patient-input','value'),
-    Input('input-rebate','value'),
-    Input('input-base-rebate','value'),]
-    + [Input('measure-name-1-2', 'children'),
-    Input('measure-name-1-6', 'children'),
-    Input('measure-name-2-1', 'children'),
-    Input('measure-name-2-2', 'children'),]
-    +[Input('measure-target-user-1-2', 'value'),
-    Input('measure-target-user-1-6', 'value'),
-    Input('measure-target-user-2-1', 'value'),
-    Input('measure-target-user-2-2', 'value'),]
-    +[Input('measure-weight-user-1-2', 'value'),
-    Input('measure-weight-user-1-6', 'value'),
-    Input('measure-weight-user-2-1', 'value'),
-    Input('measure-weight-user-2-2', 'value'),]
-#    + [Input(f'outcome-measure-row-1-{m+1}', 'hidden') for m in range(8)]
-#    + [Input(f'outcome-measure-row-2-{m+1}', 'hidden') for m in range(10)]
-#    + [Input(f'outcome-measure-row-4-{m+1}', 'hidden') for m in range(2)]
-#    + [Input(f'outcome-measure-row-5-{m+1}', 'hidden') for m in range(3)]
-#    + [Input(f'outcome-measure-row-6-{m+1}', 'hidden') for m in range(4)]
-#    + [Input(f'measure-name-1-{m+1}', 'children') for m in range(8)]
-#    + [Input(f'measure-name-2-{m+1}', 'children') for m in range(10)]
-#    + [Input(f'measure-name-4-{m+1}', 'children') for m in range(2)]
-#    + [Input(f'measure-name-5-{m+1}', 'children') for m in range(3)]
-#    + [Input(f'measure-name-6-{m+1}', 'children') for m in range(4)]
-#    + [Input(f'measure-target-user-1-{m+1}', 'value') for m in range(8)]
-#    + [Input(f'measure-target-user-2-{m+1}', 'value') for m in range(10)]
-#    + [Input(f'measure-target-user-4-{m+1}', 'value') for m in range(2)]
-#    + [Input(f'measure-target-user-5-{m+1}', 'value') for m in range(3)]
-#    + [Input(f'measure-target-user-6-{m+1}', 'value') for m in range(4)]
-#    + [Input(f'measure-weight-user-1-{m+1}', 'value') for m in range(8)]
-#    + [Input(f'measure-weight-user-2-{m+1}', 'value') for m in range(10)]
-#    + [Input(f'measure-weight-user-4-{m+1}', 'value') for m in range(2)]
-#    + [Input(f'measure-weight-user-5-{m+1}', 'value') for m in range(3)]
-#    + [Input(f'measure-weight-user-6-{m+1}', 'value') for m in range(4)]
-    )
-#def simulation(submit_button, re_pos_perf, re_neg_perf, re_pos_adj, re_neg_adj, in_pos_perf, in_neg_perf, in_pos_adj, in_neg_adj, cohort_recom, cohort_selected, rebate_novbc, rebate_vbc,
-# h1,h2,h3,h4,h5,h6,h7,h8,h9,h10,h11,h12,h13,h14,h15,h16,h17,h18,h19,h20,h21,h22,h23,h24,h25,h26,h27,
-# m1,m2,m3,m4,m5,m6,m7,m8,m9,m10,m11,m12,m13,m14,m15,m16,m17,m18,m19,m20,m21,m22,m23,m24,m25,m26,m27,
-# t1,t2,t3,t4,t5,t6,t7,t8,t9,t10,t11,t12,t13,t14,t15,t16,t17,t18,t19,t20,t21,t22,t23,t24,t25,t26,t27,
-# w1,w2,w3,w4,w5,w6,w7,w8,w9,w10,w11,w12,w13,w14,w15,w16,w17,w18,w19,w20,w21,w22,w23,w24,w25,w26,w27):
-def simulation(submit_button, re_pos_perf, re_neg_perf, re_pos_adj, re_neg_adj, in_pos_perf, in_neg_perf, in_pos_adj, in_neg_adj, cohort_recom, cohort_selected, rebate_novbc, rebate_vbc,
-    m1,m2,m3,m4,t1,t2,t3,t4,w1,w2,w3,w4):
-    triggered = [t["prop_id"] for t in dash.callback_context.triggered]
-    submit = len([1 for i in triggered if i == "button-simulation-submit.n_clicks"])
-    if submit:
-        input1 = {'Perf_Range_U_Min': [1], 
-                    'Perf_Range_U_Max': [float(re_pos_perf[:-1])/100], 
-                    'Adj_Limit_U': [re_pos_adj/100],
-                    'Perf_Range_L_Min': [1],
-                    'Perf_Range_L_Max': [float(re_neg_perf[:-1])/100],
-                    'Adj_Limit_L': [re_neg_adj/100]} 
-        Recom_Contract = pd.DataFrame(input1, columns = ['Perf_Range_U_Min','Perf_Range_U_Max','Adj_Limit_U','Perf_Range_L_Min','Perf_Range_L_Max', 'Adj_Limit_L'])
-        
-#        selected_measure = []
-        measure_name = [m1,m2,m3,m4]
-        target_list = [t1,t2,t3,t4]
-        weight_list = [w1,w2,w3,w4]
-#        for i in range(27):
-#            if eval('h'+str(i+1)) ==False:
-#                selected_measure.append(i+1)
-#        for k in selected_measure:
-#            measure_name.append(eval('m'+str(i+1)))
-#            target_list.append(eval('t'+str(i+1)))
-#            weight_list.append(eval('w'+str(i+1)))
-        
-#        print(selected_measure,measure_name,target_list,weight_list)
-        input2 = {'Measure': measure_name, 
-                'Target': target_list, 
-                'Weight': list(np.array(weight_list)/100)} 
-        UD_Measure = pd.DataFrame(input2, columns = ['Measure', 'Target', 'Weight']) 
-        UD_Measure['Target'] = UD_Measure.apply(lambda x: x['Target']/100 if x['Measure'] in percent_input else x['Target'], axis = 1)
-
-        input3 = {'Perf_Range_U_Min': [1], 
-                        'Perf_Range_U_Max': [in_pos_perf/100], 
-                        'Adj_Limit_U': [in_pos_adj/100],
-                        'Perf_Range_L_Min': [1],
-                        'Perf_Range_L_Max': [in_neg_perf/100],
-                        'Adj_Limit_L': [in_neg_adj/100]} 
-        UD_Contract = pd.DataFrame(input3, columns = ['Perf_Range_U_Min','Perf_Range_U_Max','Adj_Limit_U','Perf_Range_L_Min','Perf_Range_L_Max', 'Adj_Limit_L']) 
-
-        if cohort_selected == cohort_recom:
-            cohort = 'CHF+AF (Recommended)'
-        else:
-            cohort = 'All CHF Patients'
-
-        t1,t2,t3=Contract_Calculation(Recom_Contract, UD_Measure,UD_Contract,cohort,rebate_novbc/100, rebate_vbc/100)
-        t1.reset_index(inplace = True)
-        t2.reset_index(inplace = True)
-        t3.reset_index(inplace  =True)
-
-        return 'tab-1',sim_result_box(t1),table_sim_result(t1),sim_result_box(t2),table_sim_result(t2)
-    return 'tab-0',{},[],{},[]
-
-
-
-
-
 ##input likelihood
 
 def cal_measure_likelihood(recom_like, recom_target, user_target, measure, h):
@@ -1388,7 +1269,7 @@ def overall_like(l1,l2,l3,l4,l5,l6,l7,l8,l9,l10,l11,l12,l13,l14,l15,l16,l17,l18,
 #input modal measure
 @app.callback(
     Output("optimizer-modal-centered", "is_open"),
-    [Input("open-centered", "n_clicks"), Input("close-centered", "n_clicks")],
+    [Input("optimizer-open-centered", "n_clicks"), Input("optimizer-close-centered", "n_clicks")],
     [State("optimizer-modal-centered", "is_open")],
     )
 def toggle_modal_simulation_measure_selection(n1, n2, is_open):
@@ -1422,7 +1303,7 @@ for d in range(len(list(Domain_options.keys()))):
     for i in range(len(list(Domain_options[list(Domain_options.keys())[d]].keys()))):
         app.callback(
             [Output(f"optimizer-checklist-domain-measures-lv2-container-{d+1}-{i+1}","is_open")],
-            [Input(f"measures-lv1-{d+1}-{i+1}","n_clicks")],
+            [Input(f"optimizer-measures-lv1-{d+1}-{i+1}","n_clicks")],
             [State(f"optimizer-checklist-domain-measures-lv2-container-{d+1}-{i+1}","is_open")],
         )(open_measure_lv2)
 
@@ -1546,485 +1427,7 @@ def toggle_collapse_domain_selection_measures_6(v1):
     if measure_count > 0: 
         return  "primary", True, u"{} measures selected".format(measure_count)
     return "light", False, ""   
-'''
-##update outcome measures
-def show_domain_card(color):
-    if color == 'primary':
-        return [False]
-    return [True]
 
-for d in range(domain_ct):
-    app.callback(
-        [Output(f'outcome-domain-container-{d+1}', 'hidden')],
-        [Input(f'optimizer-card-domain-selection-{d+1}', 'color')]
-        )(show_domain_card)
-
-
-###domain 1
-@app.callback(
-    Output('outcome-domain-weight-user-1', 'children'),
-    [Input(f'measure-weight-user-1-{m+1}', 'value') for m in range(8)]
-    )
-def cal_domain_weight(v1, v2, v3, v4, v5, v6, v7, v8):
-    if v1:
-        n1 = v1
-    else:
-        n1 = 0
-    if v2:
-        n2 = v2
-    else:
-        n2 = 0
-    if v3:
-        n3 = v3
-    else:
-        n3 = 0
-    if v4:
-        n4 = v4
-    else:
-        n4 = 0
-    if v5:
-        n5 = v5
-    else:
-        n5 = 0
-    if v6:
-        n6 = v6
-    else:
-        n6 = 0
-    if v7:
-        n7 = v7
-    else:
-        n7 = 0
-    if v8:
-        n8 = v8
-    else:
-        n8 = 0
-    w = sum([n1, n2, n3, n4, n5, n6, n7, n8])
-    return '{:.0%}'.format(w/100)
-
-@app.callback(
-    Output('outcome-domain-weight-recom-1', 'children'),
-    [Input(f'measure-weight-recom-1-{m+1}', 'children') for m in range(8)]
-    )
-def cal_domain_weight(v1, v2, v3, v4, v5, v6, v7, v8):
-    if v1:
-        n1 = float(v1[:-1])
-    else:
-        n1 = 0
-    if v2:
-        n2 = float(v2[:-1])
-    else:
-        n2 = 0
-    if v3:
-        n3 = float(v3[:-1])
-    else:
-        n3 = 0
-    if v4:
-        n4 = float(v4[:-1])
-    else:
-        n4 = 0
-    if v5:
-        n5 = float(v5[:-1])
-    else:
-        n5 = 0
-    if v6:
-        n6 = float(v6[:-1])
-    else:
-        n6 = 0
-    if v7:
-        n7 = float(v7[:-1])
-    else:
-        n7 = 0
-    if v8:
-        n8 = float(v8[:-1])
-    else:
-        n8 = 0
-    
-    w = sum([n1, n2, n3, n4, n5, n6, n7, n8])
-    return '{:.0%}'.format(w/100)
-
-
-@app.callback(
-    [Output(f'outcome-measure-row-1-{m+1}', 'hidden') for m in range(8) ],
-    [Input(f'checklist-domain-measures-lv2-1-{n+1}', 'value') for n in range(4)] + [Input(f'measure-name-1-{m+1}','children') for m in range(8)]
-    )
-def show_measure_row_1(v1, v2, v3, v4, m1, m2, m3, m4, m5 ,m6, m7, m8):
-    v = v1+v2+v3+v4
-    if m1 in v:
-        h1 = False
-    else:
-        h1 = True
-    if m2 in v:
-        h2 = False
-    else:
-        h2 = True
-    if m3 in v:
-        h3 = False
-    else:
-        h3 = True
-    if m4 in v:
-        h4 = False
-    else:
-        h4 = True
-    if m5 in v:
-        h5 = False
-    else:
-        h5 = True
-    if m6 in v:
-        h6 = False
-    else:
-        h6 = True
-    if m7 in v:
-        h7 = False
-    else:
-        h7 = True
-    if m8 in v:
-        h8 = False
-    else:
-        h8 = True
-    
-    return h1, h2, h3, h4, h5, h6, h7, h8
-
-
-###domain 2
-@app.callback(
-    Output('outcome-domain-weight-user-2', 'children'),
-    [Input(f'measure-weight-user-2-{m+1}', 'value') for m in range(10)]
-    )
-def cal_domain_weight(v1, v2, v3, v4, v5, v6, v7, v8, v9, v10):
-    if v1:
-        n1 = v1
-    else:
-        n1 = 0
-    if v2:
-        n2 = v2
-    else:
-        n2 = 0
-    if v3:
-        n3 = v3
-    else:
-        n3 = 0
-    if v4:
-        n4 = v4
-    else:
-        n4 = 0
-    if v5:
-        n5 = v5
-    else:
-        n5 = 0
-    if v6:
-        n6 = v6
-    else:
-        n6 = 0
-    if v7:
-        n7 = v7
-    else:
-        n7 = 0
-    if v8:
-        n8 = v8
-    else:
-        n8 = 0
-    if v9:
-        n9 = v9
-    else:
-        n9 = 0
-    if v10:
-        n10 = v10
-    else:
-        n10 = 0
-    w = sum([n1, n2, n3, n4, n5, n6, n7, n8, n9, n10])
-    return '{:.0%}'.format(w/100)
-
-@app.callback(
-    Output('outcome-domain-weight-recom-2', 'children'),
-    [Input(f'measure-weight-recom-2-{m+1}', 'children') for m in range(10)]
-    )
-def cal_domain_weight(v1, v2, v3, v4, v5, v6, v7, v8, v9, v10):
-    if v1:
-        n1 = float(v1[:-1])
-    else:
-        n1 = 0
-    if v2:
-        n2 = float(v2[:-1])
-    else:
-        n2 = 0
-    if v3:
-        n3 = float(v3[:-1])
-    else:
-        n3 = 0
-    if v4:
-        n4 = float(v4[:-1])
-    else:
-        n4 = 0
-    if v5:
-        n5 = float(v5[:-1])
-    else:
-        n5 = 0
-    if v6:
-        n6 = float(v6[:-1])
-    else:
-        n6 = 0
-    if v7:
-        n7 = float(v7[:-1])
-    else:
-        n7 = 0
-    if v8:
-        n8 = float(v8[:-1])
-    else:
-        n8 = 0
-    if v9:
-        n9 = float(v9[:-1])
-    else:
-        n9 = 0
-    if v10:
-        n10 = float(v10[:-1])
-    else:
-        n10 = 0
-    w = sum([n1, n2, n3, n4, n5, n6, n7, n8, n9, n10])
-    return '{:.0%}'.format(w/100)
-
-
-@app.callback(
-    [Output(f'outcome-measure-row-2-{m+1}', 'hidden') for m in range(10) ],
-    [Input(f'checklist-domain-measures-lv2-2-{n+1}', 'value') for n in range(4)] + [Input(f'measure-name-2-{m+1}','children') for m in range(10)]
-    )
-def show_measure_row_2(v1, v2, v3, v4, m1, m2, m3, m4, m5 ,m6, m7, m8, m9, m10):
-    v = v1+v2+v3+v4
-    if m1 in v:
-        h1 = False
-    else:
-        h1 = True
-    if m2 in v:
-        h2 = False
-    else:
-        h2 = True
-    if m3 in v:
-        h3 = False
-    else:
-        h3 = True
-    if m4 in v:
-        h4 = False
-    else:
-        h4 = True
-    if m5 in v:
-        h5 = False
-    else:
-        h5 = True
-    if m6 in v:
-        h6 = False
-    else:
-        h6 = True
-    if m7 in v:
-        h7 = False
-    else:
-        h7 = True
-    if m8 in v:
-        h8 = False
-    else:
-        h8 = True
-    if m9 in v:
-        h9 = False
-    else:
-        h9 = True
-    if m10 in v:
-        h10 = False
-    else:
-        h10 = True
-
-    return h1, h2, h3, h4, h5, h6, h7, h8, h9, h10
-
-###domain 4
-@app.callback(
-    Output('outcome-domain-weight-user-4', 'children'),
-    [Input(f'measure-weight-user-4-{m+1}', 'value') for m in range(2)]
-    )
-def cal_domain_weight(v1, v2):
-    if v1:
-        n1 = v1
-    else:
-        n1 = 0
-    if v2:
-        n2 = v2
-    else:
-        n2 = 0
-
-    w = sum([n1, n2])
-    return '{:.0%}'.format(w/100)
-
-@app.callback(
-    Output('outcome-domain-weight-recom-4', 'children'),
-    [Input(f'measure-weight-recom-4-{m+1}', 'children') for m in range(2)]
-    )
-def cal_domain_weight(v1, v2):
-    if v1:
-        n1 = float(v1[:-1])
-    else:
-        n1 = 0
-    if v2:
-        n2 = float(v2[:-1])
-    else:
-        n2 = 0
-   
-    w = sum([n1, n2])
-    return '{:.0%}'.format(w/100)
-
-@app.callback(
-    [Output(f'outcome-measure-row-4-{m+1}', 'hidden') for m in range(2) ],
-    [Input(f'checklist-domain-measures-lv2-4-1', 'value')] + [Input(f'measure-name-4-{m+1}','children') for m in range(2)]
-    )
-def show_measure_row_4(v1, m1, m2):
-    v = v1
-    if m1 in v:
-        h1 = False
-    else:
-        h1 = True
-    if m2 in v:
-        h2 = False
-    else:
-        h2 = True
-
-    return h1, h2
-
-###domain 5
-@app.callback(
-    Output('outcome-domain-weight-user-5', 'children'),
-    [Input(f'measure-weight-user-5-{m+1}', 'value') for m in range(3)]
-    )
-def cal_domain_weight(v1, v2, v3):
-    if v1:
-        n1 = v1
-    else:
-        n1 = 0
-    if v2:
-        n2 = v2
-    else:
-        n2 = 0
-    if v3:
-        n3 = v3
-    else:
-        n3 = 0
-
-    w = sum([n1, n2, n3])
-    return '{:.0%}'.format(w/100)
-
-@app.callback(
-    Output('outcome-domain-weight-recom-5', 'children'),
-    [Input(f'measure-weight-recom-5-{m+1}', 'children') for m in range(3)]
-    )
-def cal_domain_weight(v1, v2, v3):
-    if v1:
-        n1 = float(v1[:-1])
-    else:
-        n1 = 0
-    if v2:
-        n2 = float(v2[:-1])
-    else:
-        n2 = 0
-    if v3:
-        n3 = float(v3[:-1])
-    else:
-        n3 = 0
-    
-    w = sum([n1, n2, n3])
-    return '{:.0%}'.format(w/100)
-
-@app.callback(
-    [Output(f'outcome-measure-row-5-{m+1}', 'hidden') for m in range(3) ],
-    [Input(f'checklist-domain-measures-lv2-5-1', 'value')] + [Input(f'measure-name-5-{m+1}','children') for m in range(3)]
-    )
-def show_measure_row_5(v1, m1, m2, m3):
-    v = v1
-    if m1 in v:
-        h1 = False
-    else:
-        h1 = True
-    if m2 in v:
-        h2 = False
-    else:
-        h2 = True
-    if m3 in v:
-        h3 = False
-    else:
-        h3 = True
-
-    return h1, h2, h3
-
-###domain 6
-@app.callback(
-    Output('outcome-domain-weight-user-6', 'children'),
-    [Input(f'measure-weight-user-6-{m+1}', 'value') for m in range(4)]
-    )
-def cal_domain_weight(v1, v2, v3, v4):
-    if v1:
-        n1 = v1
-    else:
-        n1 = 0
-    if v2:
-        n2 = v2
-    else:
-        n2 = 0
-    if v3:
-        n3 = v3
-    else:
-        n3 = 0
-    if v4:
-        n4 = v4
-    else:
-        n4 = 0
-
-    w = sum([n1, n2, n3, n4])
-    return '{:.0%}'.format(w/100)
-
-@app.callback(
-    Output('outcome-domain-weight-recom-6', 'children'),
-    [Input(f'measure-weight-recom-6-{m+1}', 'children') for m in range(4)]
-    )
-def cal_domain_weight(v1, v2, v3, v4):
-    if v1:
-        n1 = float(v1[:-1])
-    else:
-        n1 = 0
-    if v2:
-        n2 = float(v2[:-1])
-    else:
-        n2 = 0
-    if v3:
-        n3 = float(v3[:-1])
-    else:
-        n3 = 0
-    if v4:
-        n4 = float(v4[:-1])
-    else:
-        n4 = 0
-
-    w = sum([n1, n2, n3, n4])
-    return '{:.0%}'.format(w/100)
-
-@app.callback(
-    [Output(f'outcome-measure-row-6-{m+1}', 'hidden') for m in range(4) ],
-    [Input(f'checklist-domain-measures-lv2-6-1', 'value')] + [Input(f'measure-name-6-{m+1}','children') for m in range(4)]
-    )
-def show_measure_row_6(v1, m1, m2, m3, m4):
-    v = v1
-    if m1 in v:
-        h1 = False
-    else:
-        h1 = True
-    if m2 in v:
-        h2 = False
-    else:
-        h2 = True
-    if m3 in v:
-        h3 = False
-    else:
-        h3 = True
-    if m4 in v:
-        h4 = False
-    else:
-        h4 = True
-
-    return h1, h2, h3, h4
-
-'''
 
 
 # results
@@ -2080,7 +1483,7 @@ def parse_contents(contents, filename, date):
         ])
 
 @app.callback(
-	Output('optimizer-output-data-upload', 'children'),
+	Output('output-data-upload', 'children'),
 	[Input('upload-data', 'contents')],
 	[State('upload-data', 'filename'),
 	State('upload-data','last_modified')]
@@ -2094,9 +1497,9 @@ def upload_output(list_of_contents, list_of_names, list_of_dates):
 
 
 @app.callback(
-	Output('optimizer-popover-age', 'is_open'),
-	[Input('button-optimizer-popover-age', 'n_clicks'), Input('optimizer-popover-age-submit', 'n_clicks')],
-	[State('optimizer-popover-age', 'is_open')],
+	Output('popover-age', 'is_open'),
+	[Input('button-popover-age', 'n_clicks'), Input('popover-age-submit', 'n_clicks')],
+	[State('popover-age', 'is_open')],
 	)
 def toggle_popover(n1, n2, is_open):
 	if n1 or n2:
@@ -2104,9 +1507,9 @@ def toggle_popover(n1, n2, is_open):
 	return is_open
 
 @app.callback(
-	Output('optimizer-modal-edit-assumption', 'is_open'),
+	Output('modal-edit-assumption', 'is_open'),
 	[Input('button-edit-assumption', 'n_clicks'), Input('close-edit-assumption', 'n_clicks')],
-	[State('optimizer-modal-edit-assumption', 'is_open')],
+	[State('modal-edit-assumption', 'is_open')],
 	)
 def toggle_popover(n1, n2, is_open):
 	if n1 or n2:
@@ -2138,12 +1541,12 @@ def toggle_popover(n1, n2, is_open):
 #    Output('table_setup', 'hidden'),
 #    [Output('computed-table', 'data'),
 #    Output('computed-table', 'selected_row_ids')],
-    [Input(f'dashboard-card-domain-selection-{d+1}', 'color') for d in range(domain_ct)]
-    + [Input(f'checklist-domain-measures-lv2-1-{n+1}', 'value') for n in range(4)]
-    + [Input(f'checklist-domain-measures-lv2-2-{n+1}', 'value') for n in range(4)]
-    + [Input(f'checklist-domain-measures-lv2-4-1', 'value')]
-    + [Input(f'checklist-domain-measures-lv2-5-1', 'value')]
-    + [Input(f'checklist-domain-measures-lv2-6-1', 'value')]
+    [Input(f'optimizer-collapse-card-domain-selection-{d+1}', 'color') for d in range(domain_ct)]
+    + [Input(f'optimizer-checklist-domain-measures-lv2-1-{n+1}', 'value') for n in range(4)]
+    + [Input(f'optimizer-checklist-domain-measures-lv2-2-{n+1}', 'value') for n in range(4)]
+    + [Input(f'optimizer-checklist-domain-measures-lv2-4-1', 'value')]
+    + [Input(f'optimizer-checklist-domain-measures-lv2-5-1', 'value')]
+    + [Input(f'optimizer-checklist-domain-measures-lv2-6-1', 'value')]
     +[Input('target-patient-input','value')]
     #+[Input('computed-table', 'data_timestamp')],
     #[State('computed-table', 'data')]

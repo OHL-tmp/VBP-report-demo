@@ -2,7 +2,7 @@
 Cost & Utilization Reduction,,,,,,75%,75,,,,,0
 CHF Related Average Cost per Patient,"$33,585 ","$33,162 ",33162,High,High,50%,50,green,yellow,33162,31500,1
 CHF Related Hospitalization Rate,55%,47%,46.75,High,High,25%,25,green,yellow,46.75,44,2
-CHF Related Average IP Cost per Patient ,"$4,000 ","$3,500 ",3200,High,High,0%,0,green,yellow,3500,3000,3
+CHF Related Average IP Cost per Patient,"$4,000 ","$3,500 ",3200,High,High,0%,0,green,yellow,3500,3000,3
 CHF Related ER Rate,40%,35%,32,High,High,0%,0,green,yellow,35,30,4
 All Causes Average Cost per Patient,"$4,000 ","$3,500 ",3200,High,High,0%,0,green,yellow,3500,3000,5
 All Causes Average IP Cost per Patient,"$4,000 ","$3,500 ",3200,High,High,0%,0,green,yellow,3500,3000,6
