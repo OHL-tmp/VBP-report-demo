@@ -760,13 +760,14 @@ def tbl_measure(df_measure_perform,d):
 def tbl_non_contract(df,measures):
     df=df[df['Measure'].isin(measures)]
     
-    percent_list=['Performance Diff from Target','Weight']
+    percent_list=['Performance Diff from Target']
     
     measure_tbl=dash_table.DataTable(
         data=df.to_dict('records'),
         columns=[ {'id': c, 'name': c,'type': 'numeric',"format":FormatTemplate.percentage(1)} if c in percent_list else {'id': c, 'name': c} for c in df.columns ],
         sort_action="native",
         sort_mode='single',
+        sort_by=[{"column_id":"Performance Diff from Target","direction":"desc"},],
         style_data={
             'whiteSpace': 'normal',
             'height': 'auto',
@@ -1314,7 +1315,10 @@ def sim_result_box(df_sim_result):
     if len(df_sim_result)==10:
         df=df_sim_result.iloc[[0,3,6,9]]
         k=k-1
-    else:df=df_sim_result.iloc[[2,5,8]]
+        bartext='Baseline:<br><br>'
+    else:
+        df=df_sim_result.iloc[[2,5,8]]
+        bartext='Contract w/o<br>VBC Payout:<br><br>'
     
     n=len(df)
     
@@ -1427,7 +1431,7 @@ def sim_result_box(df_sim_result):
                       )
     annotations.append(dict(xref='paper', yref='y',
                             x=1.1, y=base/2,
-                            text='Contract w/o<br>VBC Payout:<br><br>'+str(round(base,1))+'Mn',
+                            text=bartext+str(round(base,1))+'Mn',
                             font=dict(family='NotoSans-CondensedLight', size=12, color='#38160f'),
                             showarrow=False,
                            )
@@ -1490,6 +1494,7 @@ def sim_result_box(df_sim_result):
                 size=14,
                 color="#38160f"
             ),
+        hovermode=False,
         annotations=annotations,
         shapes=shapes,
         )
