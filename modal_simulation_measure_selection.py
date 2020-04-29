@@ -102,7 +102,7 @@ percent_input = ["All Causes Hospitalization Rate", "CHF Related Hospitalization
 
 domain_ct = len(domain_set)
 
-def modal_dashboard_domain_selection(n):
+def modal_optimizer_domain_selection(n):
     return html.Div(
                 [
                     dbc.Button("Edit Measure", id="open-centered", className="mb-3", style={"background-color":"#38160f", "border":"none", "border-radius":"10rem", "font-family":"NotoSans-Regular", "font-size":"0.6rem"}), 

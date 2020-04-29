@@ -20,11 +20,13 @@ from figure import *
 
 from modal_drilldown_tableview import *
 
+from app import app
+
 
 df_drilldown=pd.read_csv("data/drilldown_sample_6.csv")
+dimensions=df_drilldown.columns[0:12]
 df_drill_waterfall=pd.read_csv("data/drilldown waterfall graph.csv")
 df_driver=pd.read_csv("data/Drilldown Odometer.csv")
-df_driver_all=pd.read_csv("data/Drilldown All Drivers.csv")
 data_lv3=drilldata_process(df_drilldown,'Service Category')
 data_lv4=drilldata_process(df_drilldown,'Sub Category')
 
@@ -34,24 +36,6 @@ for i in list(df_drilldown.columns[0:14]):
     for j in list(df_drilldown[i].unique()):
         all_dimension.append([i,j])
 all_dimension=pd.DataFrame(all_dimension,columns=['dimension','value'])
-
-#for modify criteria list
-dimensions = ['Age Band' , 'Gender' , 'Comorbidity Type' , 'Risk Score Band' , 'NYHA Class' , 'Medication Adherence' ,  'Weight Band' , 'Comorbidity Score' , 'Ejection Fraction' , 'Years Since HF Diagnosis' , 'Prior Use of ACE/ARB' ]
-
-disable_list=['Weight Band','Comorbidity Score','Ejection Fraction','Years Since HF Diagnosis','Prior Use of ACE/ARB']
-
-# Path
-BASE_PATH = pathlib.Path(__file__).parent.resolve()
-DATA_PATH = BASE_PATH.joinpath("Data").resolve()
-
-#modebar display
-button_to_rm=['zoom2d', 'pan2d', 'select2d', 'lasso2d', 'zoomIn2d', 'zoomOut2d', 'autoScale2d', 'hoverClosestCartesian','hoverCompareCartesian','hoverClosestGl2d', 'hoverClosestPie', 'toggleHover','toggleSpikelines']
-
-app = dash.Dash(__name__, url_base_pathname='/vbc-demo/contract-manager-drilldown/')
-
-server = app.server
-
-
 
 
 def create_layout(app):
@@ -199,7 +183,7 @@ def card_overview_drilldown(percentage):
                             [
                                 html.Div(
                                     [
-                                        dcc.Graph(figure=drill_bar(df_drill_waterfall),config={'modeBarButtonsToRemove': button_to_rm,'displaylogo': False,}),
+                                        dcc.Graph(figure=drill_bar(df_drill_waterfall)),
                                     ]
                                 )
                             ],
@@ -211,7 +195,7 @@ def card_overview_drilldown(percentage):
                                 html.Div(
                                     [
                                         html.H3("Target Adj Details", style={"font-size":"1rem","margin-top":"-1.8rem","color":"#919191","background-color":"#f5f5f5","width":"9rem","padding-left":"1rem","padding-right":"1rem","text-align":"center"}),
-                                        html.Div([dcc.Graph(figure=drill_waterfall(df_drill_waterfall),style={"height":"24rem","padding-bottom":"1rem"},config={'modeBarButtonsToRemove': button_to_rm,'displaylogo': False,})]),
+                                        html.Div([dcc.Graph(figure=drill_waterfall(df_drill_waterfall),style={"height":"24rem","padding-bottom":"1rem"})]),
                                     ],
                                     style={"border-radius":"0.5rem","border":"2px solid #d2d2d2","padding":"1rem","height":"25.5rem"}
                                 )
@@ -232,15 +216,15 @@ def card_key_driver_drilldown(app):
                         dbc.Row(
                             [
                                 dbc.Col(html.Img(src=app.get_asset_url("bullet-round-blue.png"), width="10px"), width="auto", align="start", style={"margin-top":"-4px"}),
-		                        dbc.Col(html.H4("Key Drivers", style={"font-size":"1rem", "margin-left":"10px"})),
-                                dbc.Col([dbc.Button("See All Drivers", id = 'button-all-driver'),
-                                        dbc.Modal([
-                                                dbc.ModalHeader("All Drivers"),
-                                                dbc.ModalBody(children = [table_driver_all(df_driver_all)]),
-                                                dbc.ModalFooter(
-                                                        dbc.Button("Close", id = 'close-all-driver')
-                                                        )
-                                                ], id = 'modal-all-driver')]),
+		                        dbc.Col(html.H4("Key Drivers", style={"font-size":"1rem", "margin-left":"10px"}), width=8),
+                                dbc.Col(dbc.Button(
+                                    "Show All Drivers",
+                                    #id="button-mod-dim-lv1",
+                                    className="mb-3",
+                                    style={"background-color":"#38160f", "border":"none", "border-radius":"10rem", "font-family":"NotoSans-Regular", "font-size":"0.6rem"},
+                                    ),
+                                    width=3
+                                )
                             ],
                             no_gutters=True,
                         ),
@@ -360,7 +344,6 @@ def card_graph1_performance_drilldown(app):
                 style={"box-shadow":"0 4px 8px 0 rgba(0, 0, 0, 0.05), 0 6px 20px 0 rgba(0, 0, 0, 0.05)", "border":"none", "border-radius":"0.5rem"}
             )
 
-    
 def mod_criteria_button():
     return [
                                 dbc.Button(
@@ -375,7 +358,7 @@ def mod_criteria_button():
                                         html.Div(
                                             [
                                                 dbc.RadioItems(
-                                                    options = [{'label':c , 'value':c,'disabled' : False} if c not in disable_list else {'label':c , 'value':c,'disabled' : True} for c in dimensions
+                                                    options = [{'label':c , 'value':c} for c in dimensions
                                                               ],
                                                     value = "Risk Score Band",
                                                     labelCheckedStyle={"color": "#057aff"},
@@ -569,18 +552,9 @@ def card_table2_performance_drilldown(app):
                 style={"box-shadow":"0 4px 8px 0 rgba(0, 0, 0, 0.05), 0 6px 20px 0 rgba(0, 0, 0, 0.05)", "border":"none", "border-radius":"0.5rem"}
             )
 
-app.layout = create_layout(app)
 
-@app.callback(
-    Output("modal-all-driver","is_open"),
-    [Input("button-all-driver","n_clicks"),
-     Input("close-all-driver","n_clicks")],
-    [State("modal-all-driver","is_open")]        
-)
-def open_all_driver(n1,n2,is_open):
-    if n1 or n2:
-        return not is_open
-    return is_open
+
+layout = create_layout(app)
 
 
 
@@ -752,9 +726,9 @@ def sort_table3(sort_dim):
 
 ## modal
 @app.callback(
-    Output("modal-centered", "is_open"),
+    Output("drilldown_modal-centered", "is_open"),
     [Input("open-centered", "n_clicks"), Input("close-centered", "n_clicks")],
-    [State("modal-centered", "is_open")],
+    [State("drilldown_modal-centered", "is_open")],
 )
 def toggle_modal_dashboard_domain_selection(n1, n2, is_open):
     if n1 or n2:
@@ -923,8 +897,8 @@ def datatable_data_selection(v1, v2, v3, d1, d2, f1, f2, m):
 
     table_column.extend(list(set(selected_dimension + ['Service Category', 'Sub Category'])))
     table_column.append("Pt Count")
-    percent_list = ['Diff % from Benchmark Utilization', 'Diff % from Benchmark Total Cost', 'Diff % from Benchmark Unit Cost', 'Patient %']
-    dollar_list = ['YTD Total Cost', 'Annualized Total Cost', 'Benchmark Total Cost', 'YTD Unit Cost', 'Annualized Unit Cost', 'Benchmark Unit Cost']
+    percent_list = ['Diff % from Target Utilization', 'Diff % from Target Total Cost', 'Diff % from Target Unit Cost', 'Patient %']
+    dollar_list = ['YTD Total Cost', 'Annualized Total Cost', 'Target Total Cost', 'YTD Unit Cost', 'Annualized Unit Cost', 'Target Unit Cost']
     if len(selected_dimension) > 0:
 #        ptct_dimension = set(selected_dimension + ['Service Category', 'Sub Category'])
         table_column.extend(measure_ori) 
@@ -935,21 +909,21 @@ def datatable_data_selection(v1, v2, v3, d1, d2, f1, f2, m):
         df_agg['Patient %'] = df_agg['Pt Count']/895500
         df_agg['YTD Utilization'] = df_agg['YTD Utilization']/df_agg['Pt Count']
         df_agg['Annualized Utilization'] = df_agg['Annualized Utilization']/df_agg['Pt Count']
-        df_agg['Benchmark Utilization'] = df_agg['Target Utilization']/df_agg['Pt Count']
-        df_agg['Diff % from Benchmark Utilization'] = (df_agg['Annualized Utilization'] - df_agg['Benchmark Utilization'])/df_agg['Benchmark Utilization']
+        df_agg['Target Utilization'] = df_agg['Target Utilization']/df_agg['Pt Count']
+        df_agg['Diff % from Target Utilization'] = (df_agg['Annualized Utilization'] - df_agg['Target Utilization'])/df_agg['Target Utilization']
         df_agg['YTD Total Cost'] = df_agg['YTD Total Cost']/df_agg['Pt Count']
         df_agg['Annualized Total Cost'] = df_agg['Annualized Total Cost']/df_agg['Pt Count']
-        df_agg['Benchmark Total Cost'] = df_agg['Target Total Cost']/df_agg['Pt Count']
-        df_agg['Diff % from Benchmark Total Cost'] = (df_agg['Annualized Total Cost'] - df_agg['Benchmark Total Cost'])/df_agg['Benchmark Total Cost']
+        df_agg['Target Total Cost'] = df_agg['Target Total Cost']/df_agg['Pt Count']
+        df_agg['Diff % from Target Total Cost'] = (df_agg['Annualized Total Cost'] - df_agg['Target Total Cost'])/df_agg['Target Total Cost']
         df_agg['YTD Unit Cost'] = df_agg['YTD Total Cost']/df_agg['YTD Utilization']
         df_agg['Annualized Unit Cost'] = df_agg['Annualized Total Cost']/df_agg['Annualized Utilization']
-        df_agg['Benchmark Unit Cost'] = df_agg['Target Total Cost']/df_agg['Target Utilization']
-        df_agg['Diff % from Benchmark Unit Cost'] = (df_agg['Annualized Unit Cost'] - df_agg['Benchmark Unit Cost'])/df_agg['Benchmark Unit Cost']
+        df_agg['Target Unit Cost'] = df_agg['Target Total Cost']/df_agg['Target Utilization']
+        df_agg['Diff % from Target Unit Cost'] = (df_agg['Annualized Unit Cost'] - df_agg['Target Unit Cost'])/df_agg['Target Unit Cost']
 #        df_agg.style.format({'Diff % from Target Utilization' : "{:.2%}", 'Diff % from Target Total Cost': "{:.2%}", 'Diff % from Target Unit Cost' : "{:.2%}"})
 #        df_agg.reset_index(inplace = True)
         show_column = selected_dimension + ['Patient %'] + m 
-        if 'Diff % from Benchmark Total Cost' in m:
-            df_agg =  df_agg[show_column].sort_values(by =  'Diff % from Benchmark Total Cost', ascending =False)
+        if 'Diff % from Target Total Cost' in m:
+            df_agg =  df_agg[show_column].sort_values(by =  'Diff % from Target Total Cost', ascending =False)
         else:
             df_agg = df_agg[show_column]
     else:

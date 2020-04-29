@@ -14,15 +14,7 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 from dash.dependencies import Input, Output, State
 
-# Path
-BASE_PATH = pathlib.Path(__file__).parent.resolve()
-DATA_PATH = BASE_PATH.joinpath("Data").resolve()
-
-
-
-app = dash.Dash(__name__)
-
-server = app.server
+from app import app
 
 def modal_simulation_input():
 	return html.Div([

@@ -4275,6 +4275,7 @@ input[type="button"].btn-block {
 
 .nav-tabs .nav-link:hover, .nav-tabs .nav-link:focus {
   border-color: #e9ecef #e9ecef #dee2e6;
+  background-color: #f7f7f7;
 }
 
 .nav-tabs .nav-link.disabled {
@@ -4298,12 +4299,13 @@ input[type="button"].btn-block {
 
 .nav-pills .nav-link {
   border-radius: 0.25rem;
+  border: none;
 }
 
 .nav-pills .nav-link.active,
 .nav-pills .show > .nav-link {
   color: #fff;
-  background-color: #007bff;
+  background-color: #bfd4ff;
 }
 
 .nav-fill .nav-item {
