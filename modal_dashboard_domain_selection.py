@@ -1,10 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Mon Apr 13 14:10:52 2020
-
-@author: yanchen
-"""
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
@@ -20,16 +13,7 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 from dash.dependencies import Input, Output, State
 
-
-# Path
-BASE_PATH = pathlib.Path(__file__).parent.resolve()
-DATA_PATH = BASE_PATH.joinpath("Data").resolve()
-
-
-
-app = dash.Dash(__name__, url_base_pathname='/demo-report/')
-
-server = app.server
+#callbacks for this section are in contract_manager.py callback section ## domain selection modal
 
 Domain_options ={
 "checklist-domain-measures-lv1-1" : {

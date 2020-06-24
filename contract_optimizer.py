@@ -2455,7 +2455,7 @@ def toggle_collapse(n, is_open):
 	if n:
 		return not is_open
 	return is_open
-
+## end of contract_optimizer main page
 
 
 if __name__ == "__main__":
