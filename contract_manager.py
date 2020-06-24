@@ -510,6 +510,13 @@ def card_sub_value_based_measures(app):
 
 layout = create_layout(app)
 
+'''
+sections of callbacks
+## domain selection modal --> modal_dashboard_domain_selection.py
+## contract_manager main page
+'''
+
+
 ## domain selection modal
 
 @app.callback(

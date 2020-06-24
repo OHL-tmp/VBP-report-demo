@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
@@ -26,11 +24,8 @@ from modal_drilldown_tableview import *
 from modal_drilldown_tableview_crhr import *
 
 from app import app
-#app = dash.Dash(__name__)
-#server = app.server
 
 df_drilldown=pd.read_csv("data/drilldown_sample_6.csv")
-#dimensions=df_drilldown.columns[0:12]
 df_drill_waterfall=pd.read_csv("data/drilldown waterfall graph.csv")
 df_driver=pd.read_csv("data/Drilldown Odometer.csv")
 df_driver_all=pd.read_csv("data/Drilldown All Drivers.csv")
@@ -138,10 +133,19 @@ def card_selected_measures():
 
 
 layout = create_layout(app)
-#app.layout = create_layout(app)
 
-##### select drilldown #####
+'''
+sections of callbacks
+## contract_manager_drilldown main page
+## drilldown_avg_cost --> contract_manager_drilldown_avg_cost.py
+## tableview modal --> modal_drilldown_tableview.py
+## drilldown_hosp_rate --> contract_manager_drilldown_hosp_rate.py
+## tableview_crhr modal --> modal_drilldown_tableview_crhr.py
+'''
 
+
+## callbacks on contarct_manager_drilldown main page 
+# select drilldown 
 @app.callback(
     [
     Output('drilldown-dropdownmenu','label'),
@@ -176,11 +180,11 @@ def select_drilldown(*args):
 
     return label, state_avg_cost, state_crhr
 
+## end of contract_manager_drilldown main page
 
 
 
-
-##### avg_cost callbacks #####
+## drilldown_avg_cost
 
 @app.callback(
     Output("modal-all-driver","is_open"),
@@ -220,9 +224,6 @@ def toggle_popover_mod_criteria(n1, is_open):
 )
 def update_table_dimension(dim):
     f1_name=dim
-#    filter1_value_list=[{'label': i, 'value': i} for i in all_dimension[all_dimension['dimension']==dim].loc[:,'value']]
-#    filter1=filter_template(dim,"filter_patient_1_2_value")
-    
     return drillgraph_lv1(drilldata_process(df_drilldown,dim),'dashtable_patient_lv1',dim),f1_name,filter_template(dim,"filter_patient_1_2_value"),f1_name,filter_template(dim,"filter_patient_1_3_value"),'By '+f1_name
 
 #update patient filter1 on following page based on selected rows
@@ -265,10 +266,7 @@ def update_filter2value(row):
    [State('dashtable_patient_lv1', 'data')]
 )
 def update_table3(sort_dim,data):
-    #global data_lv3
-    
-    data_lv3=pd.DataFrame(data)       
-    #data_lv3.to_csv('data/overall_performance.csv')
+    data_lv3=pd.DataFrame(data)    
     if (sort_dim is None) or (sort_dim==[]):
         sort_dim=[{"column_id":"Contribution to Overall Performance Difference","direction":"desc"}]
   
@@ -288,10 +286,7 @@ def update_table3(sort_dim,data):
    ] 
 )
 def update_table3(dim1,val1,sort_dim):
-    #global data_lv3
-    
-    data_lv3=drilldata_process(df_drilldown,'Service Category',dim1,val1)       
-    #data_lv3.to_csv('data/overall_performance.csv')
+    data_lv3=drilldata_process(df_drilldown,'Service Category',dim1,val1)   
     if (sort_dim is None) or (sort_dim==[]):
         sort_dim=[{"column_id":"Contribution to Overall Performance Difference","direction":"desc"}]
   
@@ -300,7 +295,6 @@ def update_table3(dim1,val1,sort_dim):
     df1['id']=df1[df1.columns[0]]
     df1.set_index('id', inplace=True, drop=False)
     return df1.to_dict('records')
-
 
 
 #update patient lv3 on filter1,filter2
@@ -315,8 +309,6 @@ def update_table3(dim1,val1,sort_dim):
    ] 
 )
 def update_table4(dim1,val1,dim2,val2,sort_dim):
-    
-    #global data_lv4
     data_lv4=drilldata_process(df_drilldown,'Sub Category',dim1,val1,dim2,val2)   
     
     if (sort_dim is None) or (sort_dim==[]):
@@ -416,8 +408,6 @@ def update_table3(dim1,val1,sort_dim):
    ] 
 )
 def update_table4(dim1,val1,dim2,val2,sort_dim):
-    
-    #global data_lv4
     data_lv4=drilldata_process(df_drilldown,'Sub Category',dim1,val1,dim2,val2)   
     
     if (sort_dim is None) or (sort_dim==[]):
@@ -428,11 +418,10 @@ def update_table4(dim1,val1,dim2,val2,sort_dim):
     
     return df1.to_dict('records')    
 
+## end of drilldown_avg_cost
 
 
-#### callback ####
-
-## modal
+## tableview modal
 @app.callback(
     Output("drilldown-modal-centered", "is_open"),
     [Input("drilldown-open-centered", "n_clicks"), Input("drilldown-close-centered", "n_clicks")],
@@ -613,12 +602,10 @@ def datatable_data_selection(v1, v2, v3, d1, d2, f1, f2, m):
     percent_list = ['Diff % from Benchmark Utilization per Thousand', 'Diff % from Benchmark Total Cost', 'Diff % from Benchmark Unit Cost', 'Patient %', 'Diff % from Benchmark Hospitalization Rate per Thousand']
     dollar_list = ['YTD Total Cost', 'Annualized Total Cost', 'Benchmark Total Cost', 'YTD Unit Cost', 'Annualized Unit Cost', 'Benchmark Unit Cost']
     if len(selected_dimension) > 0:
-#        ptct_dimension = set(selected_dimension + ['Service Category', 'Sub Category'])
         table_column.extend(measure_ori) 
         df_agg_pre = df_drilldown_filtered[table_column].groupby(by = list(set(selected_dimension + ['Service Category', 'Sub Category']))).sum().reset_index()
         df_agg = df_agg_pre[table_column].groupby(by = selected_dimension).agg({'Pt Count':'mean', 'YTD Utilization':'sum', 'Annualized Utilization':'sum', 'Benchmark Utilization':'sum', 
             'YTD Total Cost':'sum', 'Annualized Total Cost':'sum', 'Benchmark Total Cost':'sum', 'YTD IP Utilization':'sum', 'Annualized IP Utilization':'sum', 'Benchmark IP Utilization':'sum'}).reset_index()
-#        df_agg['Pt Count'] = df_agg[' Pt Count']/cate_cnt
         df_agg['Patient %'] = df_agg['Pt Count']/995000
         df_agg['YTD Utilization per Thousand'] = 1000 * df_agg['YTD Utilization']/df_agg['Pt Count']
         df_agg['Annualized Utilization per Thousand'] = 1000 * df_agg['Annualized Utilization']/df_agg['Pt Count']
@@ -636,8 +623,6 @@ def datatable_data_selection(v1, v2, v3, d1, d2, f1, f2, m):
         df_agg['Annualized Hospitalization Rate per Thousand'] = 1000 * df_agg['Annualized IP Utilization']/df_agg['Pt Count']
         df_agg['Benchmark Hospitalization Rate per Thousand'] = 1000 * df_agg['Benchmark IP Utilization']/df_agg['Pt Count']
         df_agg['Diff % from Benchmark Hospitalization Rate per Thousand'] = (df_agg['Annualized IP Utilization'] - df_agg['Benchmark IP Utilization'])/df_agg['Benchmark IP Utilization']
-#        df_agg.style.format({'Diff % from Target Utilization' : "{:.2%}", 'Diff % from Target Total Cost': "{:.2%}", 'Diff % from Target Unit Cost' : "{:.2%}"})
-#        df_agg.reset_index(inplace = True)
         show_column = selected_dimension + ['Patient %'] + m 
         if 'Diff % from Benchmark Total Cost' in m:
             df_agg =  df_agg[show_column].sort_values(by =  'Diff % from Benchmark Total Cost', ascending =False)
@@ -650,9 +635,10 @@ def datatable_data_selection(v1, v2, v3, d1, d2, f1, f2, m):
     
     return [{"name": i, "id": i, "selectable":True,"type":"numeric", "format": FormatTemplate.percentage(1)} if i in percent_list else {"name": i, "id": i, "selectable":True, "type":"numeric","format": FormatTemplate.money(0)} if i in dollar_list else {"name": i, "id": i, "selectable":True, "type":"numeric","format": Format(precision=1, scheme = Scheme.fixed)} for i in show_column], df_agg.to_dict('records')
 
+## end of tableview modal
 
-##### hosp_rate callbacks #####
 
+## drilldown_hosp_rate
 @app.callback(
     Output("modal-all-driver-crhr","is_open"),
     [Input("button-all-driver-crhr","n_clicks"),
@@ -689,13 +675,9 @@ def toggle_popover_mod_criteria(n1, is_open):
 )
 def update_table_dimension(dim):
     f1_name=dim
-#    filter1_value_list=[{'label': i, 'value': i} for i in all_dimension[all_dimension['dimension']==dim].loc[:,'value']]
-    
-    
     return drillgraph_lv1_crhr(drilldata_process_crhr(df_drilldown,dim),'dashtable_patient_lv1_crhr',dim),f1_name,filter_template_crhr(dim,"filter_patient_1_2_value_crhr"),'By '+f1_name
 
 #update patient filter1 on following page based on selected rows
-
 @app.callback(
     Output("filter_patient_1_2_value_crhr","value"),   
    [ Input("dashtable_patient_lv1_crhr","selected_row_ids"),
@@ -710,7 +692,6 @@ def update_filter1value_patient(row):
     return row_1
 
 #update patient lv1 on sort_by
-
 @app.callback(
    Output("dashtable_patient_lv1_crhr","data"), 
    [ Input('dashtable_patient_lv1_crhr', 'sort_by'),
@@ -718,10 +699,7 @@ def update_filter1value_patient(row):
    [ State('dashtable_patient_lv1_crhr', 'data'),]
 )
 def update_table3(sort_dim,data):
-    #global data_lv3
-    
-    data_lv3=pd.DataFrame(data)       
-    #data_lv3.to_csv('data/overall_performance.csv')
+    data_lv3=pd.DataFrame(data)
     if (sort_dim is None) or (sort_dim==[]):
         sort_dim=[{"column_id":"Contribution to Overall Performance Difference","direction":"desc"}]
   
@@ -731,7 +709,6 @@ def update_table3(sort_dim,data):
     return df1.to_dict('records')
 
 #update patient lv2 on sort_by
-
 @app.callback(
    Output("dashtable_patient_lv2_crhr","data"), 
    [ Input("filter_patient_1_2_name_crhr","children"),
@@ -740,10 +717,7 @@ def update_table3(sort_dim,data):
    ] 
 )
 def update_table3(dim1,val1,sort_dim):
-    #global data_lv3
-    
-    data_lv3=drilldata_process_crhr(df_drilldown,'Sub Category',dim1,val1)       
-    #data_lv3.to_csv('data/overall_performance.csv')
+    data_lv3=drilldata_process_crhr(df_drilldown,'Sub Category',dim1,val1)   
     if (sort_dim is None) or (sort_dim==[]):
         sort_dim=[{"column_id":"Contribution to Overall Performance Difference","direction":"desc"}]
   
@@ -755,7 +729,6 @@ def update_table3(dim1,val1,sort_dim):
 
 
 #update physician filter1 on following page based on selected rows
-
 @app.callback(
     Output("filter_physician_1_2_value_crhr","value"),   
    [ Input("dashtable_physician_lv1_crhr","selected_row_ids"),
@@ -770,7 +743,6 @@ def update_filter1value(row):
     return row_1
 
 #update physician lv1 on sort by
-
 @app.callback(
    Output("dashtable_physician_lv1_crhr","data"), 
    [ Input('dashtable_physician_lv1_crhr', 'sort_by'),
@@ -778,8 +750,6 @@ def update_filter1value(row):
    [State('dashtable_physician_lv1_crhr', 'data'),] 
 )
 def update_table3(sort_dim,data):
-
-    
     data_lv3=pd.DataFrame(data)    
     if (sort_dim is None) or (sort_dim==[]):
         sort_dim=[{"column_id":"Contribution to Overall Performance Difference","direction":"desc"}]
@@ -790,7 +760,6 @@ def update_table3(sort_dim,data):
     return df1.to_dict('records') 
 
 #update physician lv2 on sort by
-
 @app.callback(
    Output("dashtable_physician_lv2_crhr","data"), 
    [ Input("filter_physician_1_2_name_crhr","children"),
@@ -799,8 +768,6 @@ def update_table3(sort_dim,data):
    ] 
 )
 def update_table3(dim1,val1,sort_dim):
-
-    
     data_lv3=drilldata_process_crhr(df_drilldown,'Sub Category',dim1,val1)     
     if (sort_dim is None) or (sort_dim==[]):
         sort_dim=[{"column_id":"Contribution to Overall Performance Difference","direction":"desc"}]
@@ -821,13 +788,11 @@ def toggle_modal_dashboard_domain_selection(n1, n2, is_open):
         return not is_open
     return is_open
 
-
-#### callback ####
-
-## modal
+## end of drilldown_hosp_rate
 
 
 
+## tableview_crhr modal
 @app.callback(
     [Output('dimension_filter_1_crhr', 'options'),
     Output('dimension_filter_1_crhr', 'value'),
@@ -997,12 +962,10 @@ def datatable_data_selection(v1, v2, v3, d1, d2, f1, f2, m):
     percent_list = ['Diff % from Benchmark Utilization per Thousand', 'Diff % from Benchmark Total Cost', 'Diff % from Benchmark Unit Cost', 'Patient %', 'Diff % from Benchmark Hospitalization Rate per Thousand']
     dollar_list = ['YTD Total Cost', 'Annualized Total Cost', 'Benchmark Total Cost', 'YTD Unit Cost', 'Annualized Unit Cost', 'Benchmark Unit Cost']
     if len(selected_dimension) > 0:
-#        ptct_dimension = set(selected_dimension + ['Service Category', 'Sub Category'])
         table_column.extend(measure_ori) 
         df_agg_pre = df_drilldown_filtered[table_column].groupby(by = list(set(selected_dimension + ['Service Category', 'Sub Category']))).sum().reset_index()
         df_agg = df_agg_pre[table_column].groupby(by = selected_dimension).agg({'Pt Count':'mean', 'YTD Utilization':'sum', 'Annualized Utilization':'sum', 'Benchmark Utilization':'sum', 
             'YTD Total Cost':'sum', 'Annualized Total Cost':'sum', 'Benchmark Total Cost':'sum', 'YTD IP Utilization':'sum', 'Annualized IP Utilization':'sum', 'Benchmark IP Utilization':'sum'}).reset_index()
-#        df_agg['Pt Count'] = df_agg[' Pt Count']/cate_cnt
         df_agg['Patient %'] = df_agg['Pt Count']/995000
         df_agg['YTD Utilization per Thousand'] = 1000 * df_agg['YTD Utilization']/df_agg['Pt Count']
         df_agg['Annualized Utilization per Thousand'] = 1000 * df_agg['Annualized Utilization']/df_agg['Pt Count']
@@ -1020,8 +983,6 @@ def datatable_data_selection(v1, v2, v3, d1, d2, f1, f2, m):
         df_agg['Annualized Hospitalization Rate per Thousand'] = 1000 * df_agg['Annualized IP Utilization']/df_agg['Pt Count']
         df_agg['Benchmark Hospitalization Rate per Thousand'] = 1000 * df_agg['Benchmark IP Utilization']/df_agg['Pt Count']
         df_agg['Diff % from Benchmark Hospitalization Rate per Thousand'] = (df_agg['Annualized IP Utilization'] - df_agg['Benchmark IP Utilization'])/df_agg['Benchmark IP Utilization']
-#        df_agg.style.format({'Diff % from Target Utilization' : "{:.2%}", 'Diff % from Target Total Cost': "{:.2%}", 'Diff % from Target Unit Cost' : "{:.2%}"})
-#        df_agg.reset_index(inplace = True)
         show_column = selected_dimension + ['Patient %'] + m 
         if 'Diff % from Benchmark Total Cost' in m:
             df_agg =  df_agg[show_column].sort_values(by =  'Diff % from Benchmark Total Cost', ascending =False)
@@ -1034,6 +995,7 @@ def datatable_data_selection(v1, v2, v3, d1, d2, f1, f2, m):
     
     return [{"name": i, "id": i, "selectable":True,"type":"numeric", "format": FormatTemplate.percentage(1)} if i in percent_list else {"name": i, "id": i, "selectable":True, "type":"numeric","format": FormatTemplate.money(0)} if i in dollar_list else {"name": i, "id": i, "selectable":True, "type":"numeric","format": Format(precision=1, scheme = Scheme.fixed)} for i in show_column], df_agg.to_dict('records')
 
+## end of tableview_crhr modal
 
 
 if __name__ == "__main__":

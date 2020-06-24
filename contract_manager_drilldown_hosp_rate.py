@@ -22,6 +22,8 @@ from modal_drilldown_tableview_crhr import *
 
 from app import app
 
+#callbacks for this section are in contract_manager_drilldown.py callback section ## drilldown_hosp_rate
+
 df_drilldown=pd.read_csv("data/drilldown_sample_6.csv")
 
 #dimensions=df_drilldown.columns[0:12]

@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
@@ -62,7 +60,6 @@ df_factor_doc=pd.read_csv("data/confounding_factors_doc.csv")
 button_to_rm=['zoom2d', 'pan2d', 'select2d', 'lasso2d', 'zoomIn2d', 'zoomOut2d', 'autoScale2d', 'hoverClosestCartesian','hoverCompareCartesian','hoverClosestGl2d', 'hoverClosestPie', 'toggleHover','toggleSpikelines']
 
 
-#df_recom_measure = pd.read_csv("data/recom_measure.csv")
 df_payor_contract_baseline = pd.read_csv("data/payor_contract_baseline.csv")
 df_performance_assumption = pd.read_csv("data/performance_assumption.csv")
 
@@ -1424,6 +1421,14 @@ def collapse_confounding_factors(app):
 
 layout = create_layout(app)
 
+'''
+sections of callbacks
+## realtime assump modal --> modal_simulation_realtime_assump.py
+## input modal --> modal_simulation_input.py
+## measure selection modal --> modal_simulation_measure_selection.py
+## contract_optimizer main page
+'''
+
 
 
 ## realtime assump modal
@@ -1968,9 +1973,6 @@ def data_prep(save_assump, cost_trend,util_trend,hr_input,probnp_input,lvef_inpu
 		df_setup1=t7
 		df_setup2=t6
 
-		t1.to_csv('df_perfom_assump.csv')
-		t2.to_csv('df_recom_measure.csv')
-
 		if t3=='CHF+AF':
 			df_setup_filter=df_setup1
 		else:
@@ -2399,10 +2401,6 @@ def simulation(submit_button, re_pos_perf, re_neg_perf, re_pos_adj, re_neg_adj, 
 			rebate_vbc_flat = 0
 		else:
 			rebate_vbc_flat = rebate_vbc/100
-		
-		Recom_Contract.to_csv('Recom_Contract.csv')
-		UD_Measure.to_csv('UD_Measure.csv')
-		UD_Contract.to_csv('UD_Contract.csv')
 
 		t1,t2,t3=Contract_Calculation(Recom_Contract, UD_Measure,UD_Contract,cohort_selected,rebate_novbc_flat, rebate_vbc_flat, Rebate_noVBC_table,Rebate_VBC_table, MarketShare_table, utilizer/100, script, Performance_assumption, Recom_Measure_all)
 		t1.reset_index(inplace = True)
