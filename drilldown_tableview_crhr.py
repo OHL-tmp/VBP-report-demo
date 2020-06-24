@@ -46,7 +46,6 @@ filter_list = {
  		'Drug Others (Excl. Entrestro)' : ['ACE /ARB', 'Aldosterone receptor antagonists', 'Beta Blocker', 'Diuretics', 'Others', 'Vasodilators'], 
  		'Drug Entresto': ['Entresto'], 'Home Health' : ['Home Health'], 'Skilled Nursing Facility' : ['Skilled Nursing Facility'], 'Hospice' : ['Hospice']}
 
-
 cate_mix_cnt = 0
 for k in list(filter_list.keys()):
 	cate_mix_cnt = cate_mix_cnt + len(filter_list[k])
@@ -64,7 +63,7 @@ def tableview():
 									html.H4("Select Dimension", style={"font-size":"1rem","padding-left":"0.5rem", "padding-top":"0.5rem"}),
 									html.H5("First Dimension", style={"font-size":"0.8rem","color":"#919191","padding-left":"0.5rem", "padding-top":"0.5rem"}),
 									dcc.Dropdown(
-										id = "dropdown-dimension-1",
+										id = "dropdown-dimension-1-crhr",
 										placeholder ="...",
 										options = [{"label": 'Service Category', "value": 'Service Category'}, {"label": 'Sub Category', "value": 'Sub Category', 'disabled': True}] 
 										+ [{"label": k, "value": k, 'disabled' : True} if len(dimension[k]) == 0 else {"label": k, "value": k, 'disabled' : False} for k in list(dimension.keys())],
@@ -74,21 +73,21 @@ def tableview():
 										),
 									html.H5("Second Dimension", style={"font-size":"0.8rem","color":"#919191","padding-left":"0.5rem", "padding-top":"0.5rem"}),
 									dcc.Dropdown(
-										id = "dropdown-dimension-2",
+										id = "dropdown-dimension-2-crhr",
 										disabled=True,
 										placeholder ="...",
 										style = {"font-family":"NotoSans-Condensed","font-size":"0.8rem"}
 										),
 									html.H5("Third Dimension", style={"font-size":"0.8rem","color":"#919191","padding-left":"0.5rem", "padding-top":"0.5rem"}),
 									dcc.Dropdown(
-										id = "dropdown-dimension-3",
+										id = "dropdown-dimension-3-crhr",
 										disabled=True,
 										placeholder ="...",
 										style = {"font-family":"NotoSans-Condensed","font-size":"0.8rem"}
 										),
 									html.H4("Select Measures", style={"font-size":"1rem","padding-left":"0.5rem", "padding-top":"1rem"}),
 									dcc.Dropdown(
-										id = "dropdown-measure-1",
+										id = "dropdown-measure-1-crhr",
 										options = [{"label": k, "value": k} for k in measure],
 										value = ['Diff % from Benchmark Total Cost', 'YTD Total Cost', 'Annualized Total Cost', 'Benchmark Total Cost'],
 										placeholder ="Select measures",
@@ -103,7 +102,7 @@ def tableview():
 									html.H4("Filters", style={"font-size":"1rem","padding-left":"0.5rem", "padding-top":"0.5rem"}),
 									html.H5("Filter 1", style={"font-size":"0.8rem","color":"#919191","padding-left":"0.5rem", "padding-top":"0.5rem"}),
 									dcc.Dropdown(
-										id = "dimension_filter_selection_1",
+										id = "dimension_filter_selection_1_crhr",
 										options = [{"label": 'Service Category', "value": 'Service Category'}, {"label": 'Sub Category', "value": 'Sub Category', 'disabled': True}] 
 										+ [{"label": k, "value": k, 'disabled' : True} if len(dimension[k]) == 0 else {"label": k, "value": k, 'disabled' : False} for k in list(dimension.keys())],
 										placeholder = "Add a Filter",
@@ -111,21 +110,21 @@ def tableview():
 										),
 									html.H5("", style={"font-size":"0.8rem"}),
 									dcc.Dropdown(
-										id = "dimension_filter_1",
+										id = "dimension_filter_1_crhr",
 										placeholder = "Select Filter Value",
 										multi = True,
 										style = {"font-family":"NotoSans-Condensed","font-size":"0.8rem"},
 										),
 									html.H5("Filter 2", style={"font-size":"0.8rem","color":"#919191","padding-left":"0.5rem", "padding-top":"0.5rem"}),
 									dcc.Dropdown(
-										id = "dimension_filter_selection_2",
+										id = "dimension_filter_selection_2_crhr",
 										options = [{"label": k, "value": k} for k in list(dimension.keys())],
 										placeholder = "Add a Filter",
 										style = {"font-family":"NotoSans-Condensed","font-size":"0.8rem"}
 										),
 									html.H5("", style={"font-size":"0.8rem"}),
 									dcc.Dropdown(
-										id = "dimension_filter_2",
+										id = "dimension_filter_2_crhr",
 										placeholder = "Select Filter Value",
 										multi = True,
 										style = {"font-family":"NotoSans-Condensed","font-size":"0.8rem"}
@@ -144,7 +143,7 @@ def tableview():
 								[
 									html.P("*Default sorted by Diff % from Benchmark Total Cost", style={"font-size":"0.6rem"}),
 									dash_table.DataTable(
-										id = 'datatable-tableview',
+										id = 'datatable-tableview-crhr',
 										style_header = {'height': 'auto', 'width':'auto','whiteSpace':'normal','font-family':'NotoSans-Condensed','font-size':'auto','backgroundColor': '#dce7fc','color':'#1357DD'},
 										style_cell = {'font-family':'NotoSans-Regular','font-size':'0.8rem','textAlign': 'center'},
 										#fixed_rows={ 'headers': True, 'data': 0 },

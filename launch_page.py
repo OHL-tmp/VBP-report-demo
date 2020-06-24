@@ -10,12 +10,18 @@ import dash_table
 import pandas as pd
 import numpy as np
 
+import urllib.parse as url_parse
+import flask 
+from io import StringIO, BytesIO
+
 from app import app
 import contract_manager
 import contract_manager_drilldown
 import contract_optimizer
+import contract_report_generator
+import contract_measures_library
 
-
+df_test=pd.read_excel("downloads/test.xlsx", index_col = 0)
 
 
 def launch_layout():
@@ -30,7 +36,7 @@ def launch_layout():
                     ),
                     html.Div(
                         [
-                            html.P("version: beta 0.1.131             © 2020 OneHealthLink. ")
+                            html.P("PHARMA   © 2020 Sinolation. ")
                         ],
                         style={"text-align":"center", "font-size":"0.6rem"}
                     ),
@@ -52,7 +58,7 @@ def launch_layout():
                                 )
 
                             ],
-                            style={"background-color":"transparent", "border":"none"}
+                            style={"background-color":"transparent", "border":"none", "width":"1400px", "margin":"auto"}
                             ),
                         ],
                         style={"margin-top":"-30rem","background-color":"transparent","text-align":"center"}
@@ -78,11 +84,25 @@ def display_page(pathname):
         return contract_manager_drilldown.layout
     elif pathname == "/vbc-demo/contract-optimizer/":
         return contract_optimizer.layout
+    elif pathname == "/vbc-demo/contract-optimizer/measures-library/":
+        return contract_measures_library.layout
+    elif pathname == "/vbc-demo/contract-manager/report-generator/":
+        return contract_report_generator.layout
     else:
         return launch_layout()
 
 #####################################3
      
+
+
+@app.server.route('/<filename>', methods = ['GET'])
+def serve_static(filename):
+
+#    filename = 'downloads/' + filename
+    return flask.send_file(filename, as_attachment=True)
+
+
+
 
 if __name__ == "__main__":
     app.run_server(host="127.0.0.1", port = 8052)

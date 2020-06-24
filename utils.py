@@ -95,7 +95,7 @@ def get_header_contract(app, simulation_active, library_active, contract_active,
                 ),
             dbc.NavItem(dbc.NavLink(
                         "Contract Generator",
-                        href="/vbc-demo/contract-optimizer/contract-generator/",
+                        #href="/vbc-demo/contract-optimizer/contract-generator/",
                         className="nav-link",
                         active = contract_active,
                         ),

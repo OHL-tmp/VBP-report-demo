@@ -46,7 +46,7 @@ Domain_options ={
                                          "LVEDVi LS Mean Change", "LVESVi LS Mean Change", "E/e' LS Mean Change"],
     "Functional Outcomes" : ["Change in Self-Care Score", "Change in Mobility Score"  ],
     "Life Expectancy" : ["CV Mortality Rate"],
-    "Disease Progression" : ["Rate of CHF Progression for 24 months"],
+    "Disease Progression" : [],
     "Clinical Measures Adherence Level" : [],
     "Depressive Symptom Measures" : [],
     "Psychosocial Outcome" : []
@@ -72,11 +72,11 @@ Domain_options ={
 
 "checklist-domain-measures-lv1-6" : {
     "Symptom management" : ["Patient Reported SOB changes", "Patient Reported Fatigue and Tiredness Changes",
-                           "Patient Reported Peripheral Oedema Changes", "Patient Reported Disturbed Sleep Changes"],
+                           "Patient Reported Peripheral Oedema Changes"],
     "Patient Satisfaction" : []
 }}
 
-default_measure = ["CHF Related Average Cost per Patient", "CHF Related Hospitalization Rate", "NT-proBNP Improvement %", "LVEF Improvement %"]
+default_measure = ["CHF Related Average Cost per Patient", "CHF Related Hospitalization Rate", "NT-proBNP Change %", "LVEF LS Mean Change %"]
 
 domain_focus = list(Domain_options.keys())
 
@@ -95,14 +95,14 @@ domain_ct = len(domain_set)
 def modal_dashboard_domain_selection(n):
     return html.Div(
                 [
-                    dbc.Button("Edit Domain", id="open-centered", className="mb-3", style={"background-color":"#38160f", "border":"none", "border-radius":"10rem", "font-family":"NotoSans-Regular", "font-size":"0.6rem"}), 
+                    dbc.Button("Edit Measures", id="open-centered", className="mb-3", style={"background-color":"#38160f", "border":"none", "border-radius":"10rem", "font-family":"NotoSans-Regular", "font-size":"0.6rem"}), 
                     dbc.Modal(
                         [
                             dbc.ModalHeader([
                                 html.Div(
                                     [
                                         dbc.Row([
-                                             dbc.Col(html.H2("Select Domain", style={"font-size":"2rem","color":"#fff"}), width=7),
+                                             dbc.Col(html.H2("Select Measures", style={"font-size":"2rem","color":"#fff"}), width=7),
                                              dbc.Col(
                                                 dbc.Card(
                                                     dbc.CardBody(
@@ -142,7 +142,7 @@ def modal_dashboard_domain_selection(n):
                                     ]
                                 )
                             ],
-                            style={"background-image":"url('domain_selection_bg_s.png')","backgroud-size":"auto","border":"none"}
+                            style={"background-color":"#bfd4ff","background-image":"url('domain_selection_bg_s.png')","backgroud-size":"auto","border":"none"}
                             ),
                             dbc.ModalBody(
                                 card_domain_selection(n)
